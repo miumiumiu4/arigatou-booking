@@ -48,6 +48,12 @@
   .msg.ng{display:block;background:#fbe9e2;color:var(--warn)}
   .price-note{font-size:13px;color:var(--muted)}
   footer{margin-top:30px;font-size:13px;color:var(--muted);text-align:center}
+  .dateblk{background:#fff7f5;border-radius:10px;padding:4px 14px 12px;margin-top:12px}
+  .dateblk .dt{max-width:220px}
+  .req{background:#e03131;color:#fff!important;border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700}
+  .radios{display:flex;flex-wrap:wrap;gap:8px 18px}
+  .radios label{display:flex;align-items:center;gap:6px;margin:0;font-weight:700;font-size:14px;cursor:pointer}
+  .radios input{width:18px;height:18px;padding:0;accent-color:var(--or)}
 </style>
 </head>
 <body>
@@ -98,15 +104,25 @@
       <div><label>郵便番号</label><input type="text" name="zip" inputmode="numeric" autocomplete="postal-code"></div>
     </div>
     <label>ご住所 <small>必須</small></label><input type="text" name="address" required autocomplete="street-address">
-    <label>作業希望日 <small>第3希望まで（第1希望は必須）</small></label>
-    <div class="g3">
-      <div><input type="date" name="date1" required></div>
-      <div><input type="date" name="date2"></div>
-      <div><input type="date" name="date3"></div>
+    <div class="dateblk">
+      <label>作業日第一希望 <small class="req">必須</small></label>
+      <input type="date" name="date1" required class="dt">
+      <label>作業日第一希望時間 <small class="req">必須</small></label>
+      <div class="radios"><label><input type="radio" name="time1" value="9時〜12時" checked>9時〜12時</label><label><input type="radio" name="time1" value="12時〜15時">12時〜15時</label><label><input type="radio" name="time1" value="15時〜18時">15時〜18時</label><label><input type="radio" name="time1" value="上記以外で相談したい">上記以外で相談したい</label></div>
+    </div>
+    <div class="dateblk">
+      <label>作業日第二希望 <small class="req">必須</small></label>
+      <input type="date" name="date2" required class="dt">
+      <label>作業日第二希望時間 <small class="req">必須</small></label>
+      <div class="radios"><label><input type="radio" name="time2" value="9時〜12時" checked>9時〜12時</label><label><input type="radio" name="time2" value="12時〜15時">12時〜15時</label><label><input type="radio" name="time2" value="15時〜18時">15時〜18時</label><label><input type="radio" name="time2" value="上記以外で相談したい">上記以外で相談したい</label></div>
+    </div>
+    <div class="dateblk">
+      <label>作業日第三希望 <small class="req">必須</small></label>
+      <input type="date" name="date3" required class="dt">
+      <label>作業日第三希望時間 <small class="req">必須</small></label>
+      <div class="radios"><label><input type="radio" name="time3" value="9時〜12時" checked>9時〜12時</label><label><input type="radio" name="time3" value="12時〜15時">12時〜15時</label><label><input type="radio" name="time3" value="15時〜18時">15時〜18時</label><label><input type="radio" name="time3" value="上記以外で相談したい">上記以外で相談したい</label></div>
     </div>
     <p class="price-note" style="margin:6px 0 0">※ご希望日での対応が難しい場合は、1〜2日以内に日程再調整のご連絡をいたします。</p>
-    <label>希望時間帯</label>
-    <select name="time"><option>午前</option><option>午後</option><option>どちらでも</option></select>
     <label>お支払い方法</label>
     <select name="payment">
       <option value="onsite">作業当日にお支払い（現金）</option>
@@ -222,7 +238,9 @@ $("#f").addEventListener("submit", async e => {
   const consults = [...document.querySelectorAll('input[name=consult]:checked')].map(i=>i.value);
   let note = data.note || "";
   if (consults.length) note = "【その他のご相談】" + consults.join("、") + (note ? "\n" + note : "");
-  if (data.date3) note = "【第3希望】" + data.date3 + (note ? "\n" + note : "");
+  ["1","2","3"].forEach(n => { if (data["date"+n]) data["date"+n] = data["date"+n] + " " + (data["time"+n] || ""); });
+  data.time = "各希望日に記載";
+  note = "【希望日】第1 " + data.date1 + " ／ 第2 " + data.date2 + " ／ 第3 " + data.date3 + (note ? "\n" + note : "");
   Object.assign(data, {
     note,
     units: st.units, auto_units: st.auto, set3: st.set3 ? 1 : 0, set3_units: st.set3,
