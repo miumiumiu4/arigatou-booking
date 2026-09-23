@@ -84,7 +84,7 @@
     <p class="tip">💡 こちらは概算です。汚れによる追加料金は基本的に発生しません（特殊な事情がある場合は作業前に必ずご説明します）。</p>
   </div>
 
-  <form id="f" class="card">
+  <form id="f" class="card" novalidate>
     <h2>2. ご予約情報を入力する</h2>
     <div class="g2">
       <div><label>お名前 <small>必須</small></label><input type="text" name="name" required autocomplete="name"></div>
@@ -233,6 +233,25 @@ render();
 $("#f").addEventListener("submit", async e => {
   e.preventDefault();
   if (st.units < 1) { alert("エアコン台数を1台以上にしてください。"); return; }
+  // スマホ（特にiPhone）はブラウザの入力チェックの吹き出しが出ず、ボタンが無反応に見えるため自前でチェック
+  const LABELS = { name:"お名前", phone:"電話番号", email:"メールアドレス", area:"エリア", address:"ご住所", date1:"作業日第一希望", date2:"作業日第二希望", date3:"作業日第三希望" };
+  const fm = $("#f");
+  for (const n of Object.keys(LABELS)) {
+    const el = fm.querySelector('[name='+n+']');
+    if (!el) continue;
+    const v = (el.value || "").trim();
+    let bad = "";
+    if (!v) bad = LABELS[n] + "を入力してください。";
+    else if (n === "email" && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)) bad = "メールアドレスの形式をご確認ください。";
+    else if (el.type === "date" && el.min && v < el.min) bad = LABELS[n] + "は " + el.min.replace(/-/g,"/") + " 以降の日付を選んでください。";
+    if (bad) {
+      const m = $("#msg"); m.className = "msg ng"; m.textContent = "⚠ " + bad;
+      el.scrollIntoView({behavior:"smooth", block:"center"});
+      setTimeout(() => { try { el.focus(); } catch(_){} }, 400);
+      alert(bad);
+      return;
+    }
+  }
   const btn = $("#submit"), msg = $("#msg"), c = calc();
   const data = Object.fromEntries(new FormData($("#f")).entries());
   const consults = [...document.querySelectorAll('input[name=consult]:checked')].map(i=>i.value);
