@@ -106,6 +106,7 @@
           <option>東京</option><option>神奈川</option><option>埼玉</option><option>千葉</option>
           <option>愛知</option><option>岐阜</option>
           <option>大阪</option><option>兵庫</option><option>和歌山</option>
+          <option>福岡</option><option>佐賀</option><option>熊本</option><option>宮城</option>
           <option>その他（備考にご記入ください）</option>
         </select></div>
       <div><label>郵便番号</label><input type="text" name="zip" inputmode="numeric" autocomplete="postal-code"></div>
@@ -250,14 +251,35 @@ const AV = { pref:"", data:null, loading:false };
 const SLOT_NAMES = ["9時〜12時","12時〜15時","15時〜18時"];
 const WD = "日月火水木金土";
 function fmtD(k){ const d=new Date(k+"T00:00:00+09:00"); return (d.getMonth()+1)+"/"+d.getDate()+"("+WD[d.getDay()]+")"; }
+
+// スマホ（特にiPhone）で通常の読み込みが失敗した場合に備え、2通りの方法で取得する
+function availJsonp(pref){
+  return new Promise((res, rej) => {
+    const cb = "__av" + Date.now() + Math.floor(Math.random()*1000);
+    const s = document.createElement("script");
+    const t = setTimeout(() => { cleanup(); rej(new Error("timeout")); }, 25000);
+    function cleanup(){ clearTimeout(t); try { delete window[cb]; } catch(_){ window[cb]=undefined; } s.remove(); }
+    window[cb] = d => { cleanup(); res(d); };
+    s.onerror = () => { cleanup(); rej(new Error("jsonp")); };
+    s.src = CONFIG.GAS_URL + "?action=avail&pref=" + encodeURIComponent(pref) + "&callback=" + cb;
+    document.head.appendChild(s);
+  });
+}
+async function getAvail(pref){
+  try {
+    const r = await fetch(CONFIG.GAS_URL + "?action=avail&pref=" + encodeURIComponent(pref));
+    return JSON.parse(await r.text());
+  } catch(_) {
+    return await availJsonp(pref);
+  }
+}
 async function loadAvail(pref){
   const box=$("#availbox"), m=$("#availmsg"), chips=$("#availchips");
   AV.pref=pref; AV.data=null; applyAvail();
   if (!pref || /その他/.test(pref)) { box.style.display="none"; return; }
-  box.style.display="block"; m.textContent="⏳ 空き状況を確認しています…"; chips.innerHTML="";
+  box.style.display="block"; m.textContent="⏳ 空き状況を確認しています…（最大15秒ほど）"; chips.innerHTML="";
   try {
-    const r = await fetch(CONFIG.GAS_URL + "?action=avail&pref=" + encodeURIComponent(pref));
-    const j = JSON.parse(await r.text());
+    const j = await getAvail(pref);
     if (AV.pref !== pref) return;
     if (!j.ok || !j.supported) throw new Error("unsupported");
     AV.data = j.days || {};
@@ -275,7 +297,9 @@ async function loadAvail(pref){
       m.textContent = "直近の空きが見つかりませんでした。ご希望日をご入力いただければ担当者が調整します。";
     }
   } catch(_) {
-    AV.data = null; box.style.display="none";
+    if (AV.pref !== pref) return;
+    AV.data = null; box.style.display="block";
+    m.textContent = "空き状況を読み込めませんでした。ご希望日をご入力いただければ担当者が調整します。"; chips.innerHTML = "";
   }
   applyAvail();
 }
@@ -299,7 +323,7 @@ function applyAvail(){
 document.querySelector("select[name=area]").addEventListener("change", e => loadAvail(e.target.value));
 ["date1","date2","date3"].forEach(n => document.querySelector("input[name="+n+"]").addEventListener("change", applyAvail));
 // 表示を速くするため、ページを開いた時点で各地域の空き状況を先読み（結果は使わない）
-["東京","愛知","大阪"].forEach(p => { try { fetch(CONFIG.GAS_URL + "?action=avail&pref=" + encodeURIComponent(p)).catch(()=>{}); } catch(_){} });
+["東京","愛知","大阪","福岡","宮城"].forEach(p => { try { getAvail(p).catch(()=>{}); } catch(_){} });
 
 $("#f").addEventListener("submit", async e => {
   e.preventDefault();
