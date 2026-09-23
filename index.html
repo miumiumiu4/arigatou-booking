@@ -12,12 +12,14 @@
   .wrap{max-width:720px;margin:0 auto;padding:24px 16px 80px}
   .badge{display:inline-block;background:var(--soft);color:var(--or);font-weight:700;padding:4px 12px;border-radius:999px;font-size:13px}
   h1{font-size:24px;line-height:1.4;margin:10px 0 6px}
-  .lead{color:var(--muted);font-size:15px;margin:0 0 18px}
+  .lead{color:var(--muted);font-size:15px;margin:0 0 14px}
+  .campbar{display:none;background:var(--or);color:#fff;border-radius:12px;padding:12px 16px;font-weight:800;text-align:center;margin-bottom:16px}
   .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:16px}
   .card h2{font-size:17px;margin:0 0 14px;padding-bottom:8px;border-bottom:2px solid var(--soft)}
   .row-item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px dashed var(--line)}
   .row-item .t b{display:block;font-size:15px}
   .row-item .t span{font-size:13px;color:var(--muted)}
+  .row-item .t span s{color:#b9a99c}
   .ctr{display:flex;align-items:center;gap:8px}
   .ctr button{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:#fff;font-size:18px;font-weight:700;color:var(--or);cursor:pointer}
   .ctr button:disabled{opacity:.3;cursor:default}
@@ -26,13 +28,19 @@
   .est .l{font-weight:700}
   .est .v{font-size:30px;font-weight:900;color:var(--or)}
   .est .v small{font-size:13px;font-weight:600;color:var(--ink)}
+  .est .d{width:100%;font-size:13px;color:var(--muted);display:none}
   .tip{font-size:13px;color:var(--muted);margin-top:8px}
   label{display:block;font-weight:700;font-size:14px;margin:14px 0 6px}
   label small{font-weight:400;color:var(--muted)}
   input,select,textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font-size:16px;background:#fff;color:var(--ink)}
   textarea{min-height:90px}
   .g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  @media(max-width:520px){.g2{grid-template-columns:1fr}}
+  .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  @media(max-width:520px){.g2,.g3{grid-template-columns:1fr}}
+  .chks{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;margin-top:4px}
+  @media(max-width:520px){.chks{grid-template-columns:1fr}}
+  .chks label{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14px;margin:0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;cursor:pointer}
+  .chks input{width:18px;height:18px;padding:0;accent-color:var(--or)}
   .btn{display:block;width:100%;background:var(--or);color:#fff;border:0;border-radius:12px;padding:16px;font-size:18px;font-weight:800;cursor:pointer;margin-top:18px}
   .btn:disabled{opacity:.5}
   .msg{display:none;padding:16px;border-radius:12px;margin-top:16px}
@@ -47,15 +55,16 @@
   <span class="badge">全国口コミ評価No.1</span>
   <h1>エアコンクリーニング ご予約フォーム</h1>
   <p class="lead">台数とオプションを選ぶと概算が出ます。送信後すぐに確認メールが届き、作業日は担当者よりご連絡のうえ確定します。</p>
+  <div class="campbar" id="campbar">🎉 9月30日までの期間限定価格で承っています</div>
 
   <div class="card">
     <h2>1. 台数とオプションを選ぶ</h2>
-    <div class="row-item"><div class="t"><b>エアコン台数（壁掛け）</b><span>8,900円/台</span></div>
+    <div class="row-item"><div class="t"><b>エアコン台数（壁掛け）</b><span id="p_units"></span></div>
       <div class="ctr"><button type="button" data-k="units" data-d="-1">−</button><output id="o_units">1</output><button type="button" data-k="units" data-d="1">＋</button></div></div>
-    <div class="row-item"><div class="t"><b>うち、お掃除機能付き</b><span>＋6,000円/台</span></div>
+    <div class="row-item"><div class="t"><b>うち、お掃除機能付き</b><span id="p_auto"></span></div>
       <div class="ctr"><button type="button" data-k="auto" data-d="-1">−</button><output id="o_auto">0</output><button type="button" data-k="auto" data-d="1">＋</button></div></div>
     <p style="font-weight:700;margin:16px 0 4px">オプション（台数分お選びください）</p>
-    <div class="row-item"><div class="t"><b>3点セット</b><span>防カビ抗菌コート＋室外機＋ドレンホース｜9,500円/台</span></div>
+    <div class="row-item"><div class="t"><b>3点セット</b><span id="p_set3"></span></div>
       <div class="ctr"><button type="button" data-k="set3" data-d="-1">−</button><output id="o_set3">0</output><button type="button" data-k="set3" data-d="1">＋</button></div></div>
     <div class="row-item"><div class="t"><b>防カビ・抗菌コート</b><span>3,000円/台</span></div>
       <div class="ctr"><button type="button" data-k="coat" data-d="-1">−</button><output id="o_coat">0</output><button type="button" data-k="coat" data-d="1">＋</button></div></div>
@@ -64,7 +73,8 @@
     <div class="row-item" style="border-bottom:0"><div class="t"><b>ドレンホース洗浄</b><span>2,500円/台</span></div>
       <div class="ctr"><button type="button" data-k="drain" data-d="-1">−</button><output id="o_drain">0</output><button type="button" data-k="drain" data-d="1">＋</button></div></div>
 
-    <div class="est"><div class="l">💰 概算金額</div><div class="v">¥<span id="e_total">8,900</span><small> 円（税込・駐車場代別）</small></div></div>
+    <div class="est"><div class="l">💰 概算金額</div><div class="v">¥<span id="e_total">6,000</span><small> 円（税込・駐車場代別）</small></div>
+      <div class="d" id="e_saving">通常価格なら ¥<span id="e_normal"></span> ▶ <b>¥<span id="e_diff"></span> お得</b></div></div>
     <p class="tip">💡 こちらは概算です。汚れによる追加料金は基本的に発生しません（特殊な事情がある場合は作業前に必ずご説明します）。</p>
   </div>
 
@@ -88,59 +98,108 @@
       <div><label>郵便番号</label><input type="text" name="zip" inputmode="numeric" autocomplete="postal-code"></div>
     </div>
     <label>ご住所 <small>必須</small></label><input type="text" name="address" required autocomplete="street-address">
-    <div class="g2">
-      <div><label>作業希望日 第1希望 <small>必須</small></label><input type="date" name="date1" required></div>
-      <div><label>第2希望</label><input type="date" name="date2"></div>
+    <label>作業希望日 <small>第3希望まで（第1希望は必須）</small></label>
+    <div class="g3">
+      <div><input type="date" name="date1" required></div>
+      <div><input type="date" name="date2"></div>
+      <div><input type="date" name="date3"></div>
     </div>
+    <p class="price-note" style="margin:6px 0 0">※ご希望日での対応が難しい場合は、1〜2日以内に日程再調整のご連絡をいたします。</p>
     <label>希望時間帯</label>
     <select name="time"><option>午前</option><option>午後</option><option>どちらでも</option></select>
     <label>お支払い方法</label>
-    <select name="payment"><option value="onsite">作業当日にお支払い</option><option value="paypal">PayPal請求書（メールで届きます。カード払い可）</option></select>
+    <select name="payment">
+      <option value="onsite">作業当日にお支払い（現金）</option>
+      <option value="paypay">作業当日にお支払い（PayPay）</option>
+      <option value="paypal">PayPal請求書（メールで届きます。カード払い可）</option>
+    </select>
     <label>駐車場 <small>駐車場代は別途実費</small></label>
     <select name="parking"><option>敷地内に駐車可</option><option>近隣コインパーキング利用</option><option>相談したい</option></select>
+
+    <label>エアコン以外のお掃除もご相談いただけます <small>任意・料金は担当者からご案内します</small></label>
+    <div class="chks">
+      <label><input type="checkbox" name="consult" value="お風呂・浴室クリーニング">お風呂・浴室</label>
+      <label><input type="checkbox" name="consult" value="キッチン・水回りクリーニング">キッチン・水回り</label>
+      <label><input type="checkbox" name="consult" value="洗濯機クリーニング">洗濯機</label>
+      <label><input type="checkbox" name="consult" value="その他のお掃除">その他（備考にご記入ください）</label>
+    </div>
+
     <label>ご要望・備考</label>
-    <textarea name="note" placeholder="設置場所、メーカー、気になる症状、10年以上の機種かどうか など"></textarea>
+    <textarea name="note" placeholder="設置場所、メーカー、気になる症状、10年以上の機種かどうか、その他のお掃除のご相談内容 など"></textarea>
     <input type="hidden" name="src" value="lp">
     <button class="btn" id="submit" type="submit">この内容で予約する</button>
-    <p class="price-note" style="margin-top:10px">送信後、確認メールをお送りします。作業日はご予約から5営業日以内に担当者よりご連絡し確定します。</p>
+    <p class="price-note" style="margin-top:10px">送信後、確認メールをお送りします。作業日はご予約から5営業日以内に担当者よりご連絡し確定します。ご希望日での対応が難しい場合は、1〜2日以内に日程再調整のご連絡をいたします。</p>
     <div id="msg" class="msg"></div>
   </form>
 
   <footer>ありがとうエアコンお掃除専門店 ☎ 080-4177-2272<br>© エイムポイント合同会社</footer>
 </div>
 <script>
-const CONFIG = { GAS_URL: "https://script.google.com/macros/s/AKfycbwzgjuZ_AdGByWhWuv4gSnQKBHVK3w96mrUbkED4ReAyFZIO9F-EZW8rECuwYMSxKlV/exec" };
-const ITEMS = {
-  units:   { name:"エアコンクリーニング", price:8900 },
-  auto:    { name:"お掃除機能付き加算", price:6000 },
-  set3:    { name:"3点セット（防カビ抗菌コート・室外機・ドレンホース）", price:9500 },
-  coat:    { name:"防カビ・抗菌コート", price:3000 },
-  outdoor: { name:"室外機クリーニング", price:4000 },
-  drain:   { name:"ドレンホース洗浄", price:2500 }
+const CONFIG = {
+  GAS_URL: "https://script.google.com/macros/s/AKfycbwzgjuZ_AdGByWhWuv4gSnQKBHVK3w96mrUbkED4ReAyFZIO9F-EZW8rECuwYMSxKlV/exec",
+  CAMPAIGN_END: "2026-09-30T23:59:59+09:00"
+};
+const CAMPAIGN = new Date() <= new Date(CONFIG.CAMPAIGN_END);
+// 通常価格
+const NORMAL = { unit:8900, auto:6000, set3:9500, coat:3000, outdoor:4000, drain:2500 };
+// キャンペーン価格（〜9/30）
+const CAMP = { first:6000, add:5000, auto:5000, set3:7000, coat:3000, outdoor:4000, drain:2500 };
+const NAMES = {
+  units:"エアコンクリーニング", auto:"お掃除機能付き加算",
+  set3:"3点セット（防カビ抗菌コート・室外機・ドレンホース）",
+  coat:"防カビ・抗菌コート", outdoor:"室外機クリーニング", drain:"ドレンホース洗浄"
 };
 const st = { units:1, auto:0, set3:0, coat:0, outdoor:0, drain:0 };
 const yen = n => n.toLocaleString("ja-JP");
 const $ = s => document.querySelector(s);
 
-// 作業希望日は明後日以降
+// 価格ラベルとバナー
+if (CAMPAIGN) {
+  $("#campbar").style.display = "block";
+  $("#p_units").innerHTML = '<s>8,900円</s> → 1台目6,000円／2台目〜5,000円';
+  $("#p_auto").innerHTML = '<s>＋6,000円</s> → ＋5,000円/台';
+  $("#p_set3").innerHTML = '防カビ抗菌コート＋室外機＋ドレンホース｜<s>9,500円</s> → 7,000円/台';
+} else {
+  $("#p_units").textContent = "8,900円/台";
+  $("#p_auto").textContent = "＋6,000円/台";
+  $("#p_set3").textContent = "防カビ抗菌コート＋室外機＋ドレンホース｜9,500円/台";
+}
+
+// 作業希望日は明後日以降（日本時間）
 (() => {
-  const d = new Date(); d.setDate(d.getDate() + 2);
-  const min = d.toISOString().slice(0,10);
-  document.querySelector('input[name=date1]').min = min;
-  document.querySelector('input[name=date2]').min = min;
+  const now = new Date(Date.now() + 9*3600*1000);
+  now.setUTCDate(now.getUTCDate() + 2);
+  const min = now.toISOString().slice(0,10);
+  ["date1","date2","date3"].forEach(n => document.querySelector('input[name='+n+']').min = min);
 })();
 
 function calc(){
   const lines = [];
-  if (st.units) lines.push({ name:ITEMS.units.name+" "+st.units+"台", amount:st.units*ITEMS.units.price, items:[{name:ITEMS.units.name, qty:st.units, unit:ITEMS.units.price}] });
+  const u = st.units;
+  if (u) {
+    const amount = CAMPAIGN ? CAMP.first + (u-1)*CAMP.add : u*NORMAL.unit;
+    const items = CAMPAIGN
+      ? [{name:"エアコンクリーニング（期間限定 1台目）",qty:1,unit:CAMP.first}].concat(u>1?[{name:"エアコンクリーニング（2台目以降）",qty:u-1,unit:CAMP.add}]:[])
+      : [{name:NAMES.units, qty:u, unit:NORMAL.unit}];
+    lines.push({ name:NAMES.units+" "+u+"台", amount, normal:u*NORMAL.unit, items });
+  }
   ["auto","set3","coat","outdoor","drain"].forEach(k => {
-    if (st[k]) lines.push({ name:ITEMS[k].name+" "+st[k]+"台", amount:st[k]*ITEMS[k].price, items:[{name:ITEMS[k].name, qty:st[k], unit:ITEMS[k].price}] });
+    if (st[k]) {
+      const unit = CAMPAIGN ? CAMP[k] : NORMAL[k];
+      lines.push({ name:NAMES[k]+" "+st[k]+"台", amount:st[k]*unit, normal:st[k]*NORMAL[k], items:[{name:NAMES[k], qty:st[k], unit}] });
+    }
   });
-  return { lines, total: lines.reduce((a,l)=>a+l.amount,0) };
+  return { lines, total: lines.reduce((a,l)=>a+l.amount,0), normal: lines.reduce((a,l)=>a+l.normal,0) };
 }
 function render(){
   Object.keys(st).forEach(k => { $("#o_"+k).textContent = st[k]; });
-  $("#e_total").textContent = yen(calc().total);
+  const c = calc();
+  $("#e_total").textContent = yen(c.total);
+  if (CAMPAIGN && c.normal > c.total) {
+    $("#e_saving").style.display = "block";
+    $("#e_normal").textContent = yen(c.normal);
+    $("#e_diff").textContent = yen(c.normal - c.total);
+  } else { $("#e_saving").style.display = "none"; }
   document.querySelectorAll(".ctr button").forEach(b => {
     const k=b.dataset.k, d=+b.dataset.d;
     if (d<0) b.disabled = st[k] <= 0;
@@ -160,12 +219,17 @@ $("#f").addEventListener("submit", async e => {
   if (st.units < 1) { alert("エアコン台数を1台以上にしてください。"); return; }
   const btn = $("#submit"), msg = $("#msg"), c = calc();
   const data = Object.fromEntries(new FormData($("#f")).entries());
+  const consults = [...document.querySelectorAll('input[name=consult]:checked')].map(i=>i.value);
+  let note = data.note || "";
+  if (consults.length) note = "【その他のご相談】" + consults.join("、") + (note ? "\n" + note : "");
+  if (data.date3) note = "【第3希望】" + data.date3 + (note ? "\n" + note : "");
   Object.assign(data, {
+    note,
     units: st.units, auto_units: st.auto, set3: st.set3 ? 1 : 0, set3_units: st.set3,
     coat_units: st.coat, outdoor_units: st.outdoor, drain_units: st.drain,
-    breakdown: "【通常予約】" + c.lines.map(l=>l.name+"="+yen(l.amount)+"円").join(" / "),
+    breakdown: (CAMPAIGN ? "【期間限定価格】" : "【通常予約】") + c.lines.map(l=>l.name+"="+yen(l.amount)+"円").join(" / "),
     items: c.lines.flatMap(l=>l.items),
-    total: c.total, normal_total: c.total, submitted_at: new Date().toISOString(), page: location.href
+    total: c.total, normal_total: c.normal, submitted_at: new Date().toISOString(), page: location.href
   });
   btn.disabled = true; btn.textContent = "送信中…"; msg.className = "msg";
   try {
