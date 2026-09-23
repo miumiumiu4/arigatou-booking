@@ -50,13 +50,6 @@
   footer{margin-top:30px;font-size:13px;color:var(--muted);text-align:center}
   .dateblk{background:#fff7f5;border-radius:10px;padding:4px 14px 12px;margin-top:12px}
   .dateblk .dt{max-width:220px}
-  .availbox{background:#eef8f4;border:1px solid #cfe9df;border-radius:10px;padding:12px 14px;margin-top:14px}
-  .availmsg{font-size:14px;font-weight:700;color:#1f6b55}
-  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
-  .chips button{border:1px solid #9fd3c0;background:#fff;color:#1f6b55;border-radius:999px;padding:6px 12px;font-size:14px;font-weight:700;cursor:pointer}
-  .dstat{font-size:13px;margin-top:6px;color:var(--muted)}
-  .dstat.ng{color:#c92a2a;font-weight:700}
-  .radios label.full{opacity:.4;text-decoration:line-through;cursor:not-allowed}
   .req{background:#e03131;color:#fff!important;border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700}
   .radios{display:flex;flex-wrap:wrap;gap:8px 18px}
   .radios label{display:flex;align-items:center;gap:6px;margin:0;font-weight:700;font-size:14px;cursor:pointer}
@@ -103,37 +96,31 @@
       <div><label>エリア（都府県） <small>必須</small></label>
         <select name="area" required>
           <option value="">選択してください</option>
-          <option>東京</option><option>神奈川</option><option>埼玉</option><option>千葉</option>
-          <option>愛知</option><option>岐阜</option>
-          <option>大阪</option><option>兵庫</option><option>和歌山</option>
-          <option>福岡</option><option>佐賀</option><option>熊本</option><option>宮城</option>
-          <option>その他（備考にご記入ください）</option>
+          <optgroup label="関東"><option>東京</option><option>神奈川</option><option>埼玉</option><option>千葉</option></optgroup>
+          <optgroup label="中部"><option>愛知</option><option>岐阜</option></optgroup>
+          <optgroup label="関西"><option>大阪</option><option>兵庫</option><option>和歌山</option></optgroup>
+          <optgroup label="九州"><option>福岡</option><option>佐賀</option><option>熊本</option></optgroup>
+          <optgroup label="東北"><option>宮城</option></optgroup>
+          <optgroup label="その他"><option>その他（備考にご記入ください）</option></optgroup>
         </select></div>
       <div><label>郵便番号</label><input type="text" name="zip" inputmode="numeric" autocomplete="postal-code"></div>
     </div>
     <label>ご住所 <small>必須</small></label><input type="text" name="address" required autocomplete="street-address">
-    <div id="availbox" class="availbox" style="display:none">
-      <div id="availmsg" class="availmsg"></div>
-      <div id="availchips" class="chips"></div>
-    </div>
     <div class="dateblk">
       <label>作業日第一希望 <small class="req">必須</small></label>
       <input type="date" name="date1" required class="dt">
-      <div class="dstat" id="dstat1"></div>
       <label>作業日第一希望時間 <small class="req">必須</small></label>
       <div class="radios"><label><input type="radio" name="time1" value="9時〜12時" checked>9時〜12時</label><label><input type="radio" name="time1" value="12時〜15時">12時〜15時</label><label><input type="radio" name="time1" value="15時〜18時">15時〜18時</label><label><input type="radio" name="time1" value="上記以外で相談したい">上記以外で相談したい</label></div>
     </div>
     <div class="dateblk">
       <label>作業日第二希望 <small class="req">必須</small></label>
       <input type="date" name="date2" required class="dt">
-      <div class="dstat" id="dstat2"></div>
       <label>作業日第二希望時間 <small class="req">必須</small></label>
       <div class="radios"><label><input type="radio" name="time2" value="9時〜12時" checked>9時〜12時</label><label><input type="radio" name="time2" value="12時〜15時">12時〜15時</label><label><input type="radio" name="time2" value="15時〜18時">15時〜18時</label><label><input type="radio" name="time2" value="上記以外で相談したい">上記以外で相談したい</label></div>
     </div>
     <div class="dateblk">
       <label>作業日第三希望 <small class="req">必須</small></label>
       <input type="date" name="date3" required class="dt">
-      <div class="dstat" id="dstat3"></div>
       <label>作業日第三希望時間 <small class="req">必須</small></label>
       <div class="radios"><label><input type="radio" name="time3" value="9時〜12時" checked>9時〜12時</label><label><input type="radio" name="time3" value="12時〜15時">12時〜15時</label><label><input type="radio" name="time3" value="15時〜18時">15時〜18時</label><label><input type="radio" name="time3" value="上記以外で相談したい">上記以外で相談したい</label></div>
     </div>
@@ -246,85 +233,6 @@ document.querySelectorAll(".ctr button").forEach(b => b.addEventListener("click"
 render();
 
 
-/* ===== 空き状況（スケジュール表を読むだけ。書き込みはしません） ===== */
-const AV = { pref:"", data:null, loading:false };
-const SLOT_NAMES = ["9時〜12時","12時〜15時","15時〜18時"];
-const WD = "日月火水木金土";
-function fmtD(k){ const d=new Date(k+"T00:00:00+09:00"); return (d.getMonth()+1)+"/"+d.getDate()+"("+WD[d.getDay()]+")"; }
-
-// スマホ（特にiPhone）で通常の読み込みが失敗した場合に備え、2通りの方法で取得する
-function availJsonp(pref){
-  return new Promise((res, rej) => {
-    const cb = "__av" + Date.now() + Math.floor(Math.random()*1000);
-    const s = document.createElement("script");
-    const t = setTimeout(() => { cleanup(); rej(new Error("timeout")); }, 25000);
-    function cleanup(){ clearTimeout(t); try { delete window[cb]; } catch(_){ window[cb]=undefined; } s.remove(); }
-    window[cb] = d => { cleanup(); res(d); };
-    s.onerror = () => { cleanup(); rej(new Error("jsonp")); };
-    s.src = CONFIG.GAS_URL + "?action=avail&pref=" + encodeURIComponent(pref) + "&callback=" + cb;
-    document.head.appendChild(s);
-  });
-}
-async function getAvail(pref){
-  try {
-    const r = await fetch(CONFIG.GAS_URL + "?action=avail&pref=" + encodeURIComponent(pref));
-    return JSON.parse(await r.text());
-  } catch(_) {
-    return await availJsonp(pref);
-  }
-}
-async function loadAvail(pref){
-  const box=$("#availbox"), m=$("#availmsg"), chips=$("#availchips");
-  AV.pref=pref; AV.data=null; applyAvail();
-  if (!pref || /その他/.test(pref)) { box.style.display="none"; return; }
-  box.style.display="block"; m.textContent="⏳ 空き状況を確認しています…（最大15秒ほど）"; chips.innerHTML="";
-  try {
-    const j = await getAvail(pref);
-    if (AV.pref !== pref) return;
-    if (!j.ok || !j.supported) throw new Error("unsupported");
-    AV.data = j.days || {};
-    const min = document.querySelector("input[name=date1]").min;
-    const open = Object.keys(AV.data).sort().filter(k => k >= min && AV.data[k].some(Boolean));
-    if (open.length) {
-      m.textContent = "✅ 空きのある日（タップで希望日に入ります）";
-      chips.innerHTML = open.slice(0, 14).map(k => '<button type="button" data-d="'+k+'">'+fmtD(k)+'</button>').join("");
-      chips.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
-        const empty = ["date1","date2","date3"].map(n=>document.querySelector("input[name="+n+"]")).find(i=>!i.value) || document.querySelector("input[name=date3]");
-        empty.value = b.dataset.d; applyAvail();
-        empty.closest(".dateblk").scrollIntoView({behavior:"smooth", block:"center"});
-      }));
-    } else {
-      m.textContent = "直近の空きが見つかりませんでした。ご希望日をご入力いただければ担当者が調整します。";
-    }
-  } catch(_) {
-    if (AV.pref !== pref) return;
-    AV.data = null; box.style.display="block";
-    m.textContent = "空き状況を読み込めませんでした。ご希望日をご入力いただければ担当者が調整します。"; chips.innerHTML = "";
-  }
-  applyAvail();
-}
-function applyAvail(){
-  [1,2,3].forEach(i => {
-    const d = document.querySelector("input[name=date"+i+"]").value;
-    const st = $("#dstat"+i);
-    const radios = [...document.querySelectorAll("input[name=time"+i+"]")];
-    radios.forEach(r => { r.disabled=false; r.parentElement.classList.remove("full"); });
-    st.className="dstat"; st.textContent="";
-    if (!AV.data || !d) return;
-    const slots = AV.data[d];
-    if (!slots) { st.textContent = "この日の空き状況は担当者が確認してご連絡します。"; return; }
-    radios.slice(0,3).forEach((r,k) => { if (!slots[k]) { r.disabled=true; r.parentElement.classList.add("full"); } });
-    if (!slots.some(Boolean)) { st.className="dstat ng"; st.textContent="この日は満席です。別の日をお選びください（「上記以外で相談したい」も選べます）。"; }
-    else st.textContent = "空き：" + SLOT_NAMES.filter((_,k)=>slots[k]).join("・");
-    const cur = radios.find(r=>r.checked);
-    if (cur && cur.disabled) { const f = radios.find(r=>!r.disabled); if (f) f.checked = true; }
-  });
-}
-document.querySelector("select[name=area]").addEventListener("change", e => loadAvail(e.target.value));
-["date1","date2","date3"].forEach(n => document.querySelector("input[name="+n+"]").addEventListener("change", applyAvail));
-// 表示を速くするため、ページを開いた時点で各地域の空き状況を先読み（結果は使わない）
-["東京","愛知","大阪","福岡","宮城"].forEach(p => { try { getAvail(p).catch(()=>{}); } catch(_){} });
-
 $("#f").addEventListener("submit", async e => {
   e.preventDefault();
   if (st.units < 1) { alert("エアコン台数を1台以上にしてください。"); return; }
@@ -339,11 +247,6 @@ $("#f").addEventListener("submit", async e => {
     if (!v) bad = LABELS[n] + "を入力してください。";
     else if (n === "email" && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)) bad = "メールアドレスの形式をご確認ください。";
     else if (el.type === "date" && el.min && v < el.min) bad = LABELS[n] + "は " + el.min.replace(/-/g,"/") + " 以降の日付を選んでください。";
-    if (!bad && el.type === "date" && AV.data && AV.data[v]) {
-      const i = n.slice(-1), r = fm.querySelector("input[name=time"+i+"]:checked");
-      const slots = AV.data[v];
-      if (r && r.value !== "上記以外で相談したい" && (r.disabled || !slots[SLOT_NAMES.indexOf(r.value)])) bad = LABELS[n] + "の時間帯は満席です。別の時間か日付をお選びください。";
-    }
     if (bad) {
       const m = $("#msg"); m.className = "msg ng"; m.textContent = "⚠ " + bad;
       el.scrollIntoView({behavior:"smooth", block:"center"});
@@ -377,7 +280,7 @@ $("#f").addEventListener("submit", async e => {
     if (!j.ok) throw new Error(j.error || "送信失敗");
     msg.className = "msg ok";
     msg.innerHTML = "ご予約を受け付けました（受付番号 <b>"+j.id+"</b>）。確認メールをお送りしました。作業日は担当者よりご連絡のうえ確定します。";
-    $("#f").reset(); loadAvail(""); btn.textContent = "送信済み";
+    $("#f").reset(); btn.textContent = "送信済み";
     window.scrollTo({top: msg.offsetTop - 100, behavior:"smooth"});
   } catch(err) {
     msg.className = "msg ng"; msg.textContent = "送信できませんでした。☎080-4177-2272 までご連絡ください。（"+err.message+"）";
