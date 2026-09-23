@@ -162,7 +162,7 @@ if (CAMPAIGN) {
 } else {
   $("#p_units").textContent = "8,900円/台";
   $("#p_auto").textContent = "＋6,000円/台";
-  $("#p_set3").textContent = "防カビ抗菌コート＋室外機＋ドレンホース｜9,500円/台";
+  $("#p_set3").textContent = "防カビ抗菌コート＋室外機＋ドレンホース｜7,000円/台（別々なら9,500円）";
 }
 
 // 作業希望日は明後日以降（日本時間）
@@ -185,7 +185,7 @@ function calc(){
   }
   ["auto","set3","coat","outdoor","drain"].forEach(k => {
     if (st[k]) {
-      const unit = CAMPAIGN ? CAMP[k] : NORMAL[k];
+      const unit = (CAMPAIGN || k==="set3") ? CAMP[k] : NORMAL[k]; // 3点セットは10月以降も7,000円
       lines.push({ name:NAMES[k]+" "+st[k]+"台", amount:st[k]*unit, normal:st[k]*NORMAL[k], items:[{name:NAMES[k], qty:st[k], unit}] });
     }
   });
