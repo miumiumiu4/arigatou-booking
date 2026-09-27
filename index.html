@@ -157,7 +157,11 @@ const CONFIG = {
   GAS_URL: "https://script.google.com/macros/s/AKfycbwzgjuZ_AdGByWhWuv4gSnQKBHVK3w96mrUbkED4ReAyFZIO9F-EZW8rECuwYMSxKlV/exec",
   CAMPAIGN_END: "2026-09-30T23:59:59+09:00"
 };
-const CAMPAIGN = new Date() <= new Date(CONFIG.CAMPAIGN_END);
+// 端末の時計ずれ対策：サーバー時刻との差を補正（取れなければ端末時刻）
+let clockOffset = 0;
+const nowMs = () => Date.now() + clockOffset;
+const isCampaign = () => nowMs() <= new Date(CONFIG.CAMPAIGN_END).getTime();
+let CAMPAIGN = isCampaign();
 // 通常価格
 const NORMAL = { unit:8900, auto:6000, set3:9500, coat:3000, outdoor:4000, drain:2500 };
 // キャンペーン価格（〜9/30）
@@ -172,6 +176,7 @@ const yen = n => n.toLocaleString("ja-JP");
 const $ = s => document.querySelector(s);
 
 // 価格ラベルとバナー
+function applyPriceLabels(){
 if (CAMPAIGN) {
   $("#campbar").style.display = "block";
   $("#p_units").innerHTML = '<s>8,900円</s> → 1台目6,000円／2台目〜5,000円';
@@ -180,8 +185,25 @@ if (CAMPAIGN) {
 } else {
   $("#p_units").textContent = "8,900円/台";
   $("#p_auto").textContent = "＋6,000円/台";
+  $("#campbar").style.display = "none";
   $("#p_set3").textContent = "防カビ抗菌コート＋室外機＋ドレンホース｜7,000円/台（別々なら9,500円）";
 }
+}
+applyPriceLabels();
+
+// ページを開いたまま10/1 0:00を過ぎても、その場で通常価格に切り替える
+function checkCampaignEnd(){
+  if (CAMPAIGN && !isCampaign()) {
+    CAMPAIGN = false; applyPriceLabels(); render();
+    return true; // 切り替わった
+  }
+  return false;
+}
+setInterval(checkCampaignEnd, 15000);
+fetch(location.href.split("#")[0], { method:"HEAD", cache:"no-store" }).then(r => {
+  const d = r.headers.get("Date");
+  if (d) { clockOffset = new Date(d).getTime() - Date.now(); checkCampaignEnd(); }
+}).catch(()=>{});
 
 // 作業希望日は明後日以降（日本時間）
 (() => {
@@ -236,6 +258,13 @@ render();
 $("#f").addEventListener("submit", async e => {
   e.preventDefault();
   if (st.units < 1) { alert("エアコン台数を1台以上にしてください。"); return; }
+  if (checkCampaignEnd()) {
+    const m = $("#msg"); m.className = "msg ng";
+    m.textContent = "⚠ 期間限定価格の受付は9月30日で終了しました。通常価格で再計算しましたので、金額をご確認のうえ、もう一度「この内容で予約する」を押してください。";
+    alert(m.textContent.replace("⚠ ",""));
+    window.scrollTo({top: 0, behavior:"smooth"});
+    return;
+  }
   // スマホ（特にiPhone）はブラウザの入力チェックの吹き出しが出ず、ボタンが無反応に見えるため自前でチェック
   const LABELS = { name:"お名前", phone:"電話番号", email:"メールアドレス", area:"エリア", address:"ご住所", date1:"作業日第一希望", date2:"作業日第二希望", date3:"作業日第三希望" };
   const fm = $("#f");
