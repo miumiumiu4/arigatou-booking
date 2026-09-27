@@ -106,6 +106,8 @@
       <div><label>郵便番号</label><input type="text" name="zip" inputmode="numeric" autocomplete="postal-code"></div>
     </div>
     <label>ご住所 <small>必須</small></label><input type="text" name="address" required autocomplete="street-address">
+    <label>お住まいのタイプ <small>必須</small></label>
+    <div class="radios" id="housing"><label><input type="radio" name="housing" value="戸建て">戸建て</label><label><input type="radio" name="housing" value="マンション・アパート">マンション・アパート</label><label><input type="radio" name="housing" value="その他（店舗・事務所など）">その他（店舗・事務所など）</label></div>
     <div class="dateblk">
       <label>作業日第一希望 <small class="req">必須</small></label>
       <input type="date" name="date1" required class="dt">
@@ -283,6 +285,10 @@ $("#f").addEventListener("submit", async e => {
       alert(bad);
       return;
     }
+  }
+  if (!document.querySelector('input[name=housing]:checked')) {
+    const m = $("#msg"), t = "お住まいのタイプを選んでください。"; m.className = "msg ng"; m.textContent = "⚠ " + t;
+    $("#housing").scrollIntoView({behavior:"smooth", block:"center"}); alert(t); return;
   }
   const btn = $("#submit"), msg = $("#msg"), c = calc();
   const data = Object.fromEntries(new FormData($("#f")).entries());
