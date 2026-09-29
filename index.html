@@ -54,6 +54,15 @@
   .radios{display:flex;flex-wrap:wrap;gap:8px 18px}
   .radios label{display:flex;align-items:center;gap:6px;margin:0;font-weight:700;font-size:14px;cursor:pointer}
   .radios input{width:18px;height:18px;padding:0;accent-color:var(--or)}
+  .refnote{display:none;background:var(--soft);border-radius:10px;padding:10px 14px;font-size:14px;margin-top:8px}
+  .share{margin-top:14px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;color:var(--ink)}
+  .share b{display:block;font-size:15px}
+  .share .link{display:flex;gap:8px;margin-top:8px}
+  .share .link input{font-size:14px}
+  .share .link button,.share .line{white-space:nowrap;border:0;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
+  .share .link button{background:var(--or);color:#fff}
+  .share .line{display:inline-block;margin-top:8px;background:#06c755;color:#fff;text-decoration:none}
+  .share p{font-size:13px;color:var(--muted);margin:8px 0 0}
 </style>
 </head>
 <body>
@@ -146,6 +155,9 @@
 
     <label>ご要望・備考</label>
     <textarea name="note" placeholder="設置場所、メーカー、気になる症状、10年以上の機種かどうか、その他のお掃除のご相談内容 など"></textarea>
+    <label>紹介コード <small>任意・ご家族やお知り合いから紹介された方</small></label>
+    <input name="ref_code" id="ref_code" placeholder="例：R0929-311" autocomplete="off">
+    <div class="refnote" id="refnote">ご紹介ありがとうございます。紹介コードが入っています。</div>
     <input type="hidden" name="src" value="lp">
     <button class="btn" id="submit" type="submit">この内容で予約する</button>
     <p class="price-note" style="margin-top:10px">送信後、確認メールをお送りします。作業日はご予約から5営業日以内に担当者よりご連絡し確定します。ご希望日での対応が難しい場合は、1〜2日以内に日程再調整のご連絡をいたします。</p>
@@ -213,6 +225,21 @@ fetch(location.href.split("#")[0], { method:"HEAD", cache:"no-store" }).then(r =
   now.setUTCDate(now.getUTCDate() + 2);
   const min = now.toISOString().slice(0,10);
   ["date1","date2","date3"].forEach(n => document.querySelector('input[name='+n+']').min = min);
+})();
+
+// 紹介リンク（?ref=紹介コード）で来た方は、紹介コードを自動で入れる。90日間このブラウザに保存
+(() => {
+  const KEY = "arigatou_ref", DAYS = 90;
+  let code = "";
+  try {
+    const q = new URLSearchParams(location.search).get("ref");
+    if (q) { code = q.trim().slice(0, 30); localStorage.setItem(KEY, JSON.stringify({ code, at: Date.now() })); }
+    else {
+      const v = JSON.parse(localStorage.getItem(KEY) || "null");
+      if (v && Date.now() - v.at < DAYS * 864e5) code = v.code;
+    }
+  } catch (_) {}
+  if (code) { $("#ref_code").value = code; $("#refnote").style.display = "block"; }
 })();
 
 function calc(){
@@ -297,6 +324,8 @@ $("#f").addEventListener("submit", async e => {
   if (consults.length) note = "【その他のご相談】" + consults.join("、") + (note ? "\n" + note : "");
   ["1","2","3"].forEach(n => { if (data["date"+n]) data["date"+n] = data["date"+n] + " " + (data["time"+n] || ""); });
   data.time = "各希望日に記載";
+  const ref = (data.ref_code || "").trim();
+  if (ref) { data.ref_code = ref; data.src = "ref"; note = "【紹介コード】" + ref + (note ? "\n" + note : ""); }
   note = "【希望日】第1 " + data.date1 + " ／ 第2 " + data.date2 + " ／ 第3 " + data.date3 + (note ? "\n" + note : "");
   Object.assign(data, {
     note,
@@ -316,12 +345,32 @@ $("#f").addEventListener("submit", async e => {
     msg.className = "msg ok";
     msg.innerHTML = "ご予約を受け付けました（受付番号 <b>"+j.id+"</b>）。確認メールをお送りしました。作業日は担当者よりご連絡のうえ確定します。";
     $("#f").reset(); btn.textContent = "送信済み";
+    if (/^R\d{4}-\d+$/.test(String(j.id))) showShare(String(j.id));
     window.scrollTo({top: msg.offsetTop - 100, behavior:"smooth"});
   } catch(err) {
     msg.className = "msg ng"; msg.textContent = "送信できませんでした。☎080-4177-2272 までご連絡ください。（"+err.message+"）";
     btn.disabled = false; btn.textContent = "この内容で予約する";
   }
 });
+
+// 予約した方に、ご自身の紹介リンクを表示（紹介コード＝受付番号）
+function showShare(id){
+  const url = location.origin + location.pathname + "?ref=" + encodeURIComponent(id);
+  const text = "【紹介リンク・PR】エアコンクリーニングはここに頼みました。予約はこちらから → " + url;
+  const box = document.createElement("div");
+  box.className = "share";
+  box.innerHTML = '<b>ご家族やお知り合いに紹介しませんか</b>'
+    + '<p>このリンクから予約した方の作業とお支払いが終わると、あなたに紹介料として通常価格の20%をお支払いします。</p>'
+    + '<div class="link"><input readonly value="' + url + '" aria-label="あなたの紹介リンク"><button type="button">コピー</button></div>'
+    + '<a class="line" href="https://line.me/R/share?text=' + encodeURIComponent(text) + '" target="_blank" rel="noopener">LINEで送る</a>'
+    + '<p>あなたの紹介コード：<b style="display:inline">' + id + '</b>（予約フォームの「紹介コード」欄に入れてもらっても同じです）</p>'
+    + '<p>SNSに載せるときは、紹介料が出ることがわかるよう「PR」と書いてください。</p>';
+  box.querySelector("button").addEventListener("click", async e => {
+    try { await navigator.clipboard.writeText(url); e.target.textContent = "コピーしました"; }
+    catch (_) { box.querySelector("input").select(); e.target.textContent = "選択しました"; }
+  });
+  $("#msg").appendChild(box);
+}
 </script>
 </body>
 </html>
