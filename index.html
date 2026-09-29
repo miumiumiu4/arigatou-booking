@@ -325,7 +325,7 @@ $("#f").addEventListener("submit", async e => {
   ["1","2","3"].forEach(n => { if (data["date"+n]) data["date"+n] = data["date"+n] + " " + (data["time"+n] || ""); });
   data.time = "各希望日に記載";
   const ref = (data.ref_code || "").trim();
-  if (ref) { data.ref_code = ref; data.src = "ref"; note = "【紹介コード】" + ref + (note ? "\n" + note : ""); }
+  if (ref) { data.ref = ref; data.ref_code = ref; note = "【紹介コード】" + ref + (note ? "\n" + note : ""); } // 予約管理のスクリプトは d.ref を読む
   note = "【希望日】第1 " + data.date1 + " ／ 第2 " + data.date2 + " ／ 第3 " + data.date3 + (note ? "\n" + note : "");
   Object.assign(data, {
     note,
