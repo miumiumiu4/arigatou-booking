@@ -2,21 +2,25 @@
 // 使い方: 回答用スプレッドシート → 拡張機能 → Apps Script に貼り付け → デプロイ → ウェブアプリ（全員）
 // 質問が増えても、知らない項目は自動で右端に列が足されるので、このスクリプトの貼り直しは不要です。
 const SHEET = "回答";
+// 申込みフォーム（type: "apply"）は別シートに入れる
+const SHEETS = { survey: "回答", apply: "申込" };
 // [送信データの項目名, シートの見出し]（並び順は既存のシートと同じ）
 const COLS = [
   ["at","受付日時"],["date","受講日"],["kai","回"],["name","お名前"],["satisfaction","満足度(1-5)"],["difficulty","難しさ(1-5)"],
   ["pace","スピード"],["progress","サイトの進み具合"],["recommend","すすめたい度(0-10)"],["good","よかったところ"],["hard","わかりにくかったところ"],
   ["next","次に習いたいこと"],["next_other","次に習いたいこと(その他)"],["comment","講師へひとこと"],["id","回答ID"],["ua","端末"],
   ["possibility","感じた可能性"],["trouble","これまでの手間"],["email","メールアドレス"],
-  ["t_clarity","講師:説明のわかりやすさ(1-5)"],["t_support","講師:質問・サポート(1-5)"],["t_mood","講師:雰囲気・話しやすさ(1-5)"]
+  ["t_clarity","講師:説明のわかりやすさ(1-5)"],["t_support","講師:質問・サポート(1-5)"],["t_mood","講師:雰囲気・話しやすさ(1-5)"],
+  ["kana","ふりがな"],["phone","電話番号"],["role","今のお仕事・立場"],["pc","パソコン"],["claude","Claudeの利用"],["course","希望コース・日程"],["motive","受講したい理由"],["source","知ったきっかけ"],["page","申込ページ"]
 ];
 // 集計ページで回答を読むための合言葉（公開リポジトリには本物を書かず、ここで書き換える）
 const READ_KEY = "ここに合言葉を入れる";
 
-function sheet_() {
+function sheet_(name) {
+  name = name || SHEET;
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  let sh = ss.getSheetByName(SHEET);
-  if (!sh) { sh = ss.insertSheet(SHEET); sh.appendRow(COLS.map(c => c[1])); sh.setFrozenRows(1); }
+  let sh = ss.getSheetByName(name);
+  if (!sh) { sh = ss.insertSheet(name); sh.appendRow(name === SHEET ? COLS.slice(0, 22).map(c => c[1]) : ["受付日時", "回答ID"]); sh.setFrozenRows(1); }
   return sh;
 }
 // 見出し → 項目名 の対応表（見出しに無い項目は項目名そのものを見出しにする）
@@ -32,7 +36,7 @@ function doPost(e) {
   try {
     const d = JSON.parse(e.postData.contents);
     d.at = new Date();
-    const sh = sheet_();
+    const sh = sheet_(SHEETS[d.type] || SHEET);
     let head = headers_(sh);
     // 新しい項目があれば右端に列を足す
     Object.keys(d).filter(k => k !== "type").forEach(k => {
@@ -50,7 +54,7 @@ function doPost(e) {
 }
 function doGet(e) {
   if ((e.parameter.key || "") !== READ_KEY) return json_({ ok: false, error: "合言葉が違います" });
-  const v = sheet_().getDataRange().getValues();
+  const v = sheet_(SHEETS[e.parameter.type] || SHEET).getDataRange().getValues();
   const keys = v[0].map(l => keyOfLabel_(String(l)));
   const rows = v.slice(1).map(r => {
     const o = {}; keys.forEach((k, i) => o[k] = r[i] instanceof Date ? Utilities.formatDate(r[i], "Asia/Tokyo", k === "date" ? "yyyy-MM-dd" : "yyyy-MM-dd HH:mm") : r[i]); return o;
