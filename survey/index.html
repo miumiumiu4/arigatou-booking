@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>パソコン教室 感想アンケート</title>
+<style>
+:root{--bg:#fff8f2;--card:#fff;--ink:#33241c;--muted:#8a7a6e;--line:#f0e2d6;--or:#e8590c;--soft:#fdeee2;--ok:#1f8a70;--ng:#b4532a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;line-height:1.8;font-size:17px}
+.wrap{max-width:640px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:1.45rem;line-height:1.4;margin:.3em 0}
+.lead{color:var(--muted);margin:.2em 0 1em}
+.q{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:14px 0}
+.q>b{display:block;margin-bottom:8px}
+.req{font-size:.72rem;background:var(--or);color:#fff;border-radius:99px;padding:1px 8px;margin-left:6px;vertical-align:middle}
+.opt{font-size:.72rem;color:var(--muted);margin-left:6px}
+.scale{display:flex;gap:6px;flex-wrap:wrap}
+.scale label,.chips label{flex:1 1 0;min-width:52px;text-align:center;border:1.5px solid var(--line);border-radius:10px;padding:8px 4px;cursor:pointer;background:var(--bg);font-size:.95rem}
+.scale.wide label{min-width:38px;padding:8px 2px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips label{flex:0 1 auto;padding:8px 12px}
+input[type=radio],input[type=checkbox]{position:absolute;opacity:0;pointer-events:none}
+label:has(input:checked){border-color:var(--or);background:var(--soft);font-weight:700;color:var(--or)}
+.ends{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);margin-top:4px}
+input[type=text],input[type=date],textarea{font:inherit;width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+textarea{min-height:90px}
+button{font:inherit;font-weight:700;width:100%;padding:14px;border:0;border-radius:12px;background:var(--or);color:#fff;font-size:1.1rem;cursor:pointer;margin-top:8px}
+button:disabled{opacity:.6}
+.msg{margin-top:12px;font-weight:700;min-height:1.4em}
+.msg.ok{color:var(--ok)}.msg.ng{color:var(--ng)}
+.thanks{display:none;text-align:center;padding:40px 10px}
+.thanks h2{font-size:1.5rem}
+footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:30px}
+</style></head>
+<body><div class="wrap">
+<div id="formArea">
+<h1>📝 パソコン教室 感想アンケート</h1>
+<p class="lead">今日はお楽しみ様でした！1分で終わります。正直な感想が次回をもっと良くします。</p>
+<form id="f" novalidate>
+<div class="q"><b>受講した日<span class="req">必須</span></b>
+<input type="date" name="date" id="date" required>
+<input type="hidden" name="kai" id="kai"></div>
+
+<div class="q"><b>お名前・ニックネーム<span class="opt">任意（無記名でもOK）</span></b>
+<input type="text" name="name" maxlength="40" placeholder="例：みうら"></div>
+
+<div class="q"><b>今日の教室の満足度は？<span class="req">必須</span></b>
+<div class="scale" data-name="satisfaction"></div>
+<div class="ends"><span>1 いまいち</span><span>5 大満足</span></div></div>
+
+<div class="q"><b>内容の難しさは？<span class="req">必須</span></b>
+<div class="scale" data-name="difficulty"></div>
+<div class="ends"><span>1 かんたん</span><span>5 とても難しい</span></div></div>
+
+<div class="q"><b>進むスピードは？<span class="req">必須</span></b>
+<div class="chips" data-name="pace" data-opts="ゆっくりすぎた|ちょうどよかった|速すぎた"></div></div>
+
+<div class="q"><b>自分のサイトはどこまでできた？<span class="req">必須</span></b>
+<div class="chips" data-name="progress" data-opts="完成して公開できた|ほぼできた|半分くらい|あまり進まなかった"></div></div>
+
+<div class="q"><b>この教室を友だちにすすめたい度は？<span class="req">必須</span></b>
+<div class="scale wide" data-name="recommend" data-min="0" data-max="10"></div>
+<div class="ends"><span>0 すすめない</span><span>10 ぜひすすめたい</span></div></div>
+
+<div class="q"><b>よかったところ・楽しかったところ<span class="opt">任意</span></b>
+<textarea name="good" maxlength="1000" placeholder="例：自分のサイトがスマホで見られて感動した"></textarea></div>
+
+<div class="q"><b>わかりにくかったところ・困ったところ<span class="opt">任意</span></b>
+<textarea name="hard" maxlength="1000" placeholder="例：GitHubへのアップロードで迷った"></textarea></div>
+
+<div class="q"><b>次に習ってみたいこと<span class="opt">複数OK</span></b>
+<div class="chips" data-name="next" data-multi="1" data-opts="デザインを整える|フォームで申込みを受ける|スマホ対応|AI（Claude）の活用|写真・画像の使い方|集客・SNS連携|ネット公開のしくみ"></div>
+<input type="text" name="next_other" maxlength="200" placeholder="その他（自由に）" style="margin-top:8px"></div>
+
+<div class="q"><b>そのほか、講師へひとこと<span class="opt">任意</span></b>
+<textarea name="comment" maxlength="1000"></textarea></div>
+
+<button id="btn" type="submit">送信する</button>
+<div class="msg" id="msg"></div>
+</form>
+</div>
+<div class="thanks" id="thanks"><h2>🎉 ありがとうございました！</h2><p>感想を受け取りました。<br>今日はお楽しみ様でした。また次回お会いしましょう！</p></div>
+<footer>ありがとうグループ パソコン教室</footer>
+</div>
+<script>
+const $ = s => document.querySelector(s);
+const QKEY = "survey_queue_v1";
+// 選択肢を組み立て
+document.querySelectorAll("[data-name]").forEach(box => {
+  const name = box.dataset.name, multi = box.dataset.multi;
+  let opts = box.dataset.opts ? box.dataset.opts.split("|") : [];
+  if (!opts.length) { const mn = +(box.dataset.min ?? 1), mx = +(box.dataset.max ?? 5); for (let i = mn; i <= mx; i++) opts.push(String(i)); }
+  box.innerHTML = opts.map(o => `<label><input type="${multi ? "checkbox" : "radio"}" name="${name}" value="${o}">${o}</label>`).join("");
+});
+// 開催日・回：URLの ?date=2026-10-19&kai=第1回 で指定。なければ今日（日本時間）
+const p = new URLSearchParams(location.search);
+const today = new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
+$("#date").value = p.get("date") || today;
+$("#kai").value = p.get("kai") || "";
+
+async function gasUrl() {
+  try { const r = await fetch("config.json?t=" + Date.now(), { cache: "no-store" }); return (await r.json()).GAS_URL || ""; } catch (_) { return ""; }
+}
+const loadQ = () => { try { return JSON.parse(localStorage.getItem(QKEY) || "[]"); } catch (_) { return []; } };
+const saveQ = q => { try { localStorage.setItem(QKEY, JSON.stringify(q)); } catch (_) {} };
+async function send(url, data) {
+  const r = await fetch(url, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(data) });
+  const t = await r.text(); let j; try { j = JSON.parse(t); } catch (_) { j = { ok: true }; }
+  if (!j.ok) throw new Error(j.error || "送信失敗");
+}
+// 送れなかった回答をあとで自動送信（受付の準備ができ次第）
+let flushing = false;
+async function flush() {
+  if (flushing) return; const q = loadQ(); if (!q.length) return;
+  flushing = true;
+  try {
+    const url = await gasUrl(); if (!url) return;
+    const rest = [];
+    for (const d of q) { try { await send(url, d); } catch (_) { rest.push(d); } }
+    saveQ(rest);
+  } finally { flushing = false; }
+}
+flush(); setInterval(flush, 15000);
+
+$("#f").addEventListener("submit", async e => {
+  e.preventDefault();
+  const fd = new FormData(e.target), msg = $("#msg");
+  const need = { date: "受講した日", satisfaction: "満足度", difficulty: "難しさ", pace: "スピード", progress: "サイトの進み具合", recommend: "すすめたい度" };
+  const miss = Object.keys(need).filter(k => !fd.get(k));
+  if (miss.length) { msg.className = "msg ng"; msg.textContent = "まだ選ばれていない項目があります：" + miss.map(k => need[k]).join("、"); return; }
+  const data = {
+    type: "survey", date: fd.get("date"), kai: fd.get("kai"), name: fd.get("name").trim(),
+    satisfaction: +fd.get("satisfaction"), difficulty: +fd.get("difficulty"), pace: fd.get("pace"), progress: fd.get("progress"),
+    recommend: +fd.get("recommend"), good: fd.get("good").trim(), hard: fd.get("hard").trim(),
+    next: fd.getAll("next").join("、"), next_other: fd.get("next_other").trim(), comment: fd.get("comment").trim(),
+    submitted_at: new Date().toISOString(), id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), ua: navigator.userAgent.slice(0, 120)
+  };
+  const btn = $("#btn"); btn.disabled = true; btn.textContent = "送信中…";
+  const url = await gasUrl();
+  try {
+    if (!url) throw new Error("queue");
+    await send(url, data);
+  } catch (_) {
+    const q = loadQ(); q.push(data); saveQ(q); // 受付準備中・通信エラー時は端末に保存し、あとで自動送信
+  }
+  $("#formArea").style.display = "none"; $("#thanks").style.display = "block"; window.scrollTo(0, 0);
+});
+</script>
+</body></html>
