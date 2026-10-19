@@ -3,7 +3,7 @@
 // 質問が増えても、知らない項目は自動で右端に列が足されるので、このスクリプトの貼り直しは不要です。
 const SHEET = "回答";
 // 申込みフォーム（type: "apply"）は別シートに入れる
-const SHEETS = { survey: "回答", apply: "申込" };
+const SHEETS = { survey: "回答", apply: "申込", memo: "講師メモ" };
 // [送信データの項目名, シートの見出し]（並び順は既存のシートと同じ）
 const COLS = [
   ["at","受付日時"],["date","受講日"],["kai","回"],["name","お名前"],["satisfaction","満足度(1-5)"],["difficulty","難しさ(1-5)"],
