@@ -110,14 +110,15 @@ const today = new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
 $("#date").value = p.get("date") || today;
 $("#kai").value = p.get("kai") || "";
 
+const GAS_FALLBACK = "https://script.google.com/macros/s/AKfycbx-zIJs6eV86lVjyaA54dQqgoM-rhQsf3d0lyBx0SAkH6Zoj6JgPqlIbwWPdner0Vcm9Q/exec";
 async function gasUrl() {
-  try { const r = await fetch("config.json?t=" + Date.now(), { cache: "no-store" }); return (await r.json()).GAS_URL || ""; } catch (_) { return ""; }
+  try { const r = await fetch("config.json?t=" + Date.now(), { cache: "no-store" }); return (await r.json()).GAS_URL || GAS_FALLBACK; } catch (_) { return GAS_FALLBACK; }
 }
 const loadQ = () => { try { return JSON.parse(localStorage.getItem(QKEY) || "[]"); } catch (_) { return []; } };
 const saveQ = q => { try { localStorage.setItem(QKEY, JSON.stringify(q)); } catch (_) {} };
 async function send(url, data) {
   const r = await fetch(url, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(data) });
-  const t = await r.text(); let j; try { j = JSON.parse(t); } catch (_) { j = { ok: true }; }
+  const t = await r.text(); let j; try { j = JSON.parse(t); } catch (_) { throw new Error("受付から想定外の返事（HTTP " + r.status + "）：" + t.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").slice(0, 80)); }
   if (!j.ok) throw new Error(j.error || "送信失敗");
 }
 // 送れなかった回答をあとで自動送信（受付の準備ができ次第）
@@ -152,12 +153,14 @@ $("#f").addEventListener("submit", async e => {
   };
   const btn = $("#btn"); btn.disabled = true; btn.textContent = "送信中…";
   const url = await gasUrl();
+  let err = "";
   try {
-    if (!url) throw new Error("queue");
     await send(url, data);
-  } catch (_) {
-    const q = loadQ(); q.push(data); saveQ(q); // 受付準備中・通信エラー時は端末に保存し、あとで自動送信
+  } catch (e2) {
+    err = e2.message || String(e2);
+    const q = loadQ(); q.push(data); saveQ(q); // 通信エラー時は端末に保存し、あとで自動送信
   }
+  if (err) $("#thanks").insertAdjacentHTML("beforeend", '<p style="font-size:.8rem;color:#b4532a">※まだ送信できていません。この端末に保存したので、ページを開き直すと自動で再送します。<br>（' + err.replace(/[<>&]/g, "") + '）</p>');
   $("#formArea").style.display = "none"; $("#thanks").style.display = "block"; window.scrollTo(0, 0);
 });
 </script>
