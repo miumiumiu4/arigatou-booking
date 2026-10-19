@@ -33,6 +33,7 @@ button:disabled{opacity:.6}
 footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:30px}
 </style></head>
 <body><div class="wrap">
+<div id="qbox" style="display:none;background:#e6f4ef;color:#1f8a70;border-radius:12px;padding:12px 16px;margin-bottom:12px;font-weight:700"></div>
 <div id="formArea">
 <h1>📝 パソコン教室 感想アンケート</h1>
 <p class="lead">今日はお楽しみ様でした！1分で終わります。正直な感想が次回をもっと良くします。</p>
@@ -129,8 +130,10 @@ async function flush() {
     const rest = [];
     for (const d of q) { try { await send(url, d); } catch (_) { rest.push(d); } }
     saveQ(rest);
+    if (q.length > rest.length) { const b = $("#qbox"); b.style.display = "block"; b.textContent = "✅ さっきの回答を送信しました。ありがとうございました！このページは閉じて大丈夫です。"; }
   } finally { flushing = false; }
 }
+if (loadQ().length) { const b = $("#qbox"); b.style.display = "block"; b.textContent = "⏳ さっきの回答を送信しています。答え直しは不要です。このまま少しお待ちください…"; }
 flush(); setInterval(flush, 15000);
 
 $("#f").addEventListener("submit", async e => {
