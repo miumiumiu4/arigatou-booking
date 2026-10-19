@@ -113,14 +113,14 @@ function render() {
     bars("サイトの進み具合", rs, "progress", ["完成して公開できた", "ほぼできた", "半分くらい", "あまり進まなかった"]) +
     bars("次に習いたいこと", rs, "next", ["デザインを整える", "フォームで申込みを受ける", "スマホ対応", "AI（Claude）の活用", "写真・画像の使い方", "集客・SNS連携", "ネット公開のしくみ"], true) +
     bars("すすめたい度", rs, "recommend", [10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]);
-  const L = { good: "よかった", possibility: "可能性", hard: "困った", next_other: "習いたい", comment: "ひとこと" };
+  const L = { good: "よかった", trouble: "これまでの手間", possibility: "可能性", hard: "困った", next_other: "習いたい", comment: "ひとこと" };
   const v = rs.flatMap(r => Object.keys(L).filter(f => r[f]).map(f => `<div class="cm"><b>${L[f]}</b>${esc(r[f])}<div class="meta">${esc(r.name || "無記名")}・満足度${esc(r.satisfaction)}・${esc(keyOf(r))}</div></div>`));
   $("#voices").innerHTML = v.join("") || `<p class="muted">まだ自由記述はありません</p>`;
 }
 function csv() {
   const k = $("#sel").value, rs = k ? ROWS.filter(r => keyOf(r) === k) : ROWS;
-  const H = ["at", "date", "kai", "name", "satisfaction", "difficulty", "pace", "progress", "recommend", "good", "possibility", "hard", "next", "next_other", "comment"];
-  const J = ["受付日時", "受講日", "回", "お名前", "満足度", "難しさ", "スピード", "進み具合", "すすめたい度", "よかったところ", "感じた可能性", "わかりにくかったところ", "次に習いたいこと", "その他", "ひとこと"];
+  const H = ["at", "date", "kai", "name", "satisfaction", "difficulty", "pace", "progress", "recommend", "good", "trouble", "possibility", "hard", "next", "next_other", "comment"];
+  const J = ["受付日時", "受講日", "回", "お名前", "満足度", "難しさ", "スピード", "進み具合", "すすめたい度", "よかったところ", "これまでの手間", "感じた可能性", "わかりにくかったところ", "次に習いたいこと", "その他", "ひとこと"];
   const q = s => '"' + String(s ?? "").replace(/"/g, '""') + '"';
   const body = [J, ...rs.map(r => H.map(h => r[h]))].map(a => a.map(q).join(",")).join("\r\n");
   const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["﻿" + body], { type: "text/csv" }));

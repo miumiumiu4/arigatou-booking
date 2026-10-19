@@ -68,6 +68,9 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:30px}
 <div class="q"><b>わかりにくかったところ・困ったところ<span class="opt">任意</span></b>
 <textarea name="hard" maxlength="1000" placeholder="例：GitHubへのアップロードで迷った"></textarea></div>
 
+<div class="q"><b>これまでお仕事や生活で、どんな手間や困りごとがありましたか？<span class="opt">任意</span></b>
+<textarea name="trouble" maxlength="1000" placeholder="例：予約を電話で受けて紙に書いていた／チラシを毎回業者に頼んでいた"></textarea></div>
+
 <div class="q"><b>自分でサイトを作れるようになって、どんな可能性を感じましたか？<span class="opt">任意</span></b>
 <textarea name="possibility" maxlength="1000" placeholder="例：自分のお店の予約ページを作れそう／副業に使えそう"></textarea></div>
 
@@ -134,7 +137,7 @@ $("#f").addEventListener("submit", async e => {
   const data = {
     type: "survey", date: fd.get("date"), kai: fd.get("kai"), name: fd.get("name").trim(),
     satisfaction: +fd.get("satisfaction"), difficulty: +fd.get("difficulty"), pace: fd.get("pace"), progress: fd.get("progress"),
-    recommend: +fd.get("recommend"), good: fd.get("good").trim(), hard: fd.get("hard").trim(), possibility: fd.get("possibility").trim(),
+    recommend: +fd.get("recommend"), good: fd.get("good").trim(), hard: fd.get("hard").trim(), trouble: fd.get("trouble").trim(), possibility: fd.get("possibility").trim(),
     next: fd.getAll("next").join("、"), next_other: fd.get("next_other").trim(), comment: fd.get("comment").trim(),
     submitted_at: new Date().toISOString(), id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), ua: navigator.userAgent.slice(0, 120)
   };
