@@ -49,6 +49,7 @@ td.num{text-align:right;font-variant-numeric:tabular-nums}
   <button class="sub" id="csv">CSVをダウンロード</button>
   <span class="muted" id="upd"></span>
 </div>
+<div id="demo" style="display:none;background:#fff1c2;color:#33241c;border-radius:10px;padding:8px 14px;margin-bottom:12px;font-weight:700">これは見本データです。受付スイッチ（Apps Scriptのデプロイ）が入ると、本物の回答に切り替わります。</div>
 <div class="tiles" id="tiles"></div>
 <div class="card"><h2>回ごとの推移</h2><table id="trend"></table></div>
 <div class="grid" id="dist"></div>
@@ -74,10 +75,10 @@ async function load() {
   $("#err").textContent = "読み込み中…";
   try {
     const url = (await (await fetch("config.json?t=" + Date.now(), { cache: "no-store" })).json()).GAS_URL;
-    if (!url) throw new Error("まだ受付スクリプトがつながっていません");
-    const j = await (await fetch(url + "?key=" + encodeURIComponent($("#key").value))).json();
+    const j = !url ? demoData() : await (await fetch(url + "?key=" + encodeURIComponent($("#key").value))).json();
     if (!j.ok) throw new Error(j.error);
     try { localStorage.setItem("survey_key", $("#key").value); } catch (_) {}
+    $("#demo").style.display = url ? "none" : "block";
     ROWS = j.rows; $("#err").textContent = ""; $("#login").style.display = "none"; $("#main").style.display = "block";
     const keys = [...new Set(ROWS.map(keyOf))].sort().reverse();
     const cur = $("#sel").value;
@@ -87,6 +88,13 @@ async function load() {
     render();
     $("#upd").textContent = "最終更新 " + new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" }) + "（30秒ごとに自動更新）";
   } catch (e) { $("#err").textContent = e.message; }
+}
+// 受付スイッチが入る前に見え方を確かめるための見本データ
+function demoData() {
+  const P = ["ゆっくりすぎた", "ちょうどよかった", "速すぎた"], G = ["完成して公開できた", "ほぼできた", "半分くらい", "あまり進まなかった"], N = ["デザインを整える", "フォームで申込みを受ける", "スマホ対応", "AI（Claude）の活用", "集客・SNS連携"];
+  const rows = [];
+  for (let i = 0; i < 14; i++) rows.push({ date: "2026-10-19", kai: "見本", name: i % 3 ? "" : "見本さん" + i, satisfaction: [5, 5, 4, 5, 4, 3, 5][i % 7], difficulty: [3, 4, 2, 3, 4, 5, 3][i % 7], pace: P[[1, 1, 2, 1, 0, 1, 2][i % 7]], progress: G[[0, 1, 0, 2, 1, 0, 3][i % 7]], recommend: [10, 9, 8, 10, 7, 9, 6][i % 7], good: i < 2 ? "自分のサイトがスマホで見られて感動した" : "", trouble: i < 2 ? "予約を電話で受けて紙に書いていた" : "", possibility: i < 2 ? "自分のお店の予約ページを作れそう" : "", next: N.filter((_, j) => (i + j) % 3 == 0).join("、"), comment: "" });
+  return { ok: true, rows };
 }
 function bars(title, rs, field, opts, multi) {
   const cnt = opts.map(o => rs.filter(r => multi ? String(r[field] || "").split("、").includes(o) : String(r[field]) === String(o)).length);
