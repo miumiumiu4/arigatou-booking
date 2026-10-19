@@ -129,8 +129,8 @@ function render() {
 }
 function csv() {
   const k = $("#sel").value, rs = k ? ROWS.filter(r => keyOf(r) === k) : ROWS;
-  const H = ["at", "date", "kai", "name", "satisfaction", "difficulty", "pace", "progress", "recommend", "good", "trouble", "possibility", "hard", "next", "next_other", "comment"];
-  const J = ["受付日時", "受講日", "回", "お名前", "満足度", "難しさ", "スピード", "進み具合", "すすめたい度", "よかったところ", "これまでの手間", "感じた可能性", "わかりにくかったところ", "次に習いたいこと", "その他", "ひとこと"];
+  const H = ["at", "date", "kai", "name", "email", "satisfaction", "difficulty", "pace", "progress", "recommend", "good", "trouble", "possibility", "hard", "next", "next_other", "comment"];
+  const J = ["受付日時", "受講日", "回", "お名前", "メールアドレス", "満足度", "難しさ", "スピード", "進み具合", "すすめたい度", "よかったところ", "これまでの手間", "感じた可能性", "わかりにくかったところ", "次に習いたいこと", "その他", "ひとこと"];
   const q = s => '"' + String(s ?? "").replace(/"/g, '""') + '"';
   const body = [J, ...rs.map(r => H.map(h => r[h]))].map(a => a.map(q).join(",")).join("\r\n");
   const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["﻿" + body], { type: "text/csv" }));

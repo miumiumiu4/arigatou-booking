@@ -22,7 +22,7 @@ h1{font-size:1.45rem;line-height:1.4;margin:.3em 0}
 input[type=radio],input[type=checkbox]{position:absolute;opacity:0;pointer-events:none}
 label:has(input:checked){border-color:var(--or);background:var(--soft);font-weight:700;color:var(--or)}
 .ends{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);margin-top:4px}
-input[type=text],input[type=date],textarea{font:inherit;width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+input[type=text],input[type=email],input[type=date],textarea{font:inherit;width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
 textarea{min-height:90px}
 button{font:inherit;font-weight:700;width:100%;padding:14px;border:0;border-radius:12px;background:var(--or);color:#fff;font-size:1.1rem;cursor:pointer;margin-top:8px}
 button:disabled{opacity:.6}
@@ -44,6 +44,10 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:30px}
 <div class="q"><b>お名前（フルネーム）<span class="req">必須</span></b>
 <input type="text" name="name" maxlength="40" placeholder="例：三浦 太郎" required>
 <div class="ends"><span>ニックネームではなく、本名でご記入ください</span></div></div>
+
+<div class="q"><b>メールアドレス<span class="req">必須</span></b>
+<input type="email" name="email" maxlength="100" placeholder="例：taro@example.com" autocomplete="email" inputmode="email" required>
+<div class="ends"><span>次回の教室のご案内などに使います</span></div></div>
 
 <div class="q"><b>今日の教室の満足度は？<span class="req">必須</span></b>
 <div class="scale" data-name="satisfaction"></div>
@@ -132,11 +136,12 @@ flush(); setInterval(flush, 15000);
 $("#f").addEventListener("submit", async e => {
   e.preventDefault();
   const fd = new FormData(e.target), msg = $("#msg");
-  const need = { date: "受講した日", name: "お名前", satisfaction: "満足度", difficulty: "難しさ", pace: "スピード", progress: "サイトの進み具合", recommend: "すすめたい度" };
+  const need = { date: "受講した日", name: "お名前", email: "メールアドレス", satisfaction: "満足度", difficulty: "難しさ", pace: "スピード", progress: "サイトの進み具合", recommend: "すすめたい度" };
   const miss = Object.keys(need).filter(k => !String(fd.get(k) || "").trim());
+  if (!miss.includes("email") && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fd.get("email").trim())) { msg.className = "msg ng"; msg.textContent = "メールアドレスの形が正しくないようです。もう一度ご確認ください"; return; }
   if (miss.length) { msg.className = "msg ng"; msg.textContent = "まだ選ばれていない項目があります：" + miss.map(k => need[k]).join("、"); return; }
   const data = {
-    type: "survey", date: fd.get("date"), kai: fd.get("kai"), name: fd.get("name").trim(),
+    type: "survey", date: fd.get("date"), kai: fd.get("kai"), name: fd.get("name").trim(), email: fd.get("email").trim(),
     satisfaction: +fd.get("satisfaction"), difficulty: +fd.get("difficulty"), pace: fd.get("pace"), progress: fd.get("progress"),
     recommend: +fd.get("recommend"), good: fd.get("good").trim(), hard: fd.get("hard").trim(), trouble: fd.get("trouble").trim(), possibility: fd.get("possibility").trim(),
     next: fd.getAll("next").join("、"), next_other: fd.get("next_other").trim(), comment: fd.get("comment").trim(),
