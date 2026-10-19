@@ -41,8 +41,9 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:30px}
 <input type="date" name="date" id="date" required>
 <input type="hidden" name="kai" id="kai"></div>
 
-<div class="q"><b>お名前・ニックネーム<span class="opt">任意（無記名でもOK）</span></b>
-<input type="text" name="name" maxlength="40" placeholder="例：みうら"></div>
+<div class="q"><b>お名前（フルネーム）<span class="req">必須</span></b>
+<input type="text" name="name" maxlength="40" placeholder="例：三浦 太郎" required>
+<div class="ends"><span>ニックネームではなく、本名でご記入ください</span></div></div>
 
 <div class="q"><b>今日の教室の満足度は？<span class="req">必須</span></b>
 <div class="scale" data-name="satisfaction"></div>
@@ -131,8 +132,8 @@ flush(); setInterval(flush, 15000);
 $("#f").addEventListener("submit", async e => {
   e.preventDefault();
   const fd = new FormData(e.target), msg = $("#msg");
-  const need = { date: "受講した日", satisfaction: "満足度", difficulty: "難しさ", pace: "スピード", progress: "サイトの進み具合", recommend: "すすめたい度" };
-  const miss = Object.keys(need).filter(k => !fd.get(k));
+  const need = { date: "受講した日", name: "お名前", satisfaction: "満足度", difficulty: "難しさ", pace: "スピード", progress: "サイトの進み具合", recommend: "すすめたい度" };
+  const miss = Object.keys(need).filter(k => !String(fd.get(k) || "").trim());
   if (miss.length) { msg.className = "msg ng"; msg.textContent = "まだ選ばれていない項目があります：" + miss.map(k => need[k]).join("、"); return; }
   const data = {
     type: "survey", date: fd.get("date"), kai: fd.get("kai"), name: fd.get("name").trim(),
