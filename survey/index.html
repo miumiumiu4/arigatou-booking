@@ -2,7 +2,7 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<meta name="version" content="2026-10-20a">
+<meta name="version" content="2026-10-20b">
 <title>パソコン教室 感想アンケート</title>
 <style>
 :root{--bg:#fff8f2;--card:#fff;--ink:#33241c;--muted:#8a7a6e;--line:#f0e2d6;--or:#e8590c;--soft:#fdeee2;--ok:#1f8a70;--ng:#b4532a}
@@ -64,6 +64,18 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:30px}
 
 <div class="q"><b>自分のサイトはどこまでできた？<span class="req">必須</span></b>
 <div class="chips" data-name="progress" data-opts="完成して公開できた|ほぼできた|半分くらい|あまり進まなかった"></div></div>
+
+<div class="q"><b>講師の説明はわかりやすかったですか？<span class="req">必須</span></b>
+<div class="scale" data-name="t_clarity"></div>
+<div class="ends"><span>1 わかりにくい</span><span>5 とてもわかりやすい</span></div></div>
+
+<div class="q"><b>質問したときの講師の対応・サポートは？<span class="req">必須</span></b>
+<div class="scale" data-name="t_support"></div>
+<div class="ends"><span>1 物足りない</span><span>5 とても助かった</span></div></div>
+
+<div class="q"><b>講師の雰囲気・話しやすさは？<span class="req">必須</span></b>
+<div class="scale" data-name="t_mood"></div>
+<div class="ends"><span>1 話しにくい</span><span>5 とても話しやすい</span></div></div>
 
 <div class="q"><b>この教室を友だちにすすめたい度は？<span class="req">必須</span></b>
 <div class="scale wide" data-name="recommend" data-min="0" data-max="10"></div>
@@ -141,14 +153,14 @@ flush(); setInterval(flush, 15000);
 $("#f").addEventListener("submit", async e => {
   e.preventDefault();
   const fd = new FormData(e.target), msg = $("#msg");
-  const need = { date: "受講した日", name: "お名前", email: "メールアドレス", satisfaction: "満足度", difficulty: "難しさ", pace: "スピード", progress: "サイトの進み具合", recommend: "すすめたい度" };
+  const need = { date: "受講した日", name: "お名前", email: "メールアドレス", satisfaction: "満足度", difficulty: "難しさ", pace: "スピード", progress: "サイトの進み具合", recommend: "すすめたい度", t_clarity: "講師の説明", t_support: "講師のサポート", t_mood: "講師の雰囲気" };
   const miss = Object.keys(need).filter(k => !String(fd.get(k) || "").trim());
   if (!miss.includes("email") && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fd.get("email").trim())) { msg.className = "msg ng"; msg.textContent = "メールアドレスの形が正しくないようです。もう一度ご確認ください"; return; }
   if (miss.length) { msg.className = "msg ng"; msg.textContent = "まだ選ばれていない項目があります：" + miss.map(k => need[k]).join("、"); return; }
   const data = {
     type: "survey", date: fd.get("date"), kai: fd.get("kai"), name: fd.get("name").trim(), email: fd.get("email").trim(),
     satisfaction: +fd.get("satisfaction"), difficulty: +fd.get("difficulty"), pace: fd.get("pace"), progress: fd.get("progress"),
-    recommend: +fd.get("recommend"), good: fd.get("good").trim(), hard: fd.get("hard").trim(), trouble: fd.get("trouble").trim(), possibility: fd.get("possibility").trim(),
+    recommend: +fd.get("recommend"), t_clarity: +fd.get("t_clarity"), t_support: +fd.get("t_support"), t_mood: +fd.get("t_mood"), good: fd.get("good").trim(), hard: fd.get("hard").trim(), trouble: fd.get("trouble").trim(), possibility: fd.get("possibility").trim(),
     next: fd.getAll("next").join("、"), next_other: fd.get("next_other").trim(), comment: fd.get("comment").trim(),
     submitted_at: new Date().toISOString(), id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), ua: navigator.userAgent.slice(0, 120)
   };
