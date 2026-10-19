@@ -199,6 +199,9 @@ function renderPeople() {
       ${D ? `<details class="ds"><summary>📖 ${l}クラスの講師台本を開く</summary>
         <p><b>ゴール：</b>${esc(D.goal)}</p><p><b>たとえ話：</b>${esc(D.image)}</p>
         <table class="flow"><tr><th>時間</th><th>長さ</th><th>やること</th><th>声かけ・コツ</th></tr>${D.flow.map(f => `<tr><td>${f[0]}</td><td>${f[1]}</td><td>${esc(f[2])}</td><td>${esc(f[3])}</td></tr>`).join("")}</table>
+        ${D.before ? `<p><b>事前チェック</b></p><ul>${D.before.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
+        ${D.cards ? `<p><b>最初にチャットに貼る決まり文句</b></p><ul>${D.cards.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
+        ${D.extra ? `<p><b>早く終わった人へ</b></p><ul>${D.extra.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
         <p><b>つまずきやすい所</b></p><ul>${D.stumble.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
         <p><b>使える声かけ</b></p><ul>${D.phrases.map(x => `<li>${esc(x)}</li>`).join("")}</ul></details>` : ""}</div>`;
   }).join("");
