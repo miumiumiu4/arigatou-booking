@@ -51,6 +51,7 @@ td.num{text-align:right;font-variant-numeric:tabular-nums}
 </div>
 <div id="demo" style="display:none;background:#fff1c2;color:#33241c;border-radius:10px;padding:8px 14px;margin-bottom:12px;font-weight:700">これは見本データです。受付スイッチ（Apps Scriptのデプロイ）が入ると、本物の回答に切り替わります。</div>
 <div class="tiles" id="tiles"></div>
+<div class="card" id="advCard"><h2>💡 講師へのアドバイス</h2><ul id="adv" style="margin:0;padding-left:1.2em"></ul><p class="muted" style="margin:.6em 0 0">回答の数字と声から自動でまとめています。</p></div>
 <div class="card"><h2>回ごとの推移</h2><table id="trend"></table></div>
 <div class="grid" id="dist"></div>
 <div class="card"><h2>みんなの声</h2><div id="voices"></div></div>
@@ -102,6 +103,36 @@ function bars(title, rs, field, opts, multi) {
   return `<div class="card"><h2>${title}</h2><div class="bars">` + opts.map((o, i) =>
     `<span>${esc(o)}</span><div class="t" title="${esc(o)}：${cnt[i]}人（${Math.round(cnt[i] / n * 100)}%）"><div class="f" style="width:${cnt[i] / max * 100}%"></div></div><span class="n">${cnt[i]}人</span>`).join("") + `</div></div>`;
 }
+function advice(rs, k) {
+  const out = [], n = rs.length; if (!n) return ["まだ回答がありません。"];
+  const pct = f => Math.round(rs.filter(f).length / n * 100);
+  const sat = avg(rs.map(r => +r.satisfaction)), dif = avg(rs.map(r => +r.difficulty)), np = nps(rs);
+  const fast = pct(r => r.pace === "速すぎた"), slow = pct(r => r.pace === "ゆっくりすぎた");
+  const done = pct(r => r.progress === "完成して公開できた"), stuck = rs.filter(r => r.progress === "あまり進まなかった");
+  if (n < 5) out.push(`回答はまだ${n}人分なので、傾向は参考程度に見てください。`);
+  if (sat >= 4.5) out.push(`満足度${f1(sat)}点ととても高いです。今回の進め方は「型」として次回もそのまま使えます。`);
+  else if (sat < 3.5) out.push(`満足度が${f1(sat)}点と低めです。下の「困った」の声を先に読み、つまずいた場面を次回の冒頭で解消しましょう。`);
+  if (fast >= 30) out.push(`${fast}%が「速すぎた」と感じています。手順ごとに「ここまでできた人は👍」と確認の間を入れると、置いていかれる人が減ります。`);
+  else if (slow >= 30) out.push(`${slow}%が「ゆっくりすぎた」と感じています。早く終わった人向けの「おかわり課題」を用意すると、待ち時間が学びに変わります。`);
+  if (dif >= 3.8) out.push(`難しさが${f1(dif)}と高めです。1つの手順を半分に割る、画面のお手本動画を先に配るなどで、山を低くできます。`);
+  else if (dif <= 2.2) out.push(`難しさが${f1(dif)}と易しめです。次回は一段上のテーマに進んでも大丈夫そうです。`);
+  if (done < 50) out.push(`サイト完成まで行けた人は${done}%です。補講か録画で「最後の公開まで」を一緒にやる場を作ると、成功体験がそろいます。`);
+  if (stuck.length) out.push(`「あまり進まなかった」人がいます（${stuck.map(r => esc(r.name || "名前なし")).join("、")}）。個別に一声かけてフォローすると、次回の参加につながります。`);
+  const low = rs.filter(r => +r.satisfaction <= 3);
+  if (low.length && low.length <= 5) out.push(`満足度3以下の人（${low.map(r => esc(r.name || "名前なし")).join("、")}）には、何が足りなかったか直接聞いてみるのがおすすめです。`);
+  if (!isNaN(np)) {
+    if (np >= 30) out.push(`すすめたい度（NPS）が${np > 0 ? "+" : ""}${np}と高いです。「よかった」の声を許可をもらって次回の募集文に使うと、紹介や集客に効きます。`);
+    else if (np < 0) out.push(`すすめたい度（NPS）がマイナスです。人にすすめにくい理由が「難しさ」か「スピード」かを、次回の冒頭で聞いてみましょう。`);
+  }
+  const NX = {}; rs.forEach(r => String(r.next || "").split("、").filter(Boolean).forEach(x => NX[x] = (NX[x] || 0) + 1));
+  const top = Object.entries(NX).sort((a, b) => b[1] - a[1]).slice(0, 2);
+  if (top.length) out.push(`次に習いたいことの上位は「${top.map(t => esc(t[0]) + "（" + t[1] + "人）").join("」「")}」です。次回のテーマ候補にどうぞ。`);
+  if (rs.some(r => r.trouble)) out.push(`「これまでの手間」の声は、受講者が本当に困っている場面です。次回の教材の例題にすると「自分ごと」として学べます。`);
+  if (rs.some(r => r.possibility)) out.push(`「感じた可能性」の声は、教室の価値を表す言葉です。募集ページや紹介文にそのまま使えます。`);
+  const keys = [...new Set(ROWS.map(keyOf))].sort();
+  if (k) { const i = keys.indexOf(k); if (i > 0) { const prev = ROWS.filter(r => keyOf(r) === keys[i - 1]), d = sat - avg(prev.map(r => +r.satisfaction)); if (!isNaN(d) && Math.abs(d) >= 0.2) out.push(`前回より満足度が${d > 0 ? "+" : ""}${d.toFixed(1)}点${d > 0 ? "上がりました。今回変えたことが効いています" : "下がりました。前回との違いを振り返ってみましょう"}。`); } }
+  return out;
+}
 function render() {
   const k = $("#sel").value, rs = k ? ROWS.filter(r => keyOf(r) === k) : ROWS;
   const sat = avg(rs.map(r => +r.satisfaction)), dif = avg(rs.map(r => +r.difficulty)), np = nps(rs);
@@ -111,6 +142,7 @@ function render() {
     ["すすめたい度（NPS）", isNaN(np) ? "–" : (np > 0 ? "+" : "") + np, "−100〜+100（0以上なら良好）"],
     ["サイト完成率", rs.length ? Math.round(done / rs.length * 100) + "%" : "–", "完成して公開できた人"]
   ].map(t => `<div class="tile"><div class="k">${t[0]}</div><div class="v">${t[1]}</div><div class="s">${t[2]}</div></div>`).join("");
+  $("#adv").innerHTML = advice(rs, k).map(t => `<li style="margin:.3em 0">${t}</li>`).join("");
   const keys = [...new Set(ROWS.map(keyOf))].sort();
   $("#trend").innerHTML = `<tr><th>回</th><th class="num">人数</th><th class="num">満足度</th><th class="num">難しさ</th><th class="num">NPS</th><th class="num">完成率</th></tr>` + keys.map(x => {
     const g = ROWS.filter(r => keyOf(r) === x), p = nps(g);
