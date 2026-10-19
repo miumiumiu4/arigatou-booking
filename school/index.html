@@ -81,7 +81,7 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;padding:30px 0 50px}
 
 <section>
   <h2>教室の流れ</h2>
-  <div class="step"><div class="no">1</div><b>はじめの準備</b><p>Claude と GitHub の登録を、画面を見ながら一緒に進めます。</p></div>
+  <div class="step"><div class="no">1</div><b>はじめの準備（初回）</b><p>Claude と GitHub の登録・連携を、画面を見ながら一緒に進めます。初回は4時間たっぷり取るので、ここで止まりません。</p></div>
   <div class="step"><div class="no">2</div><b>お手本をまねて作る</b><p>予約フォームのお手本を、自分のお店・会社用に作り変えます。</p></div>
   <div class="step"><div class="no">3</div><b>公開して、テスト送信</b><p>スマホで開ける状態にして、実際に申し込みが届くところまで確認します。</p></div>
   <div class="step"><div class="no">4</div><b>集計とふりかえり</b><p>届いたデータをグラフで見て、仕事にどう活かすかを考えます。</p></div>
@@ -96,7 +96,7 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;padding:30px 0 50px}
   <h2>開催概要</h2>
   <div class="grid">
     <div class="box"><b>形式</b><p>Zoom（オンライン）。カメラはオフでも大丈夫です。</p></div>
-    <div class="box"><b>時間</b><p>1回 2時間（20:00〜22:00）</p></div>
+    <div class="box"><b>時間</b><p>初回は4時間（18:00〜22:00）。GitHubとの連携まで一気に仕上げます。2回目以降は2時間（20:00〜22:00）。</p></div>
     <div class="box"><b>定員</b><p>各回 6名（少人数で一人ひとりを見ます）</p></div>
     <div class="box"><b>参加費</b><p><span class="price" id="priceText">初回無料</span><br>2回目以降は別途ご案内します</p></div>
   </div>
@@ -113,7 +113,7 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;padding:30px 0 50px}
 <section id="apply">
   <h2>日程を選んで申し込む</h2>
   <form id="f" novalidate>
-    <div class="q"><label class="t">参加する日程<span class="req">必須</span></label><div class="slots" id="slots"></div></div>
+    <div class="q"><label class="t">初回の日程<span class="req">必須</span><span class="note" style="font-weight:400;margin-left:6px">初回は4時間です</span></label><div class="slots" id="slots"></div></div>
     <div class="q"><label class="t">お名前（フルネーム）<span class="req">必須</span></label><input type="text" name="name" maxlength="40" placeholder="例：三浦 太郎"></div>
     <div class="q"><label class="t">ふりがな</label><input type="text" name="kana" maxlength="40" placeholder="例：みうら たろう"></div>
     <div class="q"><label class="t">メールアドレス<span class="req">必須</span></label><input type="email" name="email" maxlength="100" placeholder="Zoomの案内をお送りします" autocomplete="email"></div>
@@ -133,9 +133,9 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;padding:30px 0 50px}
 <script>
 // ▼ 開催日程はここを書き換えるだけで増減できます（full: true で満席表示）
 const SLOTS = [
-  { id: "2026-11-16", label: "11月16日（月）20:00〜22:00", full: false },
-  { id: "2026-11-30", label: "11月30日（月）20:00〜22:00", full: false },
-  { id: "2026-12-14", label: "12月14日（月）20:00〜22:00", full: false }
+  { id: "2026-11-16", label: "11月16日（月）18:00〜22:00 初回4時間", full: false },
+  { id: "2026-11-30", label: "11月30日（月）18:00〜22:00 初回4時間", full: false },
+  { id: "2026-12-14", label: "12月14日（月）18:00〜22:00 初回4時間", full: false }
 ];
 const GAS_URL = "https://script.google.com/macros/s/AKfycbx-zIJs6eV86lVjyaA54dQqgoM-rhQsf3d0lyBx0SAkH6Zoj6JgPqlIbwWPdner0Vcm9Q/exec";
 const $ = s => document.querySelector(s);
