@@ -2,7 +2,7 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<meta name="version" content="2026-10-20b">
+<meta name="version" content="2026-10-20c">
 <title>パソコン教室 感想アンケート</title>
 <style>
 :root{--bg:#fff8f2;--card:#fff;--ink:#33241c;--muted:#8a7a6e;--line:#f0e2d6;--or:#e8590c;--soft:#fdeee2;--ok:#1f8a70;--ng:#b4532a}
@@ -20,6 +20,10 @@ h1{font-size:1.45rem;line-height:1.4;margin:.3em 0}
 .scale.wide label{min-width:38px;padding:8px 2px}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chips label{flex:0 1 auto;padding:8px 12px}
+.chips.col{flex-direction:column}.chips.col label{text-align:left}
+.hint{font-size:.8rem;color:var(--muted);margin:-4px 0 8px}
+.sk{border-top:1px dashed var(--line);padding:8px 0}.sk:first-child{border-top:0}.sk p{margin:0 0 6px;font-size:.95rem}.sk .chips{flex-wrap:nowrap}.sk .chips label{flex:1 1 0;min-width:0;padding:8px 4px;font-size:.82rem;text-align:center;line-height:1.4}
+.lv{display:inline-block;background:var(--or);color:#fff;border-radius:12px;padding:6px 18px;font-size:1.3rem;font-weight:700;margin:8px 0}
 input[type=radio],input[type=checkbox]{position:absolute;opacity:0;pointer-events:none}
 label:has(input:checked){border-color:var(--or);background:var(--soft);font-weight:700;color:var(--or)}
 .ends{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);margin-top:4px}
@@ -62,8 +66,13 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:30px}
 <div class="q"><b>進むスピードは？<span class="req">必須</span></b>
 <div class="chips" data-name="pace" data-opts="ゆっくりすぎた|ちょうどよかった|速すぎた"></div></div>
 
-<div class="q"><b>自分のサイトはどこまでできた？<span class="req">必須</span></b>
-<div class="chips" data-name="progress" data-opts="完成して公開できた|ほぼできた|半分くらい|あまり進まなかった"></div></div>
+<div class="q"><b>今日はどこまで進みましたか？<span class="req">必須</span></b>
+<div class="hint">いちばん先まで進んだところを1つ選んでください</div>
+<div class="chips col" data-name="reach" data-opts="0 まだ何も始められなかった|1 Claudeに登録できた|2 Claude Codeを起動できた|3 GitHubに登録できた|4 お手本をコピーして自分用に直せた|5 サイトを公開できた|6 テスト送信がシートに届いた"></div></div>
+
+<div class="q"><b>次のことは、どのくらいできますか？<span class="req">必須</span></b>
+<div class="hint">今の自分に近いものを選んでください（クラス分けに使います）</div>
+<div id="skills"></div></div>
 
 <div class="q"><b>講師の説明はわかりやすかったですか？<span class="req">必須</span></b>
 <div class="scale" data-name="t_clarity"></div>
@@ -117,6 +126,23 @@ document.querySelectorAll("[data-name]").forEach(box => {
   if (!opts.length) { const mn = +(box.dataset.min ?? 1), mx = +(box.dataset.max ?? 5); for (let i = mn; i <= mx; i++) opts.push(String(i)); }
   box.innerHTML = opts.map(o => `<label><input type="${multi ? "checkbox" : "radio"}" name="${name}" value="${o}">${o}</label>`).join("");
 });
+// レベル判定用のスキル項目（0:できない 1:手伝いがあればできる 2:一人でできる）
+const SKILLS = [
+  ["sk_file", "ファイルを保存して、フォルダに分けて整理する"],
+  ["sk_copy", "コピー＆貼り付けをショートカットキーでする"],
+  ["sk_sheet", "Googleスプレッドシートで表を作る"],
+  ["sk_chat", "Claudeなどのチャットに質問して答えを使う"],
+  ["sk_code", "Claude Codeを起動して、作業を頼む"],
+  ["sk_github", "GitHubにファイルを上げて、サイトを公開する"],
+  ["sk_fix", "直したいところをClaudeに頼んで、自分で直す"]
+];
+const SK_OPTS = ["できない", "手伝いがあればできる", "一人でできる"];
+$("#skills").innerHTML = SKILLS.map(([k, t]) => `<div class="sk"><p>${t}</p><div class="chips">${SK_OPTS.map((o, i) => `<label><input type="radio" name="${k}" value="${i}">${o}</label>`).join("")}</div></div>`).join("");
+// 到達ステップ(0-6)とスキル点(0-14)からレベルを決める
+function levelOf(reach, score) {
+  const pt = reach * 2 + score; // 0〜26点
+  return pt <= 6 ? "入門" : pt <= 13 ? "初級" : pt <= 20 ? "中級" : "上級";
+}
 // 開催日・回：URLの ?date=2026-10-19&kai=第1回 で指定。なければ今日（日本時間）
 const p = new URLSearchParams(location.search);
 const today = new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
@@ -153,17 +179,23 @@ flush(); setInterval(flush, 15000);
 $("#f").addEventListener("submit", async e => {
   e.preventDefault();
   const fd = new FormData(e.target), msg = $("#msg");
-  const need = { date: "受講した日", name: "お名前", email: "メールアドレス", satisfaction: "満足度", difficulty: "難しさ", pace: "スピード", progress: "サイトの進み具合", recommend: "すすめたい度", t_clarity: "講師の説明", t_support: "講師のサポート", t_mood: "講師の雰囲気" };
+  const need = { date: "受講した日", name: "お名前", email: "メールアドレス", satisfaction: "満足度", difficulty: "難しさ", pace: "スピード", reach: "今日どこまで進んだか", recommend: "すすめたい度", t_clarity: "講師の説明", t_support: "講師のサポート", t_mood: "講師の雰囲気" };
   const miss = Object.keys(need).filter(k => !String(fd.get(k) || "").trim());
+  const skMiss = SKILLS.filter(([k]) => fd.get(k) === null);
+  if (skMiss.length) { msg.className = "msg ng"; msg.textContent = "「どのくらいできますか」でまだ選ばれていない項目が" + skMiss.length + "つあります"; return; }
   if (!miss.includes("email") && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fd.get("email").trim())) { msg.className = "msg ng"; msg.textContent = "メールアドレスの形が正しくないようです。もう一度ご確認ください"; return; }
   if (miss.length) { msg.className = "msg ng"; msg.textContent = "まだ選ばれていない項目があります：" + miss.map(k => need[k]).join("、"); return; }
   const data = {
     type: "survey", date: fd.get("date"), kai: fd.get("kai"), name: fd.get("name").trim(), email: fd.get("email").trim(),
-    satisfaction: +fd.get("satisfaction"), difficulty: +fd.get("difficulty"), pace: fd.get("pace"), progress: fd.get("progress"),
+    satisfaction: +fd.get("satisfaction"), difficulty: +fd.get("difficulty"), pace: fd.get("pace"), reach: fd.get("reach"), reach_n: parseInt(fd.get("reach"), 10),
     recommend: +fd.get("recommend"), t_clarity: +fd.get("t_clarity"), t_support: +fd.get("t_support"), t_mood: +fd.get("t_mood"), good: fd.get("good").trim(), hard: fd.get("hard").trim(), trouble: fd.get("trouble").trim(), possibility: fd.get("possibility").trim(),
     next: fd.getAll("next").join("、"), next_other: fd.get("next_other").trim(), comment: fd.get("comment").trim(),
+    ...Object.fromEntries(SKILLS.map(([k]) => [k, +fd.get(k)])),
     submitted_at: new Date().toISOString(), id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), ua: navigator.userAgent.slice(0, 120)
   };
+  data.skill_score = SKILLS.reduce((a, [k]) => a + data[k], 0);
+  data.level = levelOf(data.reach_n, data.skill_score);
+  $("#thanks").insertAdjacentHTML("beforeend", '<p>今のあなたのレベルは</p><div class="lv">' + data.level + '</div><p style="font-size:.85rem;color:#8a7a6e">次回のクラス分けの参考にします</p>');
   const btn = $("#btn"); btn.disabled = true; btn.textContent = "送信中…";
   const url = await gasUrl();
   let err = "";
