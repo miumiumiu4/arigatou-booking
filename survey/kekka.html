@@ -51,10 +51,10 @@ td.num{text-align:right;font-variant-numeric:tabular-nums}
 </div>
 <div id="demo" style="display:none;background:#fff1c2;color:#33241c;border-radius:10px;padding:8px 14px;margin-bottom:12px;font-weight:700">これは見本データです。受付スイッチ（Apps Scriptのデプロイ）が入ると、本物の回答に切り替わります。</div>
 <div class="tiles" id="tiles"></div>
-<div class="card"><h2>🎓 レベル分け（クラス分けの目安）</h2><div class="bars" id="lvBars"></div>
+<div class="card"><h2>🎓 レベル分け（講師用・受講者には表示されません）</h2><div class="bars" id="lvBars"></div>
 <h2 style="margin-top:1em">クラス分け表</h2><div style="overflow-x:auto"><table id="lvTable"></table></div>
 <h2 style="margin-top:1em">今日どこまで進んだか</h2><div class="bars" id="reachBars"></div>
-<h2 style="margin-top:1em">項目ごとのできる度（2点満点の平均）</h2><div class="bars" id="skBars"></div></div>
+<h2 style="margin-top:1em">項目ごとのできる度（2点満点の平均・上ほど基礎、下ほど高度）</h2><div class="bars" id="skBars"></div></div>
 <div class="card" id="advCard"><h2>💡 講師へのアドバイス</h2><ul id="adv" style="margin:0;padding-left:1.2em"></ul><p class="muted" style="margin:.6em 0 0">回答の数字と声から自動でまとめています。</p></div>
 <div class="card"><h2>👩‍🏫 講師の評価</h2><div class="muted" style="margin-bottom:6px">5点満点の平均（この質問が入る前の回答は含みません）</div><div class="bars" id="teach"></div>
 <h2 style="margin-top:1em">講師の評価の推移（3項目の平均）</h2><div class="bars" id="teachTrend"></div></div>
@@ -100,8 +100,8 @@ async function load() {
 function demoData() {
   const P = ["ゆっくりすぎた", "ちょうどよかった", "速すぎた"], G = ["完成して公開できた", "ほぼできた", "半分くらい", "あまり進まなかった"], N = ["デザインを整える", "フォームで申込みを受ける", "スマホ対応", "AI（Claude）の活用", "集客・SNS連携"];
   const rows = [];
-  for (let i = 0; i < 14; i++) rows.push({ date: "2026-10-19", kai: "見本", name: i % 3 ? "" : "見本さん" + i, satisfaction: [5, 5, 4, 5, 4, 3, 5][i % 7], difficulty: [3, 4, 2, 3, 4, 5, 3][i % 7], pace: P[[1, 1, 2, 1, 0, 1, 2][i % 7]], progress: G[[0, 1, 0, 2, 1, 0, 3][i % 7]], reach: REACH[[6, 5, 4, 3, 6, 2, 1][i % 7]], reach_n: [6, 5, 4, 3, 6, 2, 1][i % 7], sk_file: 2, sk_copy: [2, 1, 2, 1, 2, 0, 1][i % 7], sk_sheet: [1, 1, 2, 0, 2, 0, 1][i % 7], sk_chat: [2, 2, 1, 1, 2, 1, 0][i % 7], sk_code: [1, 1, 1, 0, 2, 0, 0][i % 7], sk_github: [1, 0, 1, 0, 2, 0, 0][i % 7], sk_fix: [1, 0, 0, 0, 1, 0, 0][i % 7], recommend: [10, 9, 8, 10, 7, 9, 6][i % 7], t_clarity: [5, 4, 5, 4, 3, 5, 4][i % 7], t_support: [5, 5, 4, 5, 4, 5, 5][i % 7], t_mood: [5, 5, 5, 4, 5, 5, 4][i % 7], good: i < 2 ? "自分のサイトがスマホで見られて感動した" : "", trouble: i < 2 ? "予約を電話で受けて紙に書いていた" : "", possibility: i < 2 ? "自分のお店の予約ページを作れそう" : "", next: N.filter((_, j) => (i + j) % 3 == 0).join("、"), comment: "" });
-  rows.forEach(r => { r.skill_score = SK.reduce((a, [k]) => a + r[k], 0); const pt = r.reach_n * 2 + r.skill_score; r.level = pt <= 6 ? "入門" : pt <= 13 ? "初級" : pt <= 20 ? "中級" : "上級"; });
+  for (let i = 0; i < 14; i++) rows.push({ date: "2026-10-19", kai: "見本", name: i % 3 ? "" : "見本さん" + i, satisfaction: [5, 5, 4, 5, 4, 3, 5][i % 7], difficulty: [3, 4, 2, 3, 4, 5, 3][i % 7], pace: P[[1, 1, 2, 1, 0, 1, 2][i % 7]], progress: G[[0, 1, 0, 2, 1, 0, 3][i % 7]], reach: REACH[[6, 5, 4, 3, 6, 2, 1][i % 7]], reach_n: [6, 5, 4, 3, 6, 2, 1][i % 7], sk_code: [2, 2, 1, 1, 2, 0, 1][i % 7], sk_github: [2, 1, 1, 0, 2, 0, 0][i % 7], sk_fix: [1, 1, 1, 0, 2, 0, 0][i % 7], sk_err: [1, 1, 0, 0, 2, 0, 0][i % 7], sk_form: [2, 1, 0, 0, 1, 0, 0][i % 7], sk_mail: [1, 0, 0, 0, 1, 0, 0][i % 7], sk_data: [1, 0, 1, 0, 1, 0, 0][i % 7], sk_spec: [0, 1, 0, 0, 1, 0, 0][i % 7], sk_teach: [0, 0, 0, 0, 1, 0, 0][i % 7], recommend: [10, 9, 8, 10, 7, 9, 6][i % 7], t_clarity: [5, 4, 5, 4, 3, 5, 4][i % 7], t_support: [5, 5, 4, 5, 4, 5, 5][i % 7], t_mood: [5, 5, 5, 4, 5, 5, 4][i % 7], good: i < 2 ? "自分のサイトがスマホで見られて感動した" : "", trouble: i < 2 ? "予約を電話で受けて紙に書いていた" : "", possibility: i < 2 ? "自分のお店の予約ページを作れそう" : "", next: N.filter((_, j) => (i + j) % 3 == 0).join("、"), comment: "" });
+  rows.forEach(r => { r.skill_score = SK.reduce((a, [k]) => a + r[k], 0); const pt = r.reach_n * 2 + r.skill_score; r.level = pt <= 7 ? "入門" : pt <= 15 ? "初級" : pt <= 23 ? "中級" : "上級"; });
   return { ok: true, rows };
 }
 function bars(title, rs, field, opts, multi) {
@@ -143,7 +143,9 @@ function advice(rs, k) {
     if (cnt.length >= 3) out.push(`レベルが${cnt.map(x => x[0] + x[1] + "人").join("・")}と幅広く分かれています。「入門・初級」と「中級・上級」の2クラスに分けると、待ち時間と置いていかれる人の両方が減ります。`);
     else if (cnt.length === 1) out.push(`全員が「${cnt[0][0]}」でそろっています。このまま1クラスで進めて大丈夫です。`);
     const weak = SK.map(([k, l]) => [l, avg(lr.map(r => +r[k]).filter(n => !isNaN(n)))]).filter(x => !isNaN(x[1])).sort((a, b) => a[1] - b[1])[0];
-    if (weak && weak[1] < 1) out.push(`みんなが一番苦手なのは「${weak[0]}」です。次回の最初の15分でここだけ一緒に練習すると、全体が進みやすくなります。`);
+    if (weak && weak[1] < 1) out.push(`全体で一番伸びしろがあるのは「${weak[0]}」です。全員をもう一段上げるなら、次回はここを全員の到達目標にしましょう。`);
+    const firstGap = SK.find(([k]) => avg(lr.map(r => +r[k]).filter(n => !isNaN(n))) < 1.5);
+    if (firstGap) out.push(`基礎から順に見ると、「${firstGap[1]}」から先がまだ全員のものになっていません。ここを全員が一人でできるようにするのが、全体を引き上げる近道です。`);
   }
   const NX = {}; rs.forEach(r => String(r.next || "").split("、").filter(Boolean).forEach(x => NX[x] = (NX[x] || 0) + 1));
   const top = Object.entries(NX).sort((a, b) => b[1] - a[1]).slice(0, 2);
@@ -156,7 +158,7 @@ function advice(rs, k) {
 }
 const LV = ["入門", "初級", "中級", "上級"];
 const REACH = ["0 まだ何も始められなかった", "1 Claudeに登録できた", "2 Claude Codeを起動できた", "3 GitHubに登録できた", "4 お手本をコピーして自分用に直せた", "5 サイトを公開できた", "6 テスト送信がシートに届いた"];
-const SK = [["sk_file", "ファイル整理"], ["sk_copy", "コピー＆貼り付け"], ["sk_sheet", "スプレッドシート"], ["sk_chat", "チャットに質問"], ["sk_code", "Claude Code"], ["sk_github", "GitHubで公開"], ["sk_fix", "自分で直す"]];
+const SK = [["sk_code", "Claude Code"], ["sk_github", "GitHubで公開"], ["sk_fix", "自分で直す"], ["sk_err", "エラー解決"], ["sk_form", "フォーム→シート"], ["sk_mail", "自動メール"], ["sk_data", "データ分析"], ["sk_spec", "指示書を書く"], ["sk_teach", "人に教える"]];
 const isDone = r => (+r.reach_n >= 5) || r.progress === "完成して公開できた";
 const TQ = [["t_clarity", "説明のわかりやすさ"], ["t_support", "質問・サポート"], ["t_mood", "雰囲気・話しやすさ"]];
 const tAvg = (rs, f) => avg(rs.map(r => +r[f]).filter(n => n > 0));
@@ -173,7 +175,7 @@ function render() {
   ].map(t => `<div class="tile"><div class="k">${t[0]}</div><div class="v">${t[1]}</div><div class="s">${t[2]}</div></div>`).join("");
   const lr = rs.filter(r => r.level);
   $("#lvBars").innerHTML = lr.length ? LV.map(l => { const c = lr.filter(r => r.level === l).length; return `<span>${l}</span><div class="t" title="${l}：${c}人"><div class="f" style="width:${c / Math.max(1, lr.length) * 100}%"></div></div><span class="n">${c}人</span>`; }).join("") : '<span class="muted" style="grid-column:1/-1">レベル分けの質問に答えた人はまだいません</span>';
-  $("#lvTable").innerHTML = lr.length ? `<tr><th>レベル</th><th>お名前</th><th>到達</th><th class="num">スキル点</th><th>メール</th></tr>` + [...lr].sort((a, b) => LV.indexOf(a.level) - LV.indexOf(b.level) || (+a.skill_score) - (+b.skill_score)).map(r => `<tr><td><b>${esc(r.level)}</b></td><td>${esc(r.name || "名前なし")}</td><td>${esc(String(r.reach || "").replace(/^\d+ /, ""))}</td><td class="num">${esc(r.skill_score)}/14</td><td>${esc(r.email || "")}</td></tr>`).join("") : "";
+  $("#lvTable").innerHTML = lr.length ? `<tr><th>レベル</th><th>お名前</th><th>到達</th><th class="num">スキル点</th><th>メール</th></tr>` + [...lr].sort((a, b) => LV.indexOf(a.level) - LV.indexOf(b.level) || (+a.skill_score) - (+b.skill_score)).map(r => `<tr><td><b>${esc(r.level)}</b></td><td>${esc(r.name || "名前なし")}</td><td>${esc(String(r.reach || "").replace(/^\d+ /, ""))}</td><td class="num">${esc(r.skill_score)}/18</td><td>${esc(r.email || "")}</td></tr>`).join("") : "";
   $("#reachBars").innerHTML = REACH.map(x => { const c = lr.filter(r => r.reach === x).length; return `<span>${esc(x.replace(/^\d+ /, ""))}</span><div class="t"><div class="f" style="width:${c / Math.max(1, lr.length) * 100}%"></div></div><span class="n">${c}人</span>`; }).join("");
   $("#skBars").innerHTML = SK.map(([k, l]) => barRow(l, avg(lr.map(r => +r[k]).filter(n => !isNaN(n))), 2)).join("");
   $("#teach").innerHTML = TQ.map(q => barRow(q[1], tAvg(rs, q[0]), 5)).join("") + barRow("総合", tAll(rs), 5);
