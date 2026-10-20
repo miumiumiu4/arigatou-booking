@@ -2,7 +2,7 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<meta name="version" content="2026-10-20f">
+<meta name="version" content="2026-10-20g">
 <title>パソコン教室 感想アンケート</title>
 <style>
 :root{--bg:#fff8f2;--card:#fff;--ink:#33241c;--muted:#8a7a6e;--line:#f0e2d6;--or:#e8590c;--soft:#fdeee2;--ok:#1f8a70;--ng:#b4532a}
@@ -66,9 +66,9 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:30px}
 <div class="q"><b>進むスピードは？<span class="req">必須</span></b>
 <div class="chips" data-name="pace" data-opts="ゆっくりすぎた|ちょうどよかった|速すぎた"></div></div>
 
-<div class="q"><b>今日はどこまで進みましたか？<span class="req">必須</span></b>
-<div class="hint">いちばん先まで進んだところを1つ選んでください</div>
-<div class="chips col" data-name="reach" data-opts="0 まだ何も始められなかった|1 Claudeに登録できた|2 Claude Codeを起動できた|3 GitHubに登録できた|4 お手本をコピーして自分用に直せた|5 サイトを公開できた|6 テスト送信がシートに届いた"></div></div>
+<div class="q"><b>これまでに、どこまで来ましたか？<span class="req">必須</span></b>
+<div class="hint">今日の教室も含めて、いちばん先まで来たところを1つ選んでください</div>
+<div class="chips col" data-name="reach" data-opts="0 まだ何も始められなかった|1 Claudeに登録できた|2 Claude Codeを起動できた|3 GitHubに登録できた|4 お手本をコピーして自分用に直せた|5 自分のサイトを公開できた|6 フォームの回答がシートにたまり、自動メールも届いた|7 自分の仕事の手間を1つ仕組みにして、実際に使っている|8 ほかの人や会社のために仕組みを作って、使ってもらっている|9 ほかの人に教えて、その人が公開までできた"></div></div>
 
 <div class="q"><b>伸びしろチェック：次のことは、どのくらいできますか？<span class="req">必須</span></b>
 <div class="hint">今の自分に近いものを気軽に選んでください。次回の内容づくりに活かします</div>
@@ -128,28 +128,32 @@ document.querySelectorAll("[data-name]").forEach(box => {
 });
 // レベル判定用のスキル項目（0:できない 1:手伝いがあればできる 2:一人でできる）
 const SKILLS = [
-  ["sk_code", "Claude Codeを起動して、作業を頼む"],
-  ["sk_github", "GitHubにファイルを上げて、サイトを公開する"],
-  ["sk_fix", "直したいところをClaudeに頼んで、自分で直す"],
-  ["sk_err", "エラーが出たとき、その画面をClaudeに見せて解決する"],
-  ["sk_form", "フォームの回答をスプレッドシートに自動でためる"],
-  ["sk_mail", "申込みが来たら自動でメールが届く仕組みを作る"],
-  ["sk_data", "たまったデータをグラフや集計表にして分析する"],
-  ["sk_spec", "自分の仕事の手間を見つけて、Claudeへの頼み方（指示書）を書く"],
-  ["sk_teach", "作った仕組みを、ほかの人に説明して教える"],
-  ["sk_pay", "予約フォームに、カードやPayPalの支払いをつなげる"],
-  ["sk_auto", "申込み→案内メール→カレンダー登録のように、いくつかの作業を自動でつなげる"],
-  ["sk_build", "ほかの人や会社のために仕組みを作って、実際に使ってもらう"]
+  ["sk_code", "Claude Codeを起動して、作業を頼む", 0],
+  ["sk_github", "GitHubにファイルを上げて、サイトを公開する", 0],
+  ["sk_fix", "直したいところをClaudeに頼んで、自分で直す", 1],
+  ["sk_err", "エラーが出たとき、その画面をClaudeに見せて解決する", 1],
+  ["sk_form", "フォームの回答をスプレッドシートに自動でためる", 1],
+  ["sk_mail", "申込みが来たら自動でメールが届く仕組みを作る", 1],
+  ["sk_spec", "自分の仕事の手間を見つけて、Claudeへの頼み方（指示書）を書く", 2],
+  ["sk_data", "たまったデータをグラフや集計表にして分析する", 2],
+  ["sk_cal", "申込みが来たら、Googleカレンダーに予定を自動で入れる", 2],
+  ["sk_pay", "予約フォームに、カードやPayPalの支払いをつなげる", 3],
+  ["sk_auto", "申込み→支払い→案内メール→記録のように、いくつかの作業を自動でつなげる", 3],
+  ["sk_build", "ほかの人や会社のために仕組みを作って、実際に使ってもらう", 3],
+  ["sk_teach", "作った仕組みを、ほかの人に説明して教える", 4]
 ];
-const BASE = 9; // 先頭9項目がレベル点、残り3項目は特級を見分けるための項目
 const SK_OPTS = ["まだやったことがない", "手伝いがあればできる", "一人でできる"];
 $("#skills").innerHTML = SKILLS.map(([k, t]) => `<div class="sk"><p>${t}</p><div class="chips">${SK_OPTS.map((o, i) => `<label><input type="radio" name="${k}" value="${i}">${o}</label>`).join("")}</div></div>`).join("");
-// 到達ステップ(0-6)とスキル点(0-18)、特級項目の点(0-6)からレベルを決める
-function levelOf(reach, score, ex) {
-  const pt = reach * 2 + score; // 0〜30点
-  // 特級：ほぼ満点で、さらに特級項目もほとんど一人でできる人
-  if (pt >= 28 && ex >= 5) return "特級";
-  return pt <= 7 ? "入門" : pt <= 15 ? "初級" : pt <= 23 ? "中級" : "上級";
+// レベル＝次に受けるクラス。入門(公開まで)→初級→中級→上級→特級。
+// 各段は「到達がその段の卒業目安に届いた」か「その段のスキルがほぼ一人でできる」で合格。下から順に合格した数で決まる
+const TIER_NEED = [3, 7, 5, 5]; // 段ごとの合格点＝「1項目だけ手伝いありでも可、残りは一人でできる」（入門2・初級4・中級3・上級3項目）
+function lvCalc(r, SKT) {
+  let reach = +r.reach_n || 0;
+  if (reach === 6 && (r.sk_cal === undefined || r.sk_cal === "")) reach = 5; // 旧版の「6 テスト送信がシートに届いた」は公開まで扱い
+  const sum = t => SKT.filter(s => s[2] === t).reduce((a, s) => a + (+r[s[0]] || 0), 0);
+  let n = 0;
+  while (n < 4 && (reach >= 5 + n || sum(n) >= TIER_NEED[n])) n++;
+  return ["入門", "初級", "中級", "上級", "特級"][n];
 }
 // 開催日・回：URLの ?date=2026-10-19&kai=第1回 で指定。なければ今日（日本時間）
 const p = new URLSearchParams(location.search);
@@ -187,7 +191,7 @@ flush(); setInterval(flush, 15000);
 $("#f").addEventListener("submit", async e => {
   e.preventDefault();
   const fd = new FormData(e.target), msg = $("#msg");
-  const need = { date: "受講した日", name: "お名前", email: "メールアドレス", satisfaction: "満足度", difficulty: "難しさ", pace: "スピード", reach: "今日どこまで進んだか", recommend: "すすめたい度", t_clarity: "講師の説明", t_support: "講師のサポート", t_mood: "講師の雰囲気" };
+  const need = { date: "受講した日", name: "お名前", email: "メールアドレス", satisfaction: "満足度", difficulty: "難しさ", pace: "スピード", reach: "どこまで来たか", recommend: "すすめたい度", t_clarity: "講師の説明", t_support: "講師のサポート", t_mood: "講師の雰囲気" };
   const miss = Object.keys(need).filter(k => !String(fd.get(k) || "").trim());
   const skMiss = SKILLS.filter(([k]) => fd.get(k) === null);
   if (skMiss.length) { msg.className = "msg ng"; msg.textContent = "「どのくらいできますか」でまだ選ばれていない項目が" + skMiss.length + "つあります"; return; }
@@ -201,9 +205,8 @@ $("#f").addEventListener("submit", async e => {
     ...Object.fromEntries(SKILLS.map(([k]) => [k, +fd.get(k)])),
     submitted_at: new Date().toISOString(), id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), ua: navigator.userAgent.slice(0, 120)
   };
-  data.skill_score = SKILLS.slice(0, BASE).reduce((a, [k]) => a + data[k], 0);
-  data.ex_score = SKILLS.slice(BASE).reduce((a, [k]) => a + data[k], 0);
-  data.level = levelOf(data.reach_n, data.skill_score, data.ex_score);
+  data.skill_score = SKILLS.reduce((a, [k]) => a + data[k], 0);
+  data.level = lvCalc(data, SKILLS);
   const nextSk = SKILLS.find(([k]) => data[k] < 2);
   $("#thanks").insertAdjacentHTML("beforeend", nextSk ? '<p>あなたの次のチャレンジは</p><div class="lv" style="font-size:1rem;line-height:1.6">' + nextSk[1] + '</div><p style="font-size:.85rem;color:#8a7a6e">一歩ずつ、一緒にできるようになりましょう！</p>' : '<p>すべて一人でできる、すばらしい！<br>次は、ほかの人に教える側にも挑戦してみてください。</p>');
   const btn = $("#btn"); btn.disabled = true; btn.textContent = "送信中…";
