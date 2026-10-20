@@ -103,7 +103,7 @@ async function load() {
     // 自動更新のときは、見ている回を勝手に切り替えない（最初は「すべての回」）
     $("#sel").value = keys.includes(cur) ? cur : "";
     render();
-    $("#upd").textContent = "最終更新 " + new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" }) + "（30秒ごとに自動更新）";
+    $("#upd").textContent = "最終更新 " + new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" }) + "（新しい回答は「最新にする」で読み込みます）";
   } catch (e) { $("#err").textContent = e.message; }
 }
 // 受付スイッチが入る前に見え方を確かめるための見本データ
@@ -256,7 +256,6 @@ $("#mk").onclick = () => {
   const u = BASE + "?date=" + $("#ld").value + ($("#lk").value.trim() ? "&kai=" + encodeURIComponent($("#lk").value.trim()) : "");
   $("#lo").textContent = u; navigator.clipboard?.writeText(u).then(() => $("#lo").textContent = u + "（コピーしました）", () => {});
 };
-setInterval(() => { if ($("#main").style.display === "block") load(); }, 30000);
 try { const s = localStorage.getItem("survey_key"); if (s) { $("#key").value = s; load(); } } catch (_) {}
 </script>
 </body></html>
