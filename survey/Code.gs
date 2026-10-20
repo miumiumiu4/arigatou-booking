@@ -98,6 +98,8 @@ function sendReport_(sh, d) {
     + '<p>ありがとうパソコン教室<br>愛してるぜ🤟</p></div>';
   MailApp.sendEmail({ to: String(d.email).trim(), subject: "【パソコン教室】あなたの成長レポート（ステップ " + n + " / 15）", htmlBody: html, name: REPORT_FROM_NAME });
 }
-// 動作確認用：Apps Scriptの画面でこの関数を選んで「実行」すると、最後の回答の人にレポートを送り直す（初回は権限の許可が出ます）
+// 最初に1回だけ：この関数を選んで「実行」→ メール送信の権限を許可する（メールは送られません）
+function authorize() { console.log("今日あと送れるメール数: " + MailApp.getRemainingDailyQuota()); }
+// 動作確認用：この関数を「実行」すると、最後に回答した人へレポートを送り直す（本物の受講者に届くので注意）
 function testReport() { const sh = sheet_(SHEET), v = sh.getDataRange().getValues(), keys = v[0].map(l => keyOfLabel_(String(l))), r = v[v.length - 1], o = {}; keys.forEach((k, i) => o[k] = r[i]); sendReport_(sh, o); }
 function json_(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
