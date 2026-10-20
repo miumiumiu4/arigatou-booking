@@ -112,8 +112,8 @@ function demoData() {
   const P = ["ゆっくりすぎた", "ちょうどよかった", "速すぎた"], G = ["完成して公開できた", "ほぼできた", "半分くらい", "あまり進まなかった"], N = ["デザインを整える", "フォームで申込みを受ける", "スマホ対応", "AI（Claude）の活用", "集客・SNS連携"];
   const rows = [];
   for (let i = 0; i < 14; i++) rows.push({ date: "2026-10-19", kai: "見本", name: i % 3 ? "" : "見本さん" + i, satisfaction: [5, 5, 4, 5, 4, 3, 5][i % 7], difficulty: [3, 4, 2, 3, 4, 5, 3][i % 7], pace: P[[1, 1, 2, 1, 0, 1, 2][i % 7]], progress: G[[0, 1, 0, 2, 1, 0, 3][i % 7]], reach: REACH[[6, 5, 4, 3, 6, 2, 1][i % 7]], reach_n: [6, 5, 4, 3, 6, 2, 1][i % 7], sk_code: [2, 2, 1, 1, 2, 0, 1][i % 7], sk_github: [2, 1, 1, 0, 2, 0, 0][i % 7], sk_fix: [1, 1, 1, 0, 2, 0, 0][i % 7], sk_err: [1, 1, 0, 0, 2, 0, 0][i % 7], sk_form: [2, 1, 0, 0, 1, 0, 0][i % 7], sk_mail: [1, 0, 0, 0, 1, 0, 0][i % 7], sk_data: [1, 0, 1, 0, 1, 0, 0][i % 7], sk_spec: [0, 1, 0, 0, 1, 0, 0][i % 7], sk_teach: [0, 0, 0, 0, 1, 0, 0][i % 7], recommend: [10, 9, 8, 10, 7, 9, 6][i % 7], t_clarity: [5, 4, 5, 4, 3, 5, 4][i % 7], t_support: [5, 5, 4, 5, 4, 5, 5][i % 7], t_mood: [5, 5, 5, 4, 5, 5, 4][i % 7], good: i < 2 ? "自分のサイトがスマホで見られて感動した" : "", trouble: i < 2 ? "予約を電話で受けて紙に書いていた" : "", possibility: i < 2 ? "自分のお店の予約ページを作れそう" : "", next: N.filter((_, j) => (i + j) % 3 == 0).join("、"), comment: "" });
-  rows.forEach((r, i) => { r.skill_score = SK.reduce((a, [k]) => a + r[k], 0); const pt = r.reach_n * 2 + r.skill_score; r.level = pt <= 7 ? "入門" : pt <= 15 ? "初級" : pt <= 23 ? "中級" : "上級"; if (i === 4) { SK.forEach(([k]) => r[k] = 2); r.reach_n = 6; r.reach = REACH[6]; r.skill_score = 18; r.level = "特級"; } });
-  rows.forEach((r, i) => { r.email = "demo" + (i % 7) + "@example.com"; r.name = "見本さん" + (i % 7); if (i >= 7) { r.date = "2026-11-02"; r.kai = "第2回"; ["sk_code", "sk_github", "sk_fix", "sk_err"].forEach(k => r[k] = Math.min(2, r[k] + 1)); r.reach_n = Math.min(6, r.reach_n + 2); r.reach = REACH[r.reach_n]; r.skill_score = SK.reduce((a, [k]) => a + r[k], 0); const pt = r.reach_n * 2 + r.skill_score; r.level = pt <= 7 ? "入門" : pt <= 15 ? "初級" : pt <= 23 ? "中級" : "上級"; if (i === 11) { SK.forEach(([k]) => r[k] = 2); r.reach_n = 6; r.reach = REACH[6]; r.skill_score = 18; r.level = "特級"; } } });
+  rows.forEach((r, i) => { ["sk_pay", "sk_auto", "sk_build"].forEach(k => r[k] = i % 7 >= 5 ? 1 : 0); r.skill_score = SK9.reduce((a, [k]) => a + r[k], 0); const pt = r.reach_n * 2 + r.skill_score; r.level = pt <= 7 ? "入門" : pt <= 15 ? "初級" : pt <= 23 ? "中級" : "上級"; if (i === 4) { SK.forEach(([k]) => r[k] = 2); r.reach_n = 6; r.reach = REACH[6]; r.skill_score = 18; r.level = "特級"; } });
+  rows.forEach((r, i) => { r.email = "demo" + (i % 7) + "@example.com"; r.name = "見本さん" + (i % 7); if (i >= 7) { r.date = "2026-11-02"; r.kai = "第2回"; ["sk_code", "sk_github", "sk_fix", "sk_err"].forEach(k => r[k] = Math.min(2, r[k] + 1)); r.reach_n = Math.min(6, r.reach_n + 2); r.reach = REACH[r.reach_n]; r.skill_score = SK9.reduce((a, [k]) => a + r[k], 0); const pt = r.reach_n * 2 + r.skill_score; r.level = pt <= 7 ? "入門" : pt <= 15 ? "初級" : pt <= 23 ? "中級" : "上級"; if (i === 11) { SK.forEach(([k]) => r[k] = 2); r.reach_n = 6; r.reach = REACH[6]; r.skill_score = 18; r.level = "特級"; } } });
   return { ok: true, rows };
 }
 function bars(title, rs, field, opts, multi) {
@@ -154,9 +154,9 @@ function advice(rs, k) {
     const cnt = LV.map(l => [l, lr.filter(r => r.level === l).length]).filter(x => x[1]);
     if (cnt.length >= 3) out.push(`レベルが${cnt.map(x => x[0] + x[1] + "人").join("・")}と幅広く分かれています。「入門・初級」と「中級・上級」の2クラスに分けると、待ち時間と置いていかれる人の両方が減ります。`);
     else if (cnt.length === 1) out.push(`全員が「${cnt[0][0]}」でそろっています。このまま1クラスで進めて大丈夫です。`);
-    const weak = SK.map(([k, l]) => [l, avg(lr.map(r => +r[k]).filter(n => !isNaN(n)))]).filter(x => !isNaN(x[1])).sort((a, b) => a[1] - b[1])[0];
+    const weak = SK9.map(([k, l]) => [l, avg(lr.map(r => +r[k]).filter(n => !isNaN(n)))]).filter(x => !isNaN(x[1])).sort((a, b) => a[1] - b[1])[0];
     if (weak && weak[1] < 1) out.push(`全体で一番伸びしろがあるのは「${weak[0]}」です。全員をもう一段上げるなら、次回はここを全員の到達目標にしましょう。`);
-    const firstGap = SK.find(([k]) => avg(lr.map(r => +r[k]).filter(n => !isNaN(n))) < 1.5);
+    const firstGap = SK9.find(([k]) => avg(lr.map(r => +r[k]).filter(n => !isNaN(n))) < 1.5);
     if (firstGap) out.push(`基礎から順に見ると、「${firstGap[1]}」から先がまだ全員のものになっていません。ここを全員が一人でできるようにするのが、全体を引き上げる近道です。`);
   }
   const NX = {}; rs.forEach(r => String(r.next || "").split("、").filter(Boolean).forEach(x => NX[x] = (NX[x] || 0) + 1));
@@ -170,7 +170,8 @@ function advice(rs, k) {
 }
 const LV = ["入門", "初級", "中級", "上級", "特級"];
 const REACH = ["0 まだ何も始められなかった", "1 Claudeに登録できた", "2 Claude Codeを起動できた", "3 GitHubに登録できた", "4 お手本をコピーして自分用に直せた", "5 サイトを公開できた", "6 テスト送信がシートに届いた"];
-const SK = [["sk_code", "Claude Code"], ["sk_github", "GitHubで公開"], ["sk_fix", "自分で直す"], ["sk_err", "エラー解決"], ["sk_form", "フォーム→シート"], ["sk_mail", "自動メール"], ["sk_data", "データ分析"], ["sk_spec", "指示書を書く"], ["sk_teach", "人に教える"]];
+const SK = [["sk_code", "Claude Code"], ["sk_github", "GitHubで公開"], ["sk_fix", "自分で直す"], ["sk_err", "エラー解決"], ["sk_form", "フォーム→シート"], ["sk_mail", "自動メール"], ["sk_data", "データ分析"], ["sk_spec", "指示書を書く"], ["sk_teach", "人に教える"], ["sk_pay", "決済をつなぐ"], ["sk_auto", "作業を自動でつなぐ"], ["sk_build", "人のために作る"]];
+const SK9 = SK.slice(0, 9); // レベル点に使う9項目（残り3つは特級の見分け用）
 const isDone = r => (+r.reach_n >= 5) || r.progress === "完成して公開できた";
 const TQ = [["t_clarity", "説明のわかりやすさ"], ["t_support", "質問・サポート"], ["t_mood", "雰囲気・話しやすさ"]];
 const tAvg = (rs, f) => avg(rs.map(r => +r[f]).filter(n => n > 0));
@@ -249,7 +250,7 @@ function render() {
 }
 function csv() {
   const k = $("#sel").value, rs = k ? ROWS.filter(r => keyOf(r) === k) : ROWS;
-  const H = ["at", "date", "kai", "name", "email", "level", "skill_score", "reach", "t_clarity", "t_support", "t_mood", "satisfaction", "difficulty", "pace", "progress", "recommend", "good", "trouble", "possibility", "hard", "next", "next_other", "comment"];
+  const H = ["at", "date", "kai", "name", "email", "level", "skill_score", "ex_score", "reach", "t_clarity", "t_support", "t_mood", "satisfaction", "difficulty", "pace", "progress", "recommend", "good", "trouble", "possibility", "hard", "next", "next_other", "comment"];
   const J = ["受付日時", "受講日", "回", "お名前", "メールアドレス", "レベル", "スキル点", "到達", "講師:説明", "講師:サポート", "講師:雰囲気", "満足度", "難しさ", "スピード", "進み具合", "すすめたい度", "よかったところ", "これまでの手間", "感じた可能性", "わかりにくかったところ", "次に習いたいこと", "その他", "ひとこと"];
   const q = s => '"' + String(s ?? "").replace(/"/g, '""') + '"';
   const body = [J, ...rs.map(r => H.map(h => r[h]))].map(a => a.map(q).join(",")).join("\r\n");
