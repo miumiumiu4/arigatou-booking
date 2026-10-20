@@ -65,6 +65,7 @@ details.ds summary{font-weight:700;cursor:pointer}
 <div class="card"><h2>🧑‍🎓 受講者ごとのレベルと推移</h2><p class="muted" style="margin-top:0">同じメールアドレス（なければ名前）の人を1人としてまとめています。3回目からのクラス分けは、受講2回以上の人の最新レベルで決めます。</p>
 <div style="overflow-x:auto"><table id="people"></table></div></div>
 <div class="card"><h2>🏫 レベル別クラス編成案と台本</h2><p class="muted" style="margin-top:0">各クラスの「今回の重点」は、そのクラスの人たちの伸びしろチェックから自動で選んでいます。</p><div id="classes"></div></div>
+<div class="card"><h2>🚄 特級の宿題リスト（講師の自主課題にも）</h2><p class="muted" style="margin-top:0">上級のさらに上。チェックは、この端末に保存されます。</p><div id="hw"></div></div>
 <div class="card" id="advCard"><h2>💡 講師へのアドバイス</h2><ul id="adv" style="margin:0;padding-left:1.2em"></ul><p class="muted" style="margin:.6em 0 0">回答の数字と声から自動でまとめています。</p></div>
 <div class="card"><h2>👩‍🏫 講師の評価</h2><div class="muted" style="margin-bottom:6px">5点満点の平均（この質問が入る前の回答は含みません）</div><div class="bars" id="teach"></div>
 <h2 style="margin-top:1em">講師の評価の推移（3項目の平均）</h2><div class="bars" id="teachTrend"></div></div>
@@ -111,8 +112,8 @@ function demoData() {
   const P = ["ゆっくりすぎた", "ちょうどよかった", "速すぎた"], G = ["完成して公開できた", "ほぼできた", "半分くらい", "あまり進まなかった"], N = ["デザインを整える", "フォームで申込みを受ける", "スマホ対応", "AI（Claude）の活用", "集客・SNS連携"];
   const rows = [];
   for (let i = 0; i < 14; i++) rows.push({ date: "2026-10-19", kai: "見本", name: i % 3 ? "" : "見本さん" + i, satisfaction: [5, 5, 4, 5, 4, 3, 5][i % 7], difficulty: [3, 4, 2, 3, 4, 5, 3][i % 7], pace: P[[1, 1, 2, 1, 0, 1, 2][i % 7]], progress: G[[0, 1, 0, 2, 1, 0, 3][i % 7]], reach: REACH[[6, 5, 4, 3, 6, 2, 1][i % 7]], reach_n: [6, 5, 4, 3, 6, 2, 1][i % 7], sk_code: [2, 2, 1, 1, 2, 0, 1][i % 7], sk_github: [2, 1, 1, 0, 2, 0, 0][i % 7], sk_fix: [1, 1, 1, 0, 2, 0, 0][i % 7], sk_err: [1, 1, 0, 0, 2, 0, 0][i % 7], sk_form: [2, 1, 0, 0, 1, 0, 0][i % 7], sk_mail: [1, 0, 0, 0, 1, 0, 0][i % 7], sk_data: [1, 0, 1, 0, 1, 0, 0][i % 7], sk_spec: [0, 1, 0, 0, 1, 0, 0][i % 7], sk_teach: [0, 0, 0, 0, 1, 0, 0][i % 7], recommend: [10, 9, 8, 10, 7, 9, 6][i % 7], t_clarity: [5, 4, 5, 4, 3, 5, 4][i % 7], t_support: [5, 5, 4, 5, 4, 5, 5][i % 7], t_mood: [5, 5, 5, 4, 5, 5, 4][i % 7], good: i < 2 ? "自分のサイトがスマホで見られて感動した" : "", trouble: i < 2 ? "予約を電話で受けて紙に書いていた" : "", possibility: i < 2 ? "自分のお店の予約ページを作れそう" : "", next: N.filter((_, j) => (i + j) % 3 == 0).join("、"), comment: "" });
-  rows.forEach(r => { r.skill_score = SK.reduce((a, [k]) => a + r[k], 0); const pt = r.reach_n * 2 + r.skill_score; r.level = pt <= 7 ? "入門" : pt <= 15 ? "初級" : pt <= 23 ? "中級" : "上級"; });
-  rows.forEach((r, i) => { r.email = "demo" + (i % 7) + "@example.com"; r.name = "見本さん" + (i % 7); if (i >= 7) { r.date = "2026-11-02"; r.kai = "第2回"; ["sk_code", "sk_github", "sk_fix", "sk_err"].forEach(k => r[k] = Math.min(2, r[k] + 1)); r.reach_n = Math.min(6, r.reach_n + 2); r.reach = REACH[r.reach_n]; r.skill_score = SK.reduce((a, [k]) => a + r[k], 0); const pt = r.reach_n * 2 + r.skill_score; r.level = pt <= 7 ? "入門" : pt <= 15 ? "初級" : pt <= 23 ? "中級" : "上級"; } });
+  rows.forEach((r, i) => { r.skill_score = SK.reduce((a, [k]) => a + r[k], 0); const pt = r.reach_n * 2 + r.skill_score; r.level = pt <= 7 ? "入門" : pt <= 15 ? "初級" : pt <= 23 ? "中級" : "上級"; if (i === 4) { SK.forEach(([k]) => r[k] = 2); r.reach_n = 6; r.reach = REACH[6]; r.skill_score = 18; r.level = "特級"; } });
+  rows.forEach((r, i) => { r.email = "demo" + (i % 7) + "@example.com"; r.name = "見本さん" + (i % 7); if (i >= 7) { r.date = "2026-11-02"; r.kai = "第2回"; ["sk_code", "sk_github", "sk_fix", "sk_err"].forEach(k => r[k] = Math.min(2, r[k] + 1)); r.reach_n = Math.min(6, r.reach_n + 2); r.reach = REACH[r.reach_n]; r.skill_score = SK.reduce((a, [k]) => a + r[k], 0); const pt = r.reach_n * 2 + r.skill_score; r.level = pt <= 7 ? "入門" : pt <= 15 ? "初級" : pt <= 23 ? "中級" : "上級"; if (i === 11) { SK.forEach(([k]) => r[k] = 2); r.reach_n = 6; r.reach = REACH[6]; r.skill_score = 18; r.level = "特級"; } } });
   return { ok: true, rows };
 }
 function bars(title, rs, field, opts, multi) {
@@ -167,7 +168,7 @@ function advice(rs, k) {
   if (k) { const i = keys.indexOf(k); if (i > 0) { const prev = ROWS.filter(r => keyOf(r) === keys[i - 1]), d = sat - avg(prev.map(r => +r.satisfaction)); if (!isNaN(d) && Math.abs(d) >= 0.2) out.push(`前回より満足度が${d > 0 ? "+" : ""}${d.toFixed(1)}点${d > 0 ? "上がりました。今回変えたことが効いています" : "下がりました。前回との違いを振り返ってみましょう"}。`); } }
   return out;
 }
-const LV = ["入門", "初級", "中級", "上級"];
+const LV = ["入門", "初級", "中級", "上級", "特級"];
 const REACH = ["0 まだ何も始められなかった", "1 Claudeに登録できた", "2 Claude Codeを起動できた", "3 GitHubに登録できた", "4 お手本をコピーして自分用に直せた", "5 サイトを公開できた", "6 テスト送信がシートに届いた"];
 const SK = [["sk_code", "Claude Code"], ["sk_github", "GitHubで公開"], ["sk_fix", "自分で直す"], ["sk_err", "エラー解決"], ["sk_form", "フォーム→シート"], ["sk_mail", "自動メール"], ["sk_data", "データ分析"], ["sk_spec", "指示書を書く"], ["sk_teach", "人に教える"]];
 const isDone = r => (+r.reach_n >= 5) || r.progress === "完成して公開できた";
@@ -206,6 +207,12 @@ function renderPeople() {
         <p><b>使える声かけ</b></p><ul>${D.phrases.map(x => `<li>${esc(x)}</li>`).join("")}</ul></details>` : ""}</div>`;
   }).join("");
 }
+function renderHW() {
+  const H = ((window.DAIHON || {})["特級"] || {}).homework || []; let done = {};
+  try { done = JSON.parse(localStorage.getItem("tokkyu_hw") || "{}"); } catch (_) {}
+  $("#hw").innerHTML = `<p><b>${H.filter((_, i) => done[i]).length} / ${H.length} 達成</b></p>` + H.map((h, i) => `<label style="display:block;border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin:6px 0;cursor:pointer"><input type="checkbox" data-i="${i}" ${done[i] ? "checked" : ""} style="margin-right:8px">${i + 1}. <b>${esc(h[0])}</b>：${esc(h[1])}<br><span class="muted">できた目安：${esc(h[2])}</span></label>`).join("");
+  $("#hw").querySelectorAll("input").forEach(c => c.onchange = () => { done[c.dataset.i] = c.checked; try { localStorage.setItem("tokkyu_hw", JSON.stringify(done)); } catch (_) {} renderHW(); });
+}
 function render() {
   const k = $("#sel").value, rs = k ? ROWS.filter(r => keyOf(r) === k) : ROWS;
   const sat = avg(rs.map(r => +r.satisfaction)), dif = avg(rs.map(r => +r.difficulty)), np = nps(rs);
@@ -220,7 +227,7 @@ function render() {
   $("#lvTable").innerHTML = lr.length ? `<tr><th>レベル</th><th>お名前</th><th>到達</th><th class="num">スキル点</th><th>メール</th></tr>` + [...lr].sort((a, b) => LV.indexOf(a.level) - LV.indexOf(b.level) || (+a.skill_score) - (+b.skill_score)).map(r => `<tr><td><b>${esc(r.level)}</b></td><td>${esc(r.name || "名前なし")}</td><td>${esc(String(r.reach || "").replace(/^\d+ /, ""))}</td><td class="num">${esc(r.skill_score)}/18</td><td>${esc(r.email || "")}</td></tr>`).join("") : "";
   $("#reachBars").innerHTML = REACH.map(x => { const c = lr.filter(r => r.reach === x).length; return `<span>${esc(x.replace(/^\d+ /, ""))}</span><div class="t"><div class="f" style="width:${c / Math.max(1, lr.length) * 100}%"></div></div><span class="n">${c}人</span>`; }).join("");
   $("#skBars").innerHTML = SK.map(([k, l]) => barRow(l, avg(lr.map(r => +r[k]).filter(n => !isNaN(n))), 2)).join("");
-  renderPeople();
+  renderPeople(); renderHW();
   $("#teach").innerHTML = TQ.map(q => barRow(q[1], tAvg(rs, q[0]), 5)).join("") + barRow("総合", tAll(rs), 5);
   $("#teachTrend").innerHTML = [...new Set(ROWS.map(keyOf))].sort().map(x => { const g = ROWS.filter(r => keyOf(r) === x); return barRow(x, tAll(g), 5, "（" + g.filter(r => +r.t_clarity > 0).length + "人）"); }).join("");
   $("#adv").innerHTML = advice(rs, k).map(t => `<li style="margin:.3em 0">${t}</li>`).join("");
