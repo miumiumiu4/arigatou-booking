@@ -100,8 +100,8 @@ async function load() {
     const keys = [...new Set(ROWS.map(keyOf))].sort().reverse();
     const cur = $("#sel").value;
     $("#sel").innerHTML = `<option value="">すべての回（${ROWS.length}件）</option>` + keys.map(k => `<option value="${esc(k)}">${esc(k)}（${ROWS.filter(r => keyOf(r) === k).length}件）</option>`).join("");
-    $("#sel").value = keys.includes(cur) || cur === "" ? cur : "";
-    if (!cur && keys.length) $("#sel").value = keys[0];
+    // 自動更新のときは、見ている回を勝手に切り替えない（最初は「すべての回」）
+    $("#sel").value = keys.includes(cur) ? cur : "";
     render();
     $("#upd").textContent = "最終更新 " + new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" }) + "（30秒ごとに自動更新）";
   } catch (e) { $("#err").textContent = e.message; }
