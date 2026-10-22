@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>コンサル 成長の記録</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
+.tile b{display:block;font-size:1.6rem;line-height:1.2}.tile span{font-size:.78rem;color:var(--muted)}
+.chart{position:relative}.chart svg{width:100%;height:auto;display:block}
+.legend{display:flex;gap:14px;font-size:.85rem;color:var(--muted);margin:2px 0 6px}
+.legend i{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px}
+.tip{position:absolute;pointer-events:none;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.82rem;box-shadow:0 2px 8px #0002;white-space:nowrap}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin:10px 0}
+.card h3{margin:0;font-size:1rem}.card .meta{color:var(--muted);font-size:.82rem}
+.card dl{margin:8px 0 0}.card dt{font-size:.78rem;color:var(--muted);margin-top:6px}.card dd{margin:0;white-space:pre-wrap}
+.bars{font-size:.82rem;margin-top:6px}.bars div{display:flex;gap:6px;align-items:center}.bars em{font-style:normal;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bars s{text-decoration:none;color:var(--muted);width:5.5em;text-align:right}
+table{width:100%;border-collapse:collapse;font-size:.85rem}td,th{border-bottom:1px solid var(--line);padding:4px;text-align:center}
+</style>
+</head>
+<body><div class="wrap">
+<h1>個別コンサル 成長の記録</h1>
+<div class="q" id="keyBox">
+  <b>合言葉</b>
+  <input type="password" id="key" placeholder="合言葉" autocomplete="current-password">
+  <button id="keyBtn">ひらく</button>
+  <div class="msg" id="keyMsg"></div>
+</div>
+<div id="main" class="hide">
+  <div class="chips" id="people"></div>
+  <div id="body"></div>
+  <p style="text-align:center"><a href="nyuryoku.html">← アンケートを作る</a></p>
+</div>
+<footer>ありがとうグループ 個別コンサル（三浦さん専用）</footer>
+</div>
+<script src="common.js"></script>
+<script>
+let R = null, cur = "";
+$("#key").value = store("consultKey");
+async function open_() {
+  $("#keyMsg").className = "msg"; $("#keyMsg").textContent = "読みこみ中…";
+  try {
+    const j = await apiGet({ a: "records", key: $("#key").value.trim() });
+    if (!j.ok) throw new Error(j.error === "key" ? "合言葉がちがいます" : j.error);
+    store("consultKey", $("#key").value.trim()); R = j;
+    $("#keyBox").classList.add("hide"); $("#main").classList.remove("hide");
+    $("#people").innerHTML = j.people.map(p => `<label><input type="radio" name="p" value="${esc(p.id)}">${esc(p["お名前"])}</label>`).join("");
+    document.querySelectorAll("input[name=p]").forEach(r => r.onchange = () => draw(r.value));
+    const first = document.querySelector("input[name=p]"); if (first) { first.checked = true; draw(first.value); }
+  } catch (e) { $("#keyMsg").className = "msg ng"; $("#keyMsg").textContent = e.message; }
+}
+$("#keyBtn").onclick = open_;
+if ($("#key").value) open_();
+
+const num = v => (v === "" || v == null || isNaN(+v)) ? null : +v;
+function draw(pid) {
+  cur = pid;
+  const ans = R.answers.filter(a => a["人id"] === pid).sort((x, y) => (x["実施日"] + x["受付日時"]).localeCompare(y["実施日"] + y["受付日時"]));
+  // 同じ回に2回答えたときは新しいほうだけ
+  const last = {}; ans.forEach(a => last[a.sid] = a); const A = Object.values(last).sort((x, y) => x["実施日"].localeCompare(y["実施日"]));
+  const ses = R.sessions.filter(s => s.pid === pid);
+  const wait = ses.filter(s => !s.answered);
+  const prevs = A.filter(a => a["前回の宿題"]);
+  const doneRate = prevs.length ? Math.round(prevs.filter(a => a["前回の宿題"] === "できた").length / prevs.length * 100) + "%" : "—";
+  const lastConf = A.length ? num(A[A.length - 1]["自信(0-10)"]) : null, firstConf = A.length ? num(A[0]["自信(0-10)"]) : null;
+  let h = `<div class="tiles">
+    <div class="tile"><b>${A.length}</b><span>回答した回</span></div>
+    <div class="tile"><b>${lastConf == null ? "—" : lastConf}</b><span>いまの自信（0-10）${firstConf != null && A.length > 1 ? `<br>最初は ${firstConf}` : ""}</span></div>
+    <div class="tile"><b>${doneRate}</b><span>前回の宿題「できた」</span></div></div>`;
+  if (wait.length) h += `<div class="card"><h3>まだ答えていない回</h3>${wait.map(s => `<div class="meta">${md(s.date)} ${esc(s.range)}　<a href="a.html?s=${esc(s.sid)}" target="_blank">リンク</a></div>`).join("")}</div>`;
+  if (!A.length) { $("#body").innerHTML = h + `<p class="lead">まだ回答がありません。コンサルのあとに「アンケートを作る」からリンクを送ってください。</p>`; return; }
+  h += `<h2>回ごとの変化</h2>
+    <div class="legend"><span><i style="background:var(--or)"></i>わかった度</span><span><i style="background:var(--bl)"></i>やれそう度</span></div>
+    <div class="chart" id="c1"></div>
+    <h2>自信（0-10）</h2><div class="chart" id="c2"></div>
+    <details><summary class="hint" style="cursor:pointer">表で見る</summary><table><tr><th>日付</th><th>わかった</th><th>やれそう</th><th>自信</th><th>満足</th><th>宿題</th></tr>
+    ${A.map(a => `<tr><td>${md(a["実施日"])}</td><td>${esc(a["わかった度(平均)"])}</td><td>${esc(a["やれそう度(平均)"])}</td><td>${esc(a["自信(0-10)"])}</td><td>${esc(a["満足度(1-5)"])}</td><td>${esc(a["前回の宿題"] || "—")}</td></tr>`).join("")}</table></details>
+    <h2>ふりかえり（新しい順）</h2>`;
+  h += A.slice().reverse().map(a => {
+    const s = R.sessions.find(x => x.sid === a.sid) || {};
+    let items = []; try { items = JSON.parse(a["見出しごと(JSON)"] || "[]"); } catch (_) {}
+    return `<div class="card"><h3>${md(a["実施日"])}　${esc(s.title || "")}</h3><div class="meta">${esc(a["範囲"])}${s.url ? `　<a href="${esc(s.url)}" target="_blank">台本</a>` : ""}</div>
+      <div class="bars">${items.map(x => `<div><em>${esc(x.t)}</em><s>わかった ${esc(x.u)}</s><s>やれそう ${esc(x.c)}</s></div>`).join("")}</div>
+      <dl>${a["前回の宿題"] ? `<dt>前回の宿題</dt><dd>${esc(a["前回の宿題"])}${a["前回の宿題ひとこと"] ? "　" + esc(a["前回の宿題ひとこと"]) : ""}</dd>` : ""}
+      <dt>気づき</dt><dd>${esc(a["今日の気づき"])}</dd><dt>次回までにやること</dt><dd>${esc(a["次回までにやること"])}</dd>
+      ${a["聞きたいこと"] ? `<dt>聞きたいこと</dt><dd>${esc(a["聞きたいこと"])}</dd>` : ""}
+      <dt>自信・満足度</dt><dd>${esc(a["自信(0-10)"])} / 10　・　${esc(a["満足度(1-5)"])} / 5</dd></dl></div>`;
+  }).join("");
+  $("#body").innerHTML = h;
+  line("#c1", A, [["わかった度(平均)", "var(--or)", "わかった度"], ["やれそう度(平均)", "var(--bl)", "やれそう度"]], 1, 5);
+  line("#c2", A, [["自信(0-10)", "var(--or)", "自信"]], 0, 10);
+}
+// 線グラフ（横＝回、縦＝点数）。点に触れると数字が出る
+function line(sel, A, series, lo, hi) {
+  const W = 380, H = 200, L = 26, Rr = 10, T = 10, B = 26, n = A.length;
+  const x = i => n === 1 ? (L + W - Rr) / 2 : L + (W - L - Rr) * i / (n - 1), y = v => T + (H - T - B) * (1 - (v - lo) / (hi - lo));
+  let g = "";
+  for (let v = lo; v <= hi; v += hi - lo > 5 ? 2 : 1) g += `<line x1="${L}" x2="${W - Rr}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end" font-size="12" fill="var(--muted)">${v}</text>`;
+  const step = Math.ceil(n / 5);
+  A.forEach((a, i) => { if (i % step === 0 || i === n - 1) g += `<text x="${x(i)}" y="${H - 8}" text-anchor="${n > 1 && i === n - 1 ? "end" : n > 1 && i === 0 ? "start" : "middle"}" font-size="12" fill="var(--muted)">${md(a["実施日"])}</text>`; });
+  series.forEach(([k, col]) => {
+    const pts = A.map((a, i) => [i, num(a[k])]).filter(p => p[1] != null);
+    g += `<polyline fill="none" stroke="${col}" stroke-width="2" stroke-linejoin="round" points="${pts.map(p => x(p[0]) + "," + y(p[1])).join(" ")}"/>`;
+    g += pts.map(p => `<circle cx="${x(p[0])}" cy="${y(p[1])}" r="4.5" fill="${col}" stroke="var(--bg)" stroke-width="2"/>`).join("");
+  });
+  A.forEach((a, i) => g += `<rect x="${x(i) - 16}" y="0" width="32" height="${H}" fill="transparent" data-i="${i}"/>`);
+  const el = $(sel); el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="回ごとの点数">${g}</svg><div class="tip hide"></div>`;
+  const tip = el.querySelector(".tip");
+  el.querySelectorAll("rect").forEach(r => {
+    const show = () => { const a = A[+r.dataset.i]; tip.innerHTML = `<b>${md(a["実施日"])}</b><br>` + series.map(([k, , lab]) => `${lab}: ${esc(a[k] === "" ? "—" : a[k])}`).join("<br>");
+      const bx = el.getBoundingClientRect(), rb = r.getBoundingClientRect(); tip.classList.remove("hide");
+      tip.style.left = Math.min(Math.max(0, rb.left - bx.left + rb.width / 2 - tip.offsetWidth / 2), bx.width - tip.offsetWidth) + "px"; tip.style.top = "0px"; };
+    r.onmouseenter = show; r.onclick = show; r.onmouseleave = () => tip.classList.add("hide");
+  });
+}
+</script>
+</body></html>

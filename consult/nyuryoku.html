@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>コンサル アンケート作成</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body><div class="wrap">
+<h1>コンサルのあとのアンケートを作る</h1>
+<p class="lead">人を選んで、台本の「どこからどこまでやったか」をタップすると、その範囲のアンケートのリンクができます。</p>
+
+<div class="q" id="keyBox">
+  <b>合言葉</b>
+  <input type="password" id="key" placeholder="合言葉" autocomplete="current-password">
+  <button id="keyBtn">ひらく</button>
+  <div class="msg" id="keyMsg"></div>
+</div>
+
+<div id="main" class="hide">
+  <div class="q">
+    <b>① だれのコンサル？</b>
+    <div class="chips" id="people"></div>
+    <details style="margin-top:10px"><summary class="hint" style="cursor:pointer">＋ 新しい人を名簿に足す</summary>
+      <div class="row" style="margin-top:8px"><input type="text" id="newName" placeholder="お名前（例: 田岡）"><button class="mini" id="addBtn">足す</button></div>
+      <div class="msg" id="addMsg"></div>
+    </details>
+  </div>
+
+  <div class="q hide" id="docBox">
+    <b>② 今日の台本は？</b>
+    <p class="hint">カレンダーの予定に貼ってある台本を探しました。</p>
+    <div class="pick" id="cands"></div>
+    <details style="margin-top:10px"><summary class="hint" style="cursor:pointer">見つからないときは台本のリンクを貼る</summary>
+      <div class="row" style="margin-top:8px"><input type="url" id="docUrl" placeholder="https://docs.google.com/document/d/..."><button class="mini" id="docBtn">読む</button></div>
+    </details>
+    <div class="msg" id="docMsg"></div>
+  </div>
+
+  <div class="q hide" id="rangeBox">
+    <b>③ どこからどこまでやった？</b>
+    <p class="hint">「はじめ」と「おわり」の2つをタップ（1つだけなら同じところを2回）。</p>
+    <div class="pick" id="heads"></div>
+    <div style="margin-top:10px"><b style="font-size:.95rem">実施日</b><input type="date" id="date"></div>
+    <button id="makeBtn" disabled>アンケートを作る</button>
+    <div class="msg" id="makeMsg"></div>
+  </div>
+
+  <div class="q hide" id="doneBox">
+    <b>できました。このリンクを送ってください</b>
+    <div class="linkbox" id="link"></div>
+    <div class="row"><button id="copyBtn">コピー</button><a class="btn sub" id="lineBtn" target="_blank" rel="noopener">LINEで送る</a></div>
+    <a class="btn sub" id="openBtn" target="_blank" rel="noopener">中身を見る</a>
+  </div>
+  <p style="text-align:center"><a href="kiroku.html">成長の記録を見る →</a></p>
+</div>
+<footer>ありがとうグループ 個別コンサル</footer>
+</div>
+<script src="common.js"></script>
+<script>
+let KEY = "", people = [], P = null, D = null, list = [], a = -1, b = -1;
+$("#key").value = store("consultKey");
+$("#date").value = new Date(Date.now() + 9 * 36e5).toISOString().slice(0, 10);
+
+async function open_() {
+  KEY = $("#key").value.trim(); $("#keyMsg").className = "msg"; $("#keyMsg").textContent = "読みこみ中…";
+  try {
+    const j = await apiGet({ a: "people", key: KEY });
+    if (!j.ok) throw new Error(j.error === "key" ? "合言葉がちがいます" : j.error);
+    store("consultKey", KEY); people = j.people; drawPeople();
+    $("#keyBox").classList.add("hide"); $("#main").classList.remove("hide");
+  } catch (e) { $("#keyMsg").className = "msg ng"; $("#keyMsg").textContent = e.message; }
+}
+$("#keyBtn").onclick = open_;
+if ($("#key").value) open_();
+
+function drawPeople() {
+  $("#people").innerHTML = people.map(p => `<label><input type="radio" name="p" value="${esc(p.id)}">${esc(p["お名前"])}</label>`).join("");
+  document.querySelectorAll("input[name=p]").forEach(r => r.onchange = () => pickPerson(r.value));
+}
+$("#addBtn").onclick = async () => {
+  const name = $("#newName").value.trim(); if (!name) return;
+  $("#addMsg").textContent = "登録中…";
+  const j = await apiPost({ type: "person", key: KEY, name });
+  if (!j.ok) { $("#addMsg").className = "msg ng"; $("#addMsg").textContent = "登録できませんでした（" + j.error + "）"; return; }
+  $("#newName").value = ""; $("#addMsg").className = "msg ok"; $("#addMsg").textContent = "名簿に足しました";
+  people = (await apiGet({ a: "people", key: KEY })).people; drawPeople();
+};
+
+async function pickPerson(id) {
+  P = people.find(p => p.id === id); D = null;
+  ["#rangeBox", "#doneBox"].forEach(s => $(s).classList.add("hide"));
+  $("#docBox").classList.remove("hide"); $("#cands").innerHTML = ""; $("#docMsg").className = "msg"; $("#docMsg").textContent = "カレンダーを探しています…";
+  const j = await apiGet({ a: "cands", key: KEY, pid: id });
+  const c = (j.cands || []);
+  $("#docMsg").textContent = c.length ? "" : "最近3週間の予定に台本が見つかりませんでした。下にリンクを貼ってください。";
+  $("#cands").innerHTML = c.map(ev => ev.docs.map(d => `<button data-id="${esc(d.id)}" data-date="${esc(ev.date)}">${esc(md(ev.date))}　${esc(d.name)}</button>`).join("")).join("");
+  $("#cands").querySelectorAll("button").forEach(bt => bt.onclick = () => {
+    $("#cands").querySelectorAll("button").forEach(x => x.classList.toggle("on", x === bt));
+    $("#date").value = bt.dataset.date; loadDoc(bt.dataset.id);
+  });
+}
+$("#docBtn").onclick = () => { $("#cands").querySelectorAll("button").forEach(x => x.classList.remove("on")); loadDoc($("#docUrl").value.trim()); };
+
+async function loadDoc(url) {
+  $("#docMsg").className = "msg"; $("#docMsg").textContent = "台本を読んでいます…"; $("#doneBox").classList.add("hide");
+  const j = await apiGet({ a: "heads", key: KEY, url });
+  if (!j.ok || !j.list.length) { $("#docMsg").className = "msg ng"; $("#docMsg").textContent = "台本の見出しが読めませんでした"; return; }
+  $("#docMsg").textContent = ""; D = j; list = j.list; a = b = -1; drawHeads();
+  $("#rangeBox").classList.remove("hide"); $("#rangeBox").scrollIntoView({ behavior: "smooth" });
+}
+function drawHeads() {
+  const lo = Math.min(a, b), hi = Math.max(a, b);
+  $("#heads").innerHTML = list.map((t, i) => {
+    const cls = (i === a || i === b) ? "on" : (a >= 0 && b >= 0 && i > lo && i < hi) ? "in" : "";
+    return `<button class="${cls}" data-i="${i}">${esc(t)}</button>`;
+  }).join("");
+  $("#heads").querySelectorAll("button").forEach(bt => bt.onclick = () => {
+    const i = +bt.dataset.i;
+    if (a < 0 || b >= 0) { a = i; b = -1; } else b = i;
+    drawHeads();
+  });
+  $("#makeBtn").disabled = !(a >= 0 && b >= 0);
+}
+$("#makeBtn").onclick = async () => {
+  const lo = Math.min(a, b), hi = Math.max(a, b), sel = list.slice(lo, hi + 1);
+  const range = sel.length > 1 ? `${sel[0]} 〜 ${sel[sel.length - 1]}` : sel[0];
+  $("#makeBtn").disabled = true; $("#makeMsg").className = "msg"; $("#makeMsg").textContent = "作っています…";
+  const j = await apiPost({ type: "session", key: KEY, pid: P.id, date: $("#date").value, title: D.title, url: "https://docs.google.com/document/d/" + D.id + "/edit", range, list: sel });
+  $("#makeBtn").disabled = false;
+  if (!j.ok) { $("#makeMsg").className = "msg ng"; $("#makeMsg").textContent = "作れませんでした（" + j.error + "）"; return; }
+  $("#makeMsg").textContent = "";
+  const link = new URL("a.html?s=" + j.sid, location.href).href;
+  $("#link").textContent = link; $("#openBtn").href = link;
+  const text = `${P["お名前"]}、今日はお楽しみ様でした！\n今日のふりかえりアンケートです（3分ほど）。\n${link}\n\n愛してるぜ🤟`;
+  $("#lineBtn").href = "https://line.me/R/msg/text/?" + encodeURIComponent(text);
+  $("#copyBtn").onclick = async () => { try { await navigator.clipboard.writeText(text); $("#copyBtn").textContent = "コピーしました"; } catch (_) { prompt("コピーしてください", text); } };
+  $("#copyBtn").textContent = "メッセージごとコピー";
+  $("#doneBox").classList.remove("hide"); $("#doneBox").scrollIntoView({ behavior: "smooth" });
+};
+</script>
+</body></html>

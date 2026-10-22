@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>コンサルのふりかえり</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body><div class="wrap">
+<div id="loading" class="lead">読みこみ中…</div>
+<form id="f" class="hide">
+  <h1 id="ttl">今日のふりかえり</h1>
+  <p class="lead" id="sub"></p>
+  <p class="hint hide" id="already">このアンケートはもう一度送られています。もう一度答えると、新しい答えとして残ります。</p>
+
+  <div class="q hide" id="prevBox">
+    <b>前回「<span id="prevTodo"></span>」をやると書いてくれました。やれましたか？<span class="req">必須</span></b>
+    <div class="chips">
+      <label><input type="radio" name="prev" value="できた">できた</label>
+      <label><input type="radio" name="prev" value="少しできた">少しできた</label>
+      <label><input type="radio" name="prev" value="まだ">まだ</label>
+    </div>
+    <input type="text" name="prevNote" placeholder="ひとこと（どうだったか・やれなかった理由など）" style="margin-top:8px">
+  </div>
+
+  <div class="q">
+    <b>今日やったところ、それぞれどうでしたか？<span class="req">必須</span></b>
+    <p class="hint">「わかった度」と「自分でやれそう度」を5段階で。</p>
+    <div id="secs"></div>
+  </div>
+
+  <div class="q">
+    <b>今日いちばんの気づきは？<span class="req">必須</span></b>
+    <textarea name="insight" required placeholder="例：質問したあと5秒待つと、スタッフが自分から話してくれる"></textarea>
+  </div>
+  <div class="q">
+    <b>次回までにやること（誰に・何を・いつまで）<span class="req">必須</span></b>
+    <textarea name="todo" required placeholder="例：店長に、1行コンセプトを、金曜の朝礼で伝える"></textarea>
+  </div>
+  <div class="q">
+    <b>今の自分の仕事に、どのくらい自信がありますか？<span class="req">必須</span></b>
+    <div class="scale" id="conf"></div>
+    <div class="ends"><span>0 まったくない</span><span>10 とてもある</span></div>
+  </div>
+  <div class="q">
+    <b>今日のコンサルの満足度<span class="req">必須</span></b>
+    <div class="scale" id="sat"></div>
+    <div class="ends"><span>1 いまひとつ</span><span>5 とても満足</span></div>
+  </div>
+  <div class="q">
+    <b>三浦さんに聞きたいこと・不安なこと<span class="opt">任意</span></b>
+    <textarea name="ask"></textarea>
+  </div>
+  <button type="submit" id="send">送る</button>
+  <div class="msg" id="msg"></div>
+</form>
+<div id="thanks" class="hide" style="text-align:center;padding:40px 10px">
+  <h2>ありがとうございました！</h2>
+  <p>今日もお楽しみ様でした。次回までの一歩、応援しています。</p>
+</div>
+<footer>ありがとうグループ 個別コンサル</footer>
+</div>
+<script src="common.js"></script>
+<script>
+const sid = new URLSearchParams(location.search).get("s") || "";
+const scale = (name, from, to) => Array.from({ length: to - from + 1 }, (_, i) => `<label><input type="radio" name="${name}" value="${from + i}">${from + i}</label>`).join("");
+let S = null;
+(async () => {
+  try {
+    const j = await apiGet({ a: "session", s: sid });
+    if (!j.ok) throw new Error("リンクが見つかりませんでした。三浦さんに新しいリンクをもらってください。");
+    S = j;
+    $("#ttl").textContent = `${j.name}、今日のふりかえり`;
+    $("#sub").textContent = `${md(j.date)}　${j.title}（${j.range}）`;
+    if (j.done) $("#already").classList.remove("hide");
+    if (j.prevTodo) { $("#prevTodo").textContent = j.prevTodo; $("#prevBox").classList.remove("hide"); }
+    $("#secs").innerHTML = j.list.map((t, i) => `<div class="sec"><p>${esc(t)}</p>
+      <small>わかった度（1 むずかしかった → 5 よくわかった）</small><div class="scale">${scale("u" + i, 1, 5)}</div>
+      <small>自分でやれそう度（1 まだ自信ない → 5 すぐやれる）</small><div class="scale">${scale("c" + i, 1, 5)}</div></div>`).join("");
+    $("#conf").innerHTML = scale("conf", 0, 10); $("#sat").innerHTML = scale("sat", 1, 5);
+    $("#loading").classList.add("hide"); $("#f").classList.remove("hide");
+  } catch (e) { $("#loading").textContent = e.message; }
+})();
+$("#f").onsubmit = async ev => {
+  ev.preventDefault();
+  const fd = new FormData($("#f")), v = k => (fd.get(k) || "").toString().trim();
+  const items = S.list.map((t, i) => ({ t, u: v("u" + i), c: v("c" + i) }));
+  const miss = [];
+  if (S.prevTodo && !v("prev")) miss.push("前回の宿題");
+  if (items.some(x => !x.u || !x.c)) miss.push("今日やったところの5段階");
+  if (!v("insight")) miss.push("気づき"); if (!v("todo")) miss.push("次回までにやること");
+  if (v("conf") === "") miss.push("自信"); if (!v("sat")) miss.push("満足度");
+  if (miss.length) { $("#msg").className = "msg ng"; $("#msg").textContent = "まだのところがあります：" + miss.join("・"); return; }
+  $("#send").disabled = true; $("#msg").className = "msg"; $("#msg").textContent = "送っています…";
+  try {
+    const j = await apiPost({ type: "answer", sid, items, prev: v("prev"), prevNote: v("prevNote"), insight: v("insight"), todo: v("todo"), conf: v("conf"), sat: v("sat"), ask: v("ask"), ua: navigator.userAgent });
+    if (!j.ok) throw new Error(j.error);
+    $("#f").classList.add("hide"); $("#thanks").classList.remove("hide"); scrollTo(0, 0);
+  } catch (e) { $("#send").disabled = false; $("#msg").className = "msg ng"; $("#msg").textContent = "送れませんでした。電波の良いところでもう一度押してください。"; }
+};
+</script>
+</body></html>
