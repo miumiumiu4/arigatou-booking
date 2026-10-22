@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>はじめのシート</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body><div class="wrap">
+<div id="loading" class="lead">読みこみ中…</div>
+<form id="f" class="hide">
+  <h1 id="ttl">はじめのシート</h1>
+  <p class="lead">これからの成長を記録する「スタート地点」です。10分ほどで終わります。</p>
+  <p class="hint hide" id="already">このシートはもう送られています。もう一度送ると、新しい答えとして残ります。</p>
+
+  <div class="q hide" id="goalBox">
+    <b>一緒に決めたゴールの階段</b>
+    <p class="hint">コースが終わるときに、0の段（目標達成）に届くことを目指します。</p>
+    <div id="goals"></div>
+  </div>
+
+  <div class="q">
+    <b>今のあなたは？（スタート地点）<span class="req">必須</span></b>
+    <p class="hint">0＝とても悪い、10＝とても良い</p>
+    <div id="A"></div>
+  </div>
+  <div class="q">
+    <b>人からよく褒められることは？<span class="req">必須</span></b>
+    <input type="text" name="s1">
+    <div class="sub-q"><span>時間を忘れてできることは？<span class="req">必須</span></span><input type="text" name="s2"></div>
+  </div>
+  <div class="q">
+    <b>本当は変わりたいこと<span class="req">必須</span></b>
+    <p class="hint">「本当は〇〇したい。でも〇〇だから、まだできていない」の形で書いてみてください。</p>
+    <input type="text" name="want" placeholder="本当は〇〇したい">
+    <div class="sub-q"><span>でも、何が止めていますか？</span><input type="text" name="block" placeholder="でも〇〇だから、まだできていない"></div>
+  </div>
+  <div class="q">
+    <b>記録の使い方について<span class="req">必須</span></b>
+    <p style="margin:0 0 8px;font-size:.95rem">コンサルの録画と書き起こしを、あなたの成長の記録（ふりかえりアンケートと成長レポート）づくりに使います。記録はあなたの成長のためだけに使い、ほかの受講者には見せません。</p>
+    <div class="chips"><label><input type="checkbox" name="agree" value="1">同意する</label></div>
+  </div>
+  <button type="submit" id="send">送る</button>
+  <div class="msg" id="msg"></div>
+</form>
+<div id="thanks" class="hide" style="text-align:center;padding:40px 10px">
+  <h2>ありがとうございました！</h2>
+  <p>ここがスタート地点です。一緒に一段ずつ上がっていきましょう。</p>
+</div>
+<footer>ありがとうグループ 個別コンサル</footer>
+</div>
+<script src="common.js"></script>
+<script>
+const t = new URLSearchParams(location.search).get("t") || "";
+const A_ITEMS = [["A1", "仕事・事業の手応え"], ["A2", "自分自身の心の状態"], ["A3", "人間関係（家族・スタッフ・仲間）"], ["A4", "全体として"]];
+(async () => {
+  try {
+    const j = await apiGet({ a: "first", t });
+    if (!j.ok) throw new Error("リンクが見つかりませんでした。新しいリンクをもらってください。");
+    $("#ttl").textContent = `${j.name}のはじめのシート`;
+    if (j.done) $("#already").classList.remove("hide");
+    if (j.goals.length) {
+      $("#goals").innerHTML = j.goals.map(g => `<div class="sub-q"><span><b>${esc(g["ゴール"])}</b></span>
+        <div class="hint" style="margin:0">${["+2", "+1", "0", "-1", "-2"].map(k => `${k}：${esc(g[k])}`).join("<br>")}</div></div>`).join("");
+      $("#goalBox").classList.remove("hide");
+    }
+    $("#A").innerHTML = A_ITEMS.map(([k, l]) => `<div class="sub-q"><span>${esc(l)}</span><div class="scale s11">${scale(k, 0, 10)}</div></div>`).join("");
+    $("#loading").classList.add("hide"); $("#f").classList.remove("hide");
+  } catch (e) { $("#loading").textContent = e.message; }
+})();
+$("#f").onsubmit = async ev => {
+  ev.preventDefault();
+  const fd = new FormData($("#f")), v = k => (fd.get(k) || "").toString().trim(), a = {};
+  A_ITEMS.forEach(([k]) => a[k] = v(k)); ["s1", "s2", "want", "block"].forEach(k => a[k] = v(k)); a.agree = !!v("agree");
+  const miss = [];
+  if (A_ITEMS.some(([k]) => a[k] === "")) miss.push("スタート地点");
+  if (!a.s1 || !a.s2) miss.push("強み"); if (!a.want) miss.push("変わりたいこと"); if (!a.agree) miss.push("記録の使い方への同意");
+  if (miss.length) { $("#msg").className = "msg ng"; $("#msg").textContent = "まだのところがあります：" + miss.join("・"); return; }
+  $("#send").disabled = true; $("#msg").className = "msg"; $("#msg").textContent = "送っています…";
+  try {
+    const j = await apiPost({ type: "first", t, a });
+    if (!j.ok) throw new Error(j.error);
+    $("#f").classList.add("hide"); $("#thanks").classList.remove("hide"); scrollTo(0, 0);
+  } catch (e) { $("#send").disabled = false; $("#msg").className = "msg ng"; $("#msg").textContent = "送れませんでした。もう一度押してください。"; }
+};
+</script>
+</body></html>

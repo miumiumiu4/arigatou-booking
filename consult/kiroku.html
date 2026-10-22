@@ -5,18 +5,16 @@
 <title>コンサル 成長の記録</title>
 <link rel="stylesheet" href="style.css">
 <style>
-.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}
 .tile{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
-.tile b{display:block;font-size:1.6rem;line-height:1.2}.tile span{font-size:.78rem;color:var(--muted)}
-.chart{position:relative}.chart svg{width:100%;height:auto;display:block}
-.legend{display:flex;gap:14px;font-size:.85rem;color:var(--muted);margin:2px 0 6px}
-.legend i{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px}
-.tip{position:absolute;pointer-events:none;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.82rem;box-shadow:0 2px 8px #0002;white-space:nowrap}
+.tile b{display:block;font-size:1.5rem;line-height:1.25}.tile span{font-size:.78rem;color:var(--muted)}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin:10px 0}
 .card h3{margin:0;font-size:1rem}.card .meta{color:var(--muted);font-size:.82rem}
 .card dl{margin:8px 0 0}.card dt{font-size:.78rem;color:var(--muted);margin-top:6px}.card dd{margin:0;white-space:pre-wrap}
-.bars{font-size:.82rem;margin-top:6px}.bars div{display:flex;gap:6px;align-items:center}.bars em{font-style:normal;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.bars s{text-decoration:none;color:var(--muted);width:5.5em;text-align:right}
+.todo{display:flex;gap:8px;align-items:center;justify-content:space-between;border-top:1px dashed var(--line);padding:8px 0;font-size:.92rem}.todo:first-of-type{border-top:0}
+.todo .btn,.todo button{width:auto;margin:0;padding:6px 12px;font-size:.85rem}
+.sig{font-weight:700}.sig.赤{color:var(--ng)}.sig.黄{color:#b8860b}.sig.緑{color:var(--ok)}
+.karte{white-space:pre-wrap;font-size:.93rem;margin-top:6px}
 table{width:100%;border-collapse:collapse;font-size:.85rem}td,th{border-bottom:1px solid var(--line);padding:4px;text-align:center}
 </style>
 </head>
@@ -31,22 +29,27 @@ table{width:100%;border-collapse:collapse;font-size:.85rem}td,th{border-bottom:1
 <div id="main" class="hide">
   <div class="chips" id="people"></div>
   <div id="body"></div>
-  <p style="text-align:center"><a href="nyuryoku.html">← アンケートを作る</a></p>
+  <p style="text-align:center"><a href="nyuryoku.html">← コンサルの記録をつける</a></p>
 </div>
 <footer>ありがとうグループ 個別コンサル（三浦さん専用）</footer>
 </div>
 <script src="common.js"></script>
 <script>
-let R = null, cur = "";
+let R = null, KEY = "";
 $("#key").value = store("consultKey");
+const SIG = { "赤": "🔴 要フォロー", "黄": "🟡 様子を見る", "緑": "🟢 順調" };
+const A_SER = [["A1", "var(--c1)", "仕事・事業"], ["A2", "var(--c2)", "心の状態"], ["A3", "var(--c3)", "人間関係"], ["A4", "var(--c4)", "全体"]];
+async function load() {
+  const j = await apiGet({ a: "records", key: KEY });
+  if (!j.ok) throw new Error(j.error === "key" ? "合言葉がちがいます" : j.error);
+  R = j;
+}
 async function open_() {
-  $("#keyMsg").className = "msg"; $("#keyMsg").textContent = "読みこみ中…";
+  KEY = $("#key").value.trim(); $("#keyMsg").className = "msg"; $("#keyMsg").textContent = "読みこみ中…";
   try {
-    const j = await apiGet({ a: "records", key: $("#key").value.trim() });
-    if (!j.ok) throw new Error(j.error === "key" ? "合言葉がちがいます" : j.error);
-    store("consultKey", $("#key").value.trim()); R = j;
+    await load(); store("consultKey", KEY);
     $("#keyBox").classList.add("hide"); $("#main").classList.remove("hide");
-    $("#people").innerHTML = j.people.map(p => `<label><input type="radio" name="p" value="${esc(p.id)}">${esc(p["お名前"])}</label>`).join("");
+    $("#people").innerHTML = R.people.map(p => `<label><input type="radio" name="p" value="${esc(p.id)}">${esc(p["お名前"])}</label>`).join("") + `<label><input type="radio" name="p" value="__coach">公嗣さん（する側）</label>`;
     document.querySelectorAll("input[name=p]").forEach(r => r.onchange = () => draw(r.value));
     const first = document.querySelector("input[name=p]"); if (first) { first.checked = true; draw(first.value); }
   } catch (e) { $("#keyMsg").className = "msg ng"; $("#keyMsg").textContent = e.message; }
@@ -54,66 +57,90 @@ async function open_() {
 $("#keyBtn").onclick = open_;
 if ($("#key").value) open_();
 
-const num = v => (v === "" || v == null || isNaN(+v)) ? null : +v;
-function draw(pid) {
-  cur = pid;
-  const ans = R.answers.filter(a => a["人id"] === pid).sort((x, y) => (x["実施日"] + x["受付日時"]).localeCompare(y["実施日"] + y["受付日時"]));
-  // 同じ回に2回答えたときは新しいほうだけ
-  const last = {}; ans.forEach(a => last[a.sid] = a); const A = Object.values(last).sort((x, y) => x["実施日"].localeCompare(y["実施日"]));
-  const ses = R.sessions.filter(s => s.pid === pid);
-  const wait = ses.filter(s => !s.answered);
-  const prevs = A.filter(a => a["前回の宿題"]);
-  const doneRate = prevs.length ? Math.round(prevs.filter(a => a["前回の宿題"] === "できた").length / prevs.length * 100) + "%" : "—";
-  const lastConf = A.length ? num(A[A.length - 1]["自信(0-10)"]) : null, firstConf = A.length ? num(A[0]["自信(0-10)"]) : null;
+const lastBySid = list => { const o = {}; list.forEach(a => o[a.sid] = a); return Object.values(o); };
+const lineText = (name, link) => "https://line.me/R/msg/text/?" + encodeURIComponent(`${name}、今日はお楽しみ様でした！\n今日のふりかえりアンケートです（3分ほど）。\n${link}\n\n愛してるぜ🤟`);
+function draw(pid) { if (pid === "__coach") return drawCoach(); drawPerson(pid); }
+
+function drawPerson(pid) {
+  const P = R.people.find(p => p.id === pid);
+  const A = lastBySid(R.answers.filter(a => a["人id"] === pid)).sort((x, y) => (+x["回数"] || 0) - (+y["回数"] || 0) || String(x["実施日"]).localeCompare(y["実施日"]));
+  const ses = R.sessions.filter(s => s["人id"] === pid).sort((x, y) => String(y["実施日"]).localeCompare(x["実施日"]));
+  const kar = R.karte.filter(k => k["人id"] === pid).sort((x, y) => String(y["実施日"]).localeCompare(x["実施日"]));
+  const reps = R.reports.filter(r => r["人id"] === pid);
+  const first = R.first.filter(f => f["人id"] === pid).pop();
+  const answered = new Set(A.map(a => a.sid)), coached = new Set(R.coach.map(c => c.sid));
+  const vows = A.filter(a => a["B結果"]);
+  const rate = vows.length ? Math.round(vows.reduce((s, a) => s + ({ "やれた": 1, "一部": .5 }[a["B結果"]] || 0), 0) / vows.length * 100) + "%" : "—";
+  const nowA = A.length ? num(A[A.length - 1].A4) : null, startA = first ? num(first.A4) : (A.length ? num(A[0].A4) : null);
+  const sig = kar[0] ? kar[0]["信号"] : "";
   let h = `<div class="tiles">
-    <div class="tile"><b>${A.length}</b><span>回答した回</span></div>
-    <div class="tile"><b>${lastConf == null ? "—" : lastConf}</b><span>いまの自信（0-10）${firstConf != null && A.length > 1 ? `<br>最初は ${firstConf}` : ""}</span></div>
-    <div class="tile"><b>${doneRate}</b><span>前回の宿題「できた」</span></div></div>`;
-  if (wait.length) h += `<div class="card"><h3>まだ答えていない回</h3>${wait.map(s => `<div class="meta">${md(s.date)} ${esc(s.range)}　<a href="a.html?s=${esc(s.sid)}" target="_blank">リンク</a></div>`).join("")}</div>`;
-  if (!A.length) { $("#body").innerHTML = h + `<p class="lead">まだ回答がありません。コンサルのあとに「アンケートを作る」からリンクを送ってください。</p>`; return; }
-  h += `<h2>回ごとの変化</h2>
-    <div class="legend"><span><i style="background:var(--or)"></i>わかった度</span><span><i style="background:var(--bl)"></i>やれそう度</span></div>
-    <div class="chart" id="c1"></div>
-    <h2>自信（0-10）</h2><div class="chart" id="c2"></div>
-    <details><summary class="hint" style="cursor:pointer">表で見る</summary><table><tr><th>日付</th><th>わかった</th><th>やれそう</th><th>自信</th><th>満足</th><th>宿題</th></tr>
-    ${A.map(a => `<tr><td>${md(a["実施日"])}</td><td>${esc(a["わかった度(平均)"])}</td><td>${esc(a["やれそう度(平均)"])}</td><td>${esc(a["自信(0-10)"])}</td><td>${esc(a["満足度(1-5)"])}</td><td>${esc(a["前回の宿題"] || "—")}</td></tr>`).join("")}</table></details>
-    <h2>ふりかえり（新しい順）</h2>`;
-  h += A.slice().reverse().map(a => {
-    const s = R.sessions.find(x => x.sid === a.sid) || {};
-    let items = []; try { items = JSON.parse(a["見出しごと(JSON)"] || "[]"); } catch (_) {}
-    return `<div class="card"><h3>${md(a["実施日"])}　${esc(s.title || "")}</h3><div class="meta">${esc(a["範囲"])}${s.url ? `　<a href="${esc(s.url)}" target="_blank">台本</a>` : ""}</div>
-      <div class="bars">${items.map(x => `<div><em>${esc(x.t)}</em><s>わかった ${esc(x.u)}</s><s>やれそう ${esc(x.c)}</s></div>`).join("")}</div>
-      <dl>${a["前回の宿題"] ? `<dt>前回の宿題</dt><dd>${esc(a["前回の宿題"])}${a["前回の宿題ひとこと"] ? "　" + esc(a["前回の宿題ひとこと"]) : ""}</dd>` : ""}
-      <dt>気づき</dt><dd>${esc(a["今日の気づき"])}</dd><dt>次回までにやること</dt><dd>${esc(a["次回までにやること"])}</dd>
-      ${a["聞きたいこと"] ? `<dt>聞きたいこと</dt><dd>${esc(a["聞きたいこと"])}</dd>` : ""}
-      <dt>自信・満足度</dt><dd>${esc(a["自信(0-10)"])} / 10　・　${esc(a["満足度(1-5)"])} / 5</dd></dl></div>`;
-  }).join("");
+    <div class="tile"><b>${A.length}</b><span>答えた回</span></div>
+    <div class="tile"><b>${rate}</b><span>前回の約束の実行率</span></div>
+    <div class="tile"><b>${nowA == null ? "—" : nowA}</b><span>いまの「全体」（0〜10）${startA != null ? `<br>はじめは ${startA}` : ""}</span></div>
+    <div class="tile"><b class="sig ${esc(sig)}" style="font-size:1rem;padding:.4em 0">${esc(SIG[sig] || "—")}</b><span>最新のカルテの信号</span></div></div>`;
+  // やること
+  const todos = [];
+  if (!P["同意日"]) todos.push(`<div class="todo"><span>はじめのシートがまだ（書き起こしを使う前に必要）</span><a class="btn sub" href="nyuryoku.html">リンクを作る</a></div>`);
+  ses.forEach(s => {
+    const link = new URL("a.html?s=" + s.sid, location.href).href;
+    if (s["状態"] === "準備完了" && !answered.has(s.sid)) todos.push(`<div class="todo"><span>${md(s["実施日"])} のアンケートを送る</span><a class="btn" target="_blank" rel="noopener" href="${lineText(P["お名前"], link)}">LINEで送る</a></div>`);
+    else if (s["状態"] !== "準備完了") todos.push(`<div class="todo"><span>${md(s["実施日"])} 書き起こしを読んで準備中</span><span class="tag">待ち</span></div>`);
+    if (!coached.has(s.sid)) todos.push(`<div class="todo"><span>${md(s["実施日"])} 公嗣さんの振り返り</span><a class="btn sub" href="coach.html?s=${esc(s.sid)}">つける</a></div>`);
+  });
+  reps.filter(r => r["状態"] !== "承認済み").forEach(r => todos.push(`<div class="todo"><span>第${esc(r["回数"])}回までの成長レポート（下書き）</span><span><a class="btn sub" target="_blank" href="report.html?r=${esc(r.rid)}&preview=1">見る</a> <button data-rid="${esc(r.rid)}">承認</button></span></div>`));
+  reps.filter(r => r["状態"] === "承認済み").forEach(r => {
+    const link = new URL("report.html?r=" + r.rid, location.href).href;
+    todos.push(`<div class="todo"><span>第${esc(r["回数"])}回までの成長レポート（承認ずみ${r["成長を実感(0-10)"] !== "" ? "・実感 " + esc(r["成長を実感(0-10)"]) : ""}）</span><a class="btn sub" target="_blank" rel="noopener" href="https://line.me/R/msg/text/?${encodeURIComponent(`${P["お名前"]}、ここまでの成長レポートができました！\n${link}\n\n愛してるぜ🤟`)}">LINEで送る</a></div>`);
+  });
+  if (todos.length) h += `<div class="card"><h3>やること</h3>${todos.join("")}</div>`;
+  if (A.length) {
+    const rows = (first ? [Object.assign({ "回数": "はじめ" }, first)] : []).concat(A);
+    h += `<h2>現在地の変化（0〜10）</h2>${legend(A_SER)}<div class="chart" id="c1"></div>
+      <h2>今日の時間（4項目の合計、0〜40）</h2><div class="chart" id="c2"></div>
+      <details><summary class="hint" style="cursor:pointer">表で見る</summary><table><tr><th>回</th><th>仕事</th><th>心</th><th>人間関係</th><th>全体</th><th>約束</th><th>時間</th></tr>
+      ${A.map(a => `<tr><td>${esc(a["回数"])}</td><td>${esc(a.A1)}</td><td>${esc(a.A2)}</td><td>${esc(a.A3)}</td><td>${esc(a.A4)}</td><td>${esc(a["B結果"] || "—")}</td><td>${gsum(a) ?? "—"}</td></tr>`).join("")}</table></details>`;
+  } else h += `<p class="lead">まだ回答がありません。</p>`;
+  if (kar.length) h += `<h2>カルテ（新しい順）</h2>` + kar.map(k => `<div class="card"><h3>${md(k["実施日"])}　<span class="sig ${esc(k["信号"])}">${esc(SIG[k["信号"]] || "")}</span></h3><div class="karte">${esc(k["カルテ"])}</div></div>`).join("");
+  if (A.length) h += `<h2>本人のふりかえり（新しい順）</h2>` + A.slice().reverse().map(a => `<div class="card"><h3>第${esc(a["回数"])}回　${md(a["実施日"])}</h3><dl>
+      ${a["B結果"] ? `<dt>前回の約束</dt><dd>${esc(a["B結果"])}（最善 ${esc(a["B最善"])}）</dd>` : ""}
+      <dt>小さな勝ち</dt><dd>${esc(a["C小さな勝ち"])}</dd><dt>気づき</dt><dd>${esc(a["D気づき"])}</dd><dt>次の一歩</dt><dd>${esc(a["D次の一歩"])}</dd>
+      ${a["Eまだ"] ? `<dt>まだできていないこと</dt><dd>${esc(a["Eまだ"])}</dd>` : ""}${a["G要望"] ? `<dt>もっとこうしてほしい</dt><dd>${esc(a["G要望"])}</dd>` : ""}
+      ${a["R変わったこと"] ? `<dt>3回前と比べて</dt><dd>${esc(a["R変わったこと"])}</dd><dt>強みが出た場面</dt><dd>${esc(a["R強みの場面"])}</dd>` : ""}</dl></div>`).join("");
   $("#body").innerHTML = h;
-  line("#c1", A, [["わかった度(平均)", "var(--or)", "わかった度"], ["やれそう度(平均)", "var(--bl)", "やれそう度"]], 1, 5);
-  line("#c2", A, [["自信(0-10)", "var(--or)", "自信"]], 0, 10);
+  if (A.length) {
+    const rows = (first ? [Object.assign({ "回数": "はじめ" }, first)] : []).concat(A);
+    lineChart($("#c1"), rows, A_SER, 0, 10, r => r["回数"] === "はじめ" ? "はじめ" : `第${r["回数"]}回`);
+    lineChart($("#c2"), A, [[gsum, "var(--c2)", "合計"]], 0, 40, r => `第${r["回数"]}回`);
+  }
+  $("#body").querySelectorAll("button[data-rid]").forEach(bt => bt.onclick = async () => {
+    if (!confirm("このレポートを承認しますか？承認すると本人がリンクから見られるようになります。")) return;
+    bt.disabled = true; const j = await apiPost({ type: "approve", key: KEY, rid: bt.dataset.rid });
+    if (j.ok) { await load(); drawPerson(pid); } else bt.disabled = false;
+  });
 }
-// 線グラフ（横＝回、縦＝点数）。点に触れると数字が出る
-function line(sel, A, series, lo, hi) {
-  const W = 380, H = 200, L = 26, Rr = 10, T = 10, B = 26, n = A.length;
-  const x = i => n === 1 ? (L + W - Rr) / 2 : L + (W - L - Rr) * i / (n - 1), y = v => T + (H - T - B) * (1 - (v - lo) / (hi - lo));
-  let g = "";
-  for (let v = lo; v <= hi; v += hi - lo > 5 ? 2 : 1) g += `<line x1="${L}" x2="${W - Rr}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end" font-size="12" fill="var(--muted)">${v}</text>`;
-  const step = Math.ceil(n / 5);
-  A.forEach((a, i) => { if (i % step === 0 || i === n - 1) g += `<text x="${x(i)}" y="${H - 8}" text-anchor="${n > 1 && i === n - 1 ? "end" : n > 1 && i === 0 ? "start" : "middle"}" font-size="12" fill="var(--muted)">${md(a["実施日"])}</text>`; });
-  series.forEach(([k, col]) => {
-    const pts = A.map((a, i) => [i, num(a[k])]).filter(p => p[1] != null);
-    g += `<polyline fill="none" stroke="${col}" stroke-width="2" stroke-linejoin="round" points="${pts.map(p => x(p[0]) + "," + y(p[1])).join(" ")}"/>`;
-    g += pts.map(p => `<circle cx="${x(p[0])}" cy="${y(p[1])}" r="4.5" fill="${col}" stroke="var(--bg)" stroke-width="2"/>`).join("");
-  });
-  A.forEach((a, i) => g += `<rect x="${x(i) - 16}" y="0" width="32" height="${H}" fill="transparent" data-i="${i}"/>`);
-  const el = $(sel); el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="回ごとの点数">${g}</svg><div class="tip hide"></div>`;
-  const tip = el.querySelector(".tip");
-  el.querySelectorAll("rect").forEach(r => {
-    const show = () => { const a = A[+r.dataset.i]; tip.innerHTML = `<b>${md(a["実施日"])}</b><br>` + series.map(([k, , lab]) => `${lab}: ${esc(a[k] === "" ? "—" : a[k])}`).join("<br>");
-      const bx = el.getBoundingClientRect(), rb = r.getBoundingClientRect(); tip.classList.remove("hide");
-      tip.style.left = Math.min(Math.max(0, rb.left - bx.left + rb.width / 2 - tip.offsetWidth / 2), bx.width - tip.offsetWidth) + "px"; tip.style.top = "0px"; };
-    r.onmouseenter = show; r.onclick = show; r.onmouseleave = () => tip.classList.add("hide");
-  });
+function gsum(a) { const v = ["G1", "G2", "G3", "G4"].map(k => num(a[k])); return v.some(x => x == null) ? null : v.reduce((s, x) => s + x, 0); }
+
+function drawCoach() {
+  const C = lastBySid(R.coach).sort((x, y) => String(x["実施日"]).localeCompare(y["実施日"]));
+  const ans = {}; lastBySid(R.answers).forEach(a => ans[a.sid] = a);
+  const ex = {}; R.extracts.forEach(e => { try { ex[e.sid] = JSON.parse(e["講師(JSON)"] || "{}"); } catch (_) {} });
+  const rows = C.map(c => Object.assign({}, c, { G4: ans[c.sid] ? ans[c.sid].G4 : "", talk: (ex[c.sid] || {})["話す割合"], qs: (ex[c.sid] || {})["質問の数"] }));
+  const K_SER = [["K1", "var(--c1)", "聞けた"], ["K2", "var(--c2)", "扱いたいこと"], ["K3", "var(--c3)", "自分で決めた"], ["K4", "var(--c4)", "準備・時間"]];
+  let h = `<div class="tiles"><div class="tile"><b>${C.length}</b><span>振り返りをつけた回</span></div>
+    <div class="tile"><b>${C.length ? esc(C[C.length - 1]["次に変えること"]) : "—"}</b><span>いま意識していること</span></div></div>`;
+  if (!C.length) { $("#body").innerHTML = h + `<p class="lead">まだ記録がありません。コンサルのあと「記録をつくる」→「公嗣さんの振り返り」から付けられます。</p>`; return; }
+  h += `<h2>自分の手ごたえ（0〜10）</h2>${legend(K_SER)}<div class="chart" id="k1"></div>
+    <h2>見立てのずれ（相手の「全体」：予想と実際）</h2>${legend([["相手の現在地予想", "var(--c1)", "予想"], ["G4", "var(--c2)", "実際"]])}<div class="chart" id="k2"></div>`;
+  if (rows.some(r => r.talk != null && r.talk !== "")) h += `<h2>書き起こしから：公嗣さんが話していた割合（%）</h2><div class="chart" id="k3"></div>`;
+  h += `<h2>振り返り（新しい順）</h2>` + rows.slice().reverse().map(c => `<div class="card"><h3>${md(c["実施日"])}　${esc(c["お名前"])}</h3><dl>
+    <dt>次に変えること</dt><dd>${esc(c["次に変えること"])}</dd>${c["効いた問い"] ? `<dt>効いた問い</dt><dd>${esc(c["効いた問い"])}</dd>` : ""}
+    ${c.qs != null && c.qs !== "" ? `<dt>書き起こしから</dt><dd>話した割合 ${esc(c.talk)}%・質問 ${esc(c.qs)}回${(ex[c.sid] || {})["ひとこと"] ? "\n" + esc(ex[c.sid]["ひとこと"]) : ""}</dd>` : ""}
+    ${c["ひとこと"] ? `<dt>ひとこと</dt><dd>${esc(c["ひとこと"])}</dd>` : ""}</dl></div>`).join("");
+  $("#body").innerHTML = h;
+  const xl = r => md(r["実施日"]);
+  lineChart($("#k1"), rows, K_SER, 0, 10, xl);
+  lineChart($("#k2"), rows, [["相手の現在地予想", "var(--c1)", "予想"], ["G4", "var(--c2)", "実際"]], 0, 10, xl);
+  if ($("#k3")) lineChart($("#k3"), rows, [["talk", "var(--c1)", "話した割合"]], 0, 100, xl);
 }
 </script>
 </body></html>

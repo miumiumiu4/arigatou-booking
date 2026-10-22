@@ -1,6 +1,6 @@
-:root{--bg:#fff8f2;--card:#fff;--ink:#33241c;--muted:#7d6d61;--line:#f0e2d6;--or:#e8590c;--bl:#1f6fb4;--soft:#fdeee2;--ok:#1f8a70;--ng:#b4532a}
-@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#1e1814;--card:#2a221d;--ink:#f3e9e1;--muted:#b8a89b;--line:#43372f;--or:#f07a3a;--bl:#5a9bd8;--soft:#3a2a20;--ok:#4cc29f;--ng:#e58a63}}
-:root[data-theme=dark]{--bg:#1e1814;--card:#2a221d;--ink:#f3e9e1;--muted:#b8a89b;--line:#43372f;--or:#f07a3a;--bl:#5a9bd8;--soft:#3a2a20;--ok:#4cc29f;--ng:#e58a63}
+:root{--c1:#e8590c;--c2:#1f6fb4;--c3:#2f9e5a;--c4:#9b59c9;--bg:#fff8f2;--card:#fff;--ink:#33241c;--muted:#7d6d61;--line:#f0e2d6;--or:#e8590c;--bl:#1f6fb4;--soft:#fdeee2;--ok:#1f8a70;--ng:#b4532a}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--c2:#3a86d0;--bg:#1e1814;--card:#2a221d;--ink:#f3e9e1;--muted:#b8a89b;--line:#43372f;--or:#f07a3a;--bl:#5a9bd8;--soft:#3a2a20;--ok:#4cc29f;--ng:#e58a63}}
+:root[data-theme=dark]{--c2:#3a86d0;--bg:#1e1814;--card:#2a221d;--ink:#f3e9e1;--muted:#b8a89b;--line:#43372f;--or:#f07a3a;--bl:#5a9bd8;--soft:#3a2a20;--ok:#4cc29f;--ng:#e58a63}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;line-height:1.8;font-size:17px}
 .wrap{max-width:680px;margin:0 auto;padding:20px 16px 60px}
@@ -40,3 +40,13 @@ button:disabled{opacity:.55}
 .row{display:flex;gap:8px}.row>*{flex:1}
 footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:30px}
 .hide{display:none!important}
+.chart{position:relative}.chart svg{width:100%;height:auto;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.85rem;color:var(--muted);margin:2px 0 6px}
+.legend i{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px}
+.tip{position:absolute;pointer-events:none;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.82rem;box-shadow:0 2px 8px #0002;white-space:nowrap;z-index:2}
+.scale.s11 label{font-size:.85rem;padding:8px 0}
+.chips.ladder{flex-direction:column}.ladder label{display:block;text-align:left;padding:8px 12px}
+.ladder label b{display:inline-block;min-width:2.4em;color:var(--muted)}
+.recap{background:var(--soft);border-radius:14px;padding:14px 16px;margin:14px 0}
+.recap p{margin:.3em 0;white-space:pre-wrap}
+.sub-q{margin-top:10px}.sub-q>span{display:block;font-size:.92rem;margin-bottom:4px}

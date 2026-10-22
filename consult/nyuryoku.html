@@ -2,12 +2,12 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>コンサル アンケート作成</title>
+<title>コンサルの記録をつける</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body><div class="wrap">
-<h1>コンサルのあとのアンケートを作る</h1>
-<p class="lead">人を選んで、台本の「どこからどこまでやったか」をタップすると、その範囲のアンケートのリンクができます。</p>
+<h1>コンサルの記録をつける</h1>
+<p class="lead">コンサルが終わったら、人と台本の「どこからどこまでやったか」を選んでください。その日の書き起こしを読んでから、その人専用のふりかえりアンケートを用意して、メールでお知らせします。</p>
 
 <div class="q" id="keyBox">
   <b>合言葉</b>
@@ -21,45 +21,72 @@
     <b>① だれのコンサル？</b>
     <div class="chips" id="people"></div>
     <details style="margin-top:10px"><summary class="hint" style="cursor:pointer">＋ 新しい人を名簿に足す</summary>
-      <div class="row" style="margin-top:8px"><input type="text" id="newName" placeholder="お名前（例: 田岡）"><button class="mini" id="addBtn">足す</button></div>
+      <div style="margin-top:8px"><input type="text" id="newName" placeholder="お名前（例: 田岡）"></div>
+      <div class="chips" style="margin-top:6px">
+        <label><input type="radio" name="newCourse" value="個別" checked>個別</label><label><input type="radio" name="newCourse" value="グルコン">グルコン</label>
+        <label><input type="radio" name="newKind" value="加盟" checked>加盟</label><label><input type="radio" name="newKind" value="外部">外部</label></div>
+      <button class="mini" id="addBtn" style="margin-top:8px">足す</button>
       <div class="msg" id="addMsg"></div>
     </details>
   </div>
 
+  <div class="q hide" id="personBox">
+    <b id="pName"></b>
+    <p class="hint" id="pState"></p>
+    <div class="row"><button class="sub mini" id="firstBtn" type="button">はじめのシートのリンク</button><button class="sub mini" id="goalBtn" type="button">ゴールの階段を決める</button></div>
+    <div class="hide" id="firstOut" style="margin-top:10px">
+      <div class="linkbox" id="firstLink"></div>
+      <div class="row"><button class="mini" id="firstCopy" type="button">コピー</button><a class="btn sub mini" id="firstLine" target="_blank" rel="noopener" style="margin:0;padding:6px">LINEで送る</a></div>
+    </div>
+    <div class="hide" id="goalEdit" style="margin-top:10px">
+      <p class="hint">相手と一緒に決めます（1〜3個）。-2＝今の状態、0＝目標達成、+2＝大きく超えた。</p>
+      <div id="goalRows"></div>
+      <button class="mini" id="goalSave" type="button">ゴールを保存</button>
+      <div class="msg" id="goalMsg"></div>
+    </div>
+  </div>
+
   <div class="q hide" id="docBox">
     <b>② 今日の台本は？</b>
-    <p class="hint">カレンダーの予定に貼ってある台本を探しました。</p>
+    <p class="hint">カレンダーの予定に貼ってある台本を探しました。台本なしで進めた日は「台本なし」を選んでください。</p>
     <div class="pick" id="cands"></div>
     <details style="margin-top:10px"><summary class="hint" style="cursor:pointer">見つからないときは台本のリンクを貼る</summary>
-      <div class="row" style="margin-top:8px"><input type="url" id="docUrl" placeholder="https://docs.google.com/document/d/..."><button class="mini" id="docBtn">読む</button></div>
+      <div class="row" style="margin-top:8px"><input type="url" id="docUrl" placeholder="https://docs.google.com/document/d/..."><button class="mini" id="docBtn" type="button">読む</button></div>
     </details>
     <div class="msg" id="docMsg"></div>
   </div>
 
   <div class="q hide" id="rangeBox">
     <b>③ どこからどこまでやった？</b>
-    <p class="hint">「はじめ」と「おわり」の2つをタップ（1つだけなら同じところを2回）。</p>
+    <p class="hint">「はじめ」と「おわり」の2つをタップ（1つだけなら同じところを2回）。途中で終わった見出しも選んでOKです。</p>
     <div class="pick" id="heads"></div>
+  </div>
+
+  <div class="q hide" id="moreBox">
+    <b>④ 書き起こし・メモ<span class="opt">任意</span></b>
+    <p class="hint">Zoomの書き起こしは自動で拾うので、ふだんは空のままでOK。Zoom以外で話した日や、補足したいメモがあれば貼るか、ファイル（.txt / .vtt）を選んでください。</p>
+    <textarea id="transcript" placeholder="ここに貼る"></textarea>
+    <input type="file" id="file" accept=".txt,.vtt,.md,.srt,text/plain" style="margin-top:6px">
     <div style="margin-top:10px"><b style="font-size:.95rem">実施日</b><input type="date" id="date"></div>
-    <button id="makeBtn" disabled>アンケートを作る</button>
+    <button id="makeBtn" type="button">記録をつくる</button>
     <div class="msg" id="makeMsg"></div>
   </div>
 
   <div class="q hide" id="doneBox">
-    <b>できました。このリンクを送ってください</b>
-    <div class="linkbox" id="link"></div>
-    <div class="row"><button id="copyBtn">コピー</button><a class="btn sub" id="lineBtn" target="_blank" rel="noopener">LINEで送る</a></div>
-    <a class="btn sub" id="openBtn" target="_blank" rel="noopener">中身を見る</a>
+    <b>記録をつくりました</b>
+    <p id="doneText" style="margin:.3em 0"></p>
+    <a class="btn" id="coachBtn">公嗣さんの振り返り（3分）をつける</a>
   </div>
   <p style="text-align:center"><a href="kiroku.html">成長の記録を見る →</a></p>
 </div>
-<footer>ありがとうグループ 個別コンサル</footer>
+<footer>ありがとうグループ 個別コンサル（三浦さん専用）</footer>
 </div>
 <script src="common.js"></script>
 <script>
 let KEY = "", people = [], P = null, D = null, list = [], a = -1, b = -1;
 $("#key").value = store("consultKey");
 $("#date").value = new Date(Date.now() + 9 * 36e5).toISOString().slice(0, 10);
+const show = (sel, on = true) => $(sel).classList.toggle("hide", !on);
 
 async function open_() {
   KEY = $("#key").value.trim(); $("#keyMsg").className = "msg"; $("#keyMsg").textContent = "読みこみ中…";
@@ -67,7 +94,7 @@ async function open_() {
     const j = await apiGet({ a: "people", key: KEY });
     if (!j.ok) throw new Error(j.error === "key" ? "合言葉がちがいます" : j.error);
     store("consultKey", KEY); people = j.people; drawPeople();
-    $("#keyBox").classList.add("hide"); $("#main").classList.remove("hide");
+    show("#keyBox", false); show("#main");
   } catch (e) { $("#keyMsg").className = "msg ng"; $("#keyMsg").textContent = e.message; }
 }
 $("#keyBtn").onclick = open_;
@@ -80,62 +107,91 @@ function drawPeople() {
 $("#addBtn").onclick = async () => {
   const name = $("#newName").value.trim(); if (!name) return;
   $("#addMsg").textContent = "登録中…";
-  const j = await apiPost({ type: "person", key: KEY, name });
+  const v = n => (document.querySelector(`input[name=${n}]:checked`) || {}).value;
+  const j = await apiPost({ type: "person", key: KEY, name, course: v("newCourse"), kind: v("newKind") });
   if (!j.ok) { $("#addMsg").className = "msg ng"; $("#addMsg").textContent = "登録できませんでした（" + j.error + "）"; return; }
   $("#newName").value = ""; $("#addMsg").className = "msg ok"; $("#addMsg").textContent = "名簿に足しました";
   people = (await apiGet({ a: "people", key: KEY })).people; drawPeople();
 };
 
 async function pickPerson(id) {
-  P = people.find(p => p.id === id); D = null;
-  ["#rangeBox", "#doneBox"].forEach(s => $(s).classList.add("hide"));
-  $("#docBox").classList.remove("hide"); $("#cands").innerHTML = ""; $("#docMsg").className = "msg"; $("#docMsg").textContent = "カレンダーを探しています…";
+  P = people.find(p => p.id === id); D = null; list = [];
+  ["#rangeBox", "#moreBox", "#doneBox", "#firstOut", "#goalEdit"].forEach(s => show(s, false));
+  $("#pName").textContent = P["お名前"] + "（" + (P["コース"] || "個別") + "）";
+  $("#pState").textContent = P["同意日"] ? "はじめのシート：記入ずみ（書き起こしを使った記録ができます）" : "はじめのシートがまだです。まだの間は、書き起こしは読まずにアンケートだけ用意します。";
+  show("#personBox"); show("#docBox"); $("#cands").innerHTML = ""; $("#docMsg").className = "msg"; $("#docMsg").textContent = "カレンダーを探しています…";
   const j = await apiGet({ a: "cands", key: KEY, pid: id });
-  const c = (j.cands || []);
-  $("#docMsg").textContent = c.length ? "" : "最近3週間の予定に台本が見つかりませんでした。下にリンクを貼ってください。";
-  $("#cands").innerHTML = c.map(ev => ev.docs.map(d => `<button data-id="${esc(d.id)}" data-date="${esc(ev.date)}">${esc(md(ev.date))}　${esc(d.name)}</button>`).join("")).join("");
+  const c = j.cands || [];
+  $("#docMsg").textContent = c.length ? "" : "最近3週間の予定に台本が見つかりませんでした。";
+  $("#cands").innerHTML = c.map(ev => ev.docs.map(d => `<button type="button" data-id="${esc(d.id)}" data-date="${esc(ev.date)}">${esc(md(ev.date))}　${esc(d.name)}</button>`).join("")).join("") + `<button type="button" data-none="1">台本なし</button>`;
   $("#cands").querySelectorAll("button").forEach(bt => bt.onclick = () => {
     $("#cands").querySelectorAll("button").forEach(x => x.classList.toggle("on", x === bt));
-    $("#date").value = bt.dataset.date; loadDoc(bt.dataset.id);
+    if (bt.dataset.date) $("#date").value = bt.dataset.date;
+    if (bt.dataset.none) { D = null; list = []; show("#rangeBox", false); show("#moreBox"); } else loadDoc(bt.dataset.id);
   });
 }
 $("#docBtn").onclick = () => { $("#cands").querySelectorAll("button").forEach(x => x.classList.remove("on")); loadDoc($("#docUrl").value.trim()); };
 
 async function loadDoc(url) {
-  $("#docMsg").className = "msg"; $("#docMsg").textContent = "台本を読んでいます…"; $("#doneBox").classList.add("hide");
+  $("#docMsg").className = "msg"; $("#docMsg").textContent = "台本を読んでいます…"; show("#doneBox", false);
   const j = await apiGet({ a: "heads", key: KEY, url });
   if (!j.ok || !j.list.length) { $("#docMsg").className = "msg ng"; $("#docMsg").textContent = "台本の見出しが読めませんでした"; return; }
   $("#docMsg").textContent = ""; D = j; list = j.list; a = b = -1; drawHeads();
-  $("#rangeBox").classList.remove("hide"); $("#rangeBox").scrollIntoView({ behavior: "smooth" });
+  show("#rangeBox"); show("#moreBox"); $("#rangeBox").scrollIntoView({ behavior: "smooth" });
 }
 function drawHeads() {
   const lo = Math.min(a, b), hi = Math.max(a, b);
   $("#heads").innerHTML = list.map((t, i) => {
     const cls = (i === a || i === b) ? "on" : (a >= 0 && b >= 0 && i > lo && i < hi) ? "in" : "";
-    return `<button class="${cls}" data-i="${i}">${esc(t)}</button>`;
+    return `<button type="button" class="${cls}" data-i="${i}">${esc(t)}</button>`;
   }).join("");
   $("#heads").querySelectorAll("button").forEach(bt => bt.onclick = () => {
     const i = +bt.dataset.i;
     if (a < 0 || b >= 0) { a = i; b = -1; } else b = i;
     drawHeads();
   });
-  $("#makeBtn").disabled = !(a >= 0 && b >= 0);
 }
+$("#file").onchange = async () => { const f = $("#file").files[0]; if (f) $("#transcript").value = (await f.text()).slice(0, 900000); };
+
 $("#makeBtn").onclick = async () => {
-  const lo = Math.min(a, b), hi = Math.max(a, b), sel = list.slice(lo, hi + 1);
-  const range = sel.length > 1 ? `${sel[0]} 〜 ${sel[sel.length - 1]}` : sel[0];
-  $("#makeBtn").disabled = true; $("#makeMsg").className = "msg"; $("#makeMsg").textContent = "作っています…";
-  const j = await apiPost({ type: "session", key: KEY, pid: P.id, date: $("#date").value, title: D.title, url: "https://docs.google.com/document/d/" + D.id + "/edit", range, list: sel });
+  if (D && !(a >= 0 && b >= 0)) { $("#makeMsg").className = "msg ng"; $("#makeMsg").textContent = "③で「はじめ」と「おわり」をタップしてください"; return; }
+  const sel = D ? list.slice(Math.min(a, b), Math.max(a, b) + 1) : [];
+  const range = sel.length > 1 ? `${sel[0]} 〜 ${sel[sel.length - 1]}` : (sel[0] || "台本なし");
+  $("#makeBtn").disabled = true; $("#makeMsg").className = "msg"; $("#makeMsg").textContent = "つくっています…";
+  const j = await apiPost({ type: "session", key: KEY, pid: P.id, date: $("#date").value, title: D ? D.title : "", url: D ? "https://docs.google.com/document/d/" + D.id + "/edit" : "", range, list: sel, transcript: $("#transcript").value.trim() });
   $("#makeBtn").disabled = false;
-  if (!j.ok) { $("#makeMsg").className = "msg ng"; $("#makeMsg").textContent = "作れませんでした（" + j.error + "）"; return; }
+  if (!j.ok) { $("#makeMsg").className = "msg ng"; $("#makeMsg").textContent = "つくれませんでした（" + j.error + "）"; return; }
   $("#makeMsg").textContent = "";
-  const link = new URL("a.html?s=" + j.sid, location.href).href;
-  $("#link").textContent = link; $("#openBtn").href = link;
-  const text = `${P["お名前"]}、今日はお楽しみ様でした！\n今日のふりかえりアンケートです（3分ほど）。\n${link}\n\n愛してるぜ🤟`;
-  $("#lineBtn").href = "https://line.me/R/msg/text/?" + encodeURIComponent(text);
-  $("#copyBtn").onclick = async () => { try { await navigator.clipboard.writeText(text); $("#copyBtn").textContent = "コピーしました"; } catch (_) { prompt("コピーしてください", text); } };
-  $("#copyBtn").textContent = "メッセージごとコピー";
-  $("#doneBox").classList.remove("hide"); $("#doneBox").scrollIntoView({ behavior: "smooth" });
+  $("#doneText").textContent = `${P["お名前"]}の ${md($("#date").value)} の回を登録しました。その日の書き起こしを読んで、${P["お名前"]}専用のふりかえりアンケートを用意したら、メールでお知らせします（LINEで送るボタンつき）。` +
+    (j.consent ? "" : "はじめのシートがまだなので、今回は書き起こしを読まずに用意します。");
+  $("#coachBtn").href = "coach.html?s=" + j.sid;
+  show("#doneBox"); $("#doneBox").scrollIntoView({ behavior: "smooth" });
+};
+
+// はじめのシート
+$("#firstBtn").onclick = async () => {
+  const j = await apiPost({ type: "firstlink", key: KEY, pid: P.id });
+  if (!j.ok) return;
+  const link = new URL("shokai.html?t=" + j.t, location.href).href;
+  const text = `${P["お名前"]}、これからの成長を記録する「はじめのシート」です（10分ほど）。\n${link}\n\n愛してるぜ🤟`;
+  $("#firstLink").textContent = link; $("#firstLine").href = "https://line.me/R/msg/text/?" + encodeURIComponent(text);
+  $("#firstCopy").onclick = async () => { try { await navigator.clipboard.writeText(text); $("#firstCopy").textContent = "コピーしました"; } catch (_) { prompt("コピーしてください", text); } };
+  show("#firstOut");
+};
+// ゴールの階段
+const STEP_LABEL = ["-2 今の状態", "-1 少し前進", "0 目標達成", "+1 期待以上", "+2 大きく超えた"];
+$("#goalBtn").onclick = async () => {
+  const r = await apiGet({ a: "records", key: KEY });
+  const gs = (r.goals || []).filter(g => g["人id"] === P.id);
+  const rows = [0, 1, 2].map(i => gs[i] || {});
+  $("#goalRows").innerHTML = rows.map((g, i) => `<div class="sec"><p>ゴール${i + 1}</p><input type="text" data-g="${i}" placeholder="例：月の売上" value="${esc(g["ゴール"] || "")}">
+    ${["-2", "-1", "0", "+1", "+2"].map((k, j) => `<small>${STEP_LABEL[j]}</small><input type="text" data-g="${i}" data-s="${j}" value="${esc(g[k] || "")}">`).join("")}</div>`).join("");
+  show("#goalEdit");
+};
+$("#goalSave").onclick = async () => {
+  const goals = [0, 1, 2].map(i => ({ goal: $(`input[data-g="${i}"]:not([data-s])`).value.trim(), s: [0, 1, 2, 3, 4].map(j => $(`input[data-g="${i}"][data-s="${j}"]`).value.trim()) }));
+  const j = await apiPost({ type: "goals", key: KEY, pid: P.id, goals });
+  $("#goalMsg").className = "msg " + (j.ok ? "ok" : "ng"); $("#goalMsg").textContent = j.ok ? "保存しました" : "保存できませんでした";
 };
 </script>
 </body></html>

@@ -10,89 +10,122 @@
 <form id="f" class="hide">
   <h1 id="ttl">今日のふりかえり</h1>
   <p class="lead" id="sub"></p>
-  <p class="hint hide" id="already">このアンケートはもう一度送られています。もう一度答えると、新しい答えとして残ります。</p>
+  <p class="hint hide" id="already">このアンケートはもう送られています。もう一度答えると、新しい答えとして残ります。</p>
 
-  <div class="q hide" id="prevBox">
-    <b>前回「<span id="prevTodo"></span>」をやると書いてくれました。やれましたか？<span class="req">必須</span></b>
-    <div class="chips">
-      <label><input type="radio" name="prev" value="できた">できた</label>
-      <label><input type="radio" name="prev" value="少しできた">少しできた</label>
-      <label><input type="radio" name="prev" value="まだ">まだ</label>
-    </div>
-    <input type="text" name="prevNote" placeholder="ひとこと（どうだったか・やれなかった理由など）" style="margin-top:8px">
+  <div class="recap hide" id="recap">
+    <b>今日のコンサルのふりかえり</b>
+    <p id="summary"></p>
+    <div class="hide" id="vowBox"><b style="font-size:.95rem">今日あなたが決めたこと</b><p id="vow"></p></div>
   </div>
 
   <div class="q">
-    <b>今日やったところ、それぞれどうでしたか？<span class="req">必須</span></b>
-    <p class="hint">「わかった度」と「自分でやれそう度」を5段階で。</p>
-    <div id="secs"></div>
+    <b>A　前回から今日までをふり返って、今のあなたは？<span class="req">必須</span></b>
+    <p class="hint">0＝とても悪い、10＝とても良い</p>
+    <div id="A"></div>
   </div>
 
+  <div class="q hide" id="Bbox">
+    <b>B　前回あなたは「<span id="prevVow"></span>」と決めました。<span class="req">必須</span></b>
+    <div class="sub-q"><span>やれましたか？</span>
+      <div class="chips"><label><input type="radio" name="B結果" value="やれた">やれた</label><label><input type="radio" name="B結果" value="一部">一部</label><label><input type="radio" name="B結果" value="まだ">まだ</label></div></div>
+    <div class="sub-q"><span>それに最善を尽くせましたか？（0〜10）</span><div class="scale s11"></div></div>
+  </div>
+
+  <div id="asks"></div>
+
   <div class="q">
-    <b>今日いちばんの気づきは？<span class="req">必須</span></b>
-    <textarea name="insight" required placeholder="例：質問したあと5秒待つと、スタッフが自分から話してくれる"></textarea>
+    <b>C　この期間で、小さくても前に進んだことを1つ<span class="req">必須</span></b>
+    <input type="text" name="C小さな勝ち" placeholder="例：スタッフに自分から声をかけられた">
   </div>
   <div class="q">
-    <b>次回までにやること（誰に・何を・いつまで）<span class="req">必須</span></b>
-    <textarea name="todo" required placeholder="例：店長に、1行コンセプトを、金曜の朝礼で伝える"></textarea>
+    <b>D　今日いちばん残った言葉や気づき<span class="req">必須</span></b>
+    <input type="text" name="D気づき">
+    <div class="sub-q"><span>次回までに試すことを1つ（誰に・何を・いつまで）<span class="req">必須</span></span>
+      <input type="text" name="D次の一歩" id="next"></div>
   </div>
   <div class="q">
-    <b>今の自分の仕事に、どのくらい自信がありますか？<span class="req">必須</span></b>
-    <div class="scale" id="conf"></div>
-    <div class="ends"><span>0 まったくない</span><span>10 とてもある</span></div>
+    <b>E　分かっているけど、まだできていないこと。その理由も<span class="opt">任意</span></b>
+    <input type="text" name="Eまだ" placeholder="例：本当は〇〇したい。でも〇〇だから、まだできていない">
+  </div>
+  <div class="q hide" id="Fbox">
+    <b>F　それぞれのゴールについて、今どの段にいますか？<span class="req">必須</span></b>
+    <div id="F"></div>
   </div>
   <div class="q">
-    <b>今日のコンサルの満足度<span class="req">必須</span></b>
-    <div class="scale" id="sat"></div>
-    <div class="ends"><span>1 いまひとつ</span><span>5 とても満足</span></div>
+    <b>G　今日の時間について<span class="req">必須</span></b>
+    <p class="hint">0＝まったくそう思わない、10＝とてもそう思う</p>
+    <div id="G"></div>
+    <div class="sub-q"><span>もっとこうしてほしいこと<span class="opt">任意</span></span><input type="text" name="G要望"></div>
   </div>
-  <div class="q">
-    <b>三浦さんに聞きたいこと・不安なこと<span class="opt">任意</span></b>
-    <textarea name="ask"></textarea>
+
+  <div class="q hide" id="Rbox">
+    <b>3回ごとのふりかえり</b>
+    <div class="sub-q"><span>3回前の自分と比べて、変わったと思うこと<span class="req">必須</span></span><textarea name="R変わったこと"></textarea></div>
+    <div class="sub-q"><span>最近、自分の強みが出たと思う場面<span class="req">必須</span></span><textarea name="R強みの場面"></textarea></div>
+    <div class="sub-q"><span>周りの人（家族・スタッフ・お客様・仲間）から言われた変化や提案<span class="opt">任意</span></span><textarea name="R周りの声"></textarea></div>
+    <div class="sub-q"><span>ゴールの階段の見直し</span>
+      <div class="chips"><label><input type="radio" name="Rゴール見直し" value="上げたい">上げたい</label><label><input type="radio" name="Rゴール見直し" value="変えたい">変えたい</label><label><input type="radio" name="Rゴール見直し" value="そのまま">そのまま</label></div></div>
   </div>
+
   <button type="submit" id="send">送る</button>
   <div class="msg" id="msg"></div>
 </form>
 <div id="thanks" class="hide" style="text-align:center;padding:40px 10px">
   <h2>ありがとうございました！</h2>
-  <p>今日もお楽しみ様でした。次回までの一歩、応援しています。</p>
+  <p>今日もお楽しみ様でした。次の一歩、応援しています。</p>
 </div>
 <footer>ありがとうグループ 個別コンサル</footer>
 </div>
 <script src="common.js"></script>
 <script>
 const sid = new URLSearchParams(location.search).get("s") || "";
-const scale = (name, from, to) => Array.from({ length: to - from + 1 }, (_, i) => `<label><input type="radio" name="${name}" value="${from + i}">${from + i}</label>`).join("");
-let S = null;
+const A_ITEMS = [["A1", "仕事・事業の手応え"], ["A2", "自分自身の心の状態"], ["A3", "人間関係（家族・スタッフ・仲間）"], ["A4", "全体として"]];
+const G_SOLO = [["G1", "話を聞いてもらえた"], ["G2", "話したいことを扱えた"], ["G3", "進め方が自分に合っていた"], ["G4", "全体として良かった"]];
+const G_GROUP = [["G1", "安心して話せた"], ["G2", "仲間から学べた"], ["G3", "自分ごとにできた"], ["G4", "全体として良かった"]];
+const STEPS = ["-2", "-1", "0", "+1", "+2"], STEP_NAME = ["今の状態", "少し前進", "目標達成", "期待以上", "大きく超えた"];
+let S = null, G_ITEMS = G_SOLO;
+const block = (items) => items.map(([k, t]) => `<div class="sub-q"><span>${esc(t)}</span><div class="scale s11">${scale(k, 0, 10)}</div></div>`).join("");
 (async () => {
   try {
     const j = await apiGet({ a: "session", s: sid });
-    if (!j.ok) throw new Error("リンクが見つかりませんでした。三浦さんに新しいリンクをもらってください。");
+    if (!j.ok) throw new Error("リンクが見つかりませんでした。新しいリンクをもらってください。");
+    if (!j.ready) throw new Error("今日のふりかえりを準備しています。少し時間をおいてから開いてください。");
     S = j;
     $("#ttl").textContent = `${j.name}、今日のふりかえり`;
-    $("#sub").textContent = `${md(j.date)}　${j.title}（${j.range}）`;
+    $("#sub").textContent = `${md(j.date)}　第${j.n}回${j.title ? "　" + j.title : ""}`;
     if (j.done) $("#already").classList.remove("hide");
-    if (j.prevTodo) { $("#prevTodo").textContent = j.prevTodo; $("#prevBox").classList.remove("hide"); }
-    $("#secs").innerHTML = j.list.map((t, i) => `<div class="sec"><p>${esc(t)}</p>
-      <small>わかった度（1 むずかしかった → 5 よくわかった）</small><div class="scale">${scale("u" + i, 1, 5)}</div>
-      <small>自分でやれそう度（1 まだ自信ない → 5 すぐやれる）</small><div class="scale">${scale("c" + i, 1, 5)}</div></div>`).join("");
-    $("#conf").innerHTML = scale("conf", 0, 10); $("#sat").innerHTML = scale("sat", 1, 5);
+    if (j.summary) { $("#summary").textContent = j.summary; $("#recap").classList.remove("hide"); }
+    if (j.vow) { $("#vow").textContent = j.vow; $("#vowBox").classList.remove("hide"); $("#next").placeholder = "例：" + j.vow; }
+    $("#A").innerHTML = block(A_ITEMS);
+    if (j.prevVow) { $("#prevVow").textContent = j.prevVow; $("#Bbox .scale").innerHTML = scale("B最善", 0, 10); $("#Bbox").classList.remove("hide"); }
+    $("#asks").innerHTML = (j.asks || []).map((q, i) => `<div class="q"><b>${esc(q)}<span class="opt">任意</span></b><textarea name="ask${i}"></textarea></div>`).join("");
+    if (j.goals.length) {
+      $("#F").innerHTML = j.goals.map((g, gi) => `<div class="sub-q"><span><b>${esc(g.goal)}</b></span><div class="chips ladder">${STEPS.map((s, i) =>
+        `<label><input type="radio" name="F${gi}" value="${s}"><b>${s}</b>${esc(g.steps[i] || STEP_NAME[i])}</label>`).reverse().join("")}</div></div>`).join("");
+      $("#Fbox").classList.remove("hide");
+    }
+    if (j.course === "グルコン") G_ITEMS = G_GROUP;
+    $("#G").innerHTML = block(G_ITEMS);
+    if (j.reflect) $("#Rbox").classList.remove("hide");
     $("#loading").classList.add("hide"); $("#f").classList.remove("hide");
   } catch (e) { $("#loading").textContent = e.message; }
 })();
 $("#f").onsubmit = async ev => {
   ev.preventDefault();
   const fd = new FormData($("#f")), v = k => (fd.get(k) || "").toString().trim();
-  const items = S.list.map((t, i) => ({ t, u: v("u" + i), c: v("c" + i) }));
-  const miss = [];
-  if (S.prevTodo && !v("prev")) miss.push("前回の宿題");
-  if (items.some(x => !x.u || !x.c)) miss.push("今日やったところの5段階");
-  if (!v("insight")) miss.push("気づき"); if (!v("todo")) miss.push("次回までにやること");
-  if (v("conf") === "") miss.push("自信"); if (!v("sat")) miss.push("満足度");
-  if (miss.length) { $("#msg").className = "msg ng"; $("#msg").textContent = "まだのところがあります：" + miss.join("・"); return; }
+  const a = {}, miss = [];
+  A_ITEMS.forEach(([k]) => a[k] = v(k)); if (A_ITEMS.some(([k]) => a[k] === "")) miss.push("A");
+  if (S.prevVow) { a["B結果"] = v("B結果"); a["B最善"] = v("B最善"); if (!a["B結果"] || a["B最善"] === "") miss.push("B"); }
+  a.asks = (S.asks || []).map((q, i) => ({ q, a: v("ask" + i) }));
+  ["C小さな勝ち", "D気づき", "D次の一歩"].forEach(k => { a[k] = v(k); if (!a[k]) miss.push(k[0]); });
+  a["Eまだ"] = v("Eまだ");
+  a.F = S.goals.map((g, gi) => ({ no: g.no, goal: g.goal, step: v("F" + gi) })); if (a.F.some(x => !x.step)) miss.push("F");
+  G_ITEMS.forEach(([k]) => a[k] = v(k)); if (G_ITEMS.some(([k]) => a[k] === "")) miss.push("G"); a["G要望"] = v("G要望");
+  if (S.reflect) { ["R変わったこと", "R強みの場面", "R周りの声", "Rゴール見直し"].forEach(k => a[k] = v(k)); if (!a["R変わったこと"] || !a["R強みの場面"]) miss.push("3回ごとのふりかえり"); }
+  if (miss.length) { $("#msg").className = "msg ng"; $("#msg").textContent = "まだのところがあります：" + [...new Set(miss)].join("・"); return; }
   $("#send").disabled = true; $("#msg").className = "msg"; $("#msg").textContent = "送っています…";
   try {
-    const j = await apiPost({ type: "answer", sid, items, prev: v("prev"), prevNote: v("prevNote"), insight: v("insight"), todo: v("todo"), conf: v("conf"), sat: v("sat"), ask: v("ask"), ua: navigator.userAgent });
+    const j = await apiPost({ type: "answer", sid, a, ua: navigator.userAgent });
     if (!j.ok) throw new Error(j.error);
     $("#f").classList.add("hide"); $("#thanks").classList.remove("hide"); scrollTo(0, 0);
   } catch (e) { $("#send").disabled = false; $("#msg").className = "msg ng"; $("#msg").textContent = "送れませんでした。電波の良いところでもう一度押してください。"; }

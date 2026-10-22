@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>成長レポート</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.ladder-fig{display:flex;flex-direction:column;gap:4px;margin:6px 0}
+.ladder-fig div{display:flex;align-items:center;gap:8px;border:1.5px solid var(--line);border-radius:10px;padding:6px 10px;background:var(--bg);font-size:.92rem}
+.ladder-fig div b{min-width:2.2em;color:var(--muted)}
+.ladder-fig div.goal{border-style:dashed;border-color:var(--c3)}
+.ladder-fig div.now{border-color:var(--or);background:var(--soft);font-weight:700}
+.ladder-fig em{font-style:normal;margin-left:auto;font-size:.8rem;white-space:nowrap}
+.bars2{display:flex;align-items:flex-end;gap:6px;height:120px;border-bottom:1px solid var(--line);padding-top:16px}
+.bars2 div{flex:1;background:var(--c3);border-radius:4px 4px 0 0;position:relative;min-height:2px}
+.bars2 div span{position:absolute;top:-17px;left:0;right:0;text-align:center;font-size:.75rem;color:var(--muted)}
+.xl{display:flex;gap:6px}.xl span{flex:1;text-align:center;font-size:.75rem;color:var(--muted)}
+.quote{border-left:3px solid var(--or);padding:2px 10px;margin:8px 0}
+.quote small{display:block;color:var(--muted);font-size:.78rem}
+.ba{display:grid;grid-template-columns:1fr;gap:6px;margin:10px 0}
+.draft{background:var(--ng);color:#fff;border-radius:10px;padding:6px 12px;font-weight:700;text-align:center}
+</style>
+</head>
+<body><div class="wrap">
+<div id="loading" class="lead">読みこみ中…</div>
+<div id="main" class="hide">
+  <div class="draft hide" id="draft">下書き（承認するまで本人には見えません）</div>
+  <h1 id="ttl"></h1>
+  <p class="lead" id="intro"></p>
+
+  <div class="q"><b>現在地の変化（0〜10）</b><div id="aLegend"></div><div class="chart" id="cA"></div></div>
+  <div class="q hide" id="goalBox"><b>ゴールの階段</b><div id="goals"></div></div>
+  <div class="q"><b>小さな勝ちの積み上げ</b><div id="wins"></div></div>
+  <div class="q hide" id="vowBox"><b>約束の実行率</b><p class="hint">やれた＝100、一部＝50、まだ＝0</p><div class="chart" id="cB"></div></div>
+  <div class="q hide" id="baBox"><b>言葉のビフォーアフター</b><div id="ba"></div></div>
+  <div class="q hide" id="stBox"><b>あなたの強み</b><div id="strengths"></div></div>
+  <div class="q hide" id="nextBox"><b>次の3回の一歩</b><p id="nextStep" style="margin:.2em 0;font-weight:700"></p><div class="quote hide" id="word"></div></div>
+  <div class="q" id="feelBox">
+    <b>このレポートを見て、成長を実感できましたか？</b>
+    <div class="scale s11" id="feel"></div>
+    <div class="ends"><span>0 まったく</span><span>10 とても</span></div>
+    <div class="msg" id="feelMsg"></div>
+  </div>
+</div>
+<footer>ありがとうグループ 個別コンサル</footer>
+</div>
+<script src="common.js"></script>
+<script>
+const q = new URLSearchParams(location.search), rid = q.get("r") || "";
+const SER = [["A1", "var(--c1)", "仕事・事業"], ["A2", "var(--c2)", "心の状態"], ["A3", "var(--c3)", "人間関係"], ["A4", "var(--c4)", "全体"]];
+const STEPS = ["+2", "+1", "0", "-1", "-2"];
+(async () => {
+  try {
+    const p = { a: "report", r: rid }; const k = store("consultKey"); if (k && q.has("preview")) p.key = k;
+    const j = await apiGet(p);
+    if (!j.ok) throw new Error("レポートが見つかりませんでした。");
+    const R = j.report || {};
+    if (j.state !== "承認済み") $("#draft").classList.remove("hide");
+    $("#ttl").textContent = `${j.name}の成長レポート（第${j.n}回まで）`;
+    $("#intro").textContent = R.intro || "ここまでの歩みを、柱の傷のように並べました。";
+    const rows = (j.start ? [Object.assign({ n: "はじめ" }, j.start)] : []).concat(j.series);
+    $("#aLegend").innerHTML = legend(SER);
+    lineChart($("#cA"), rows, SER, 0, 10, r => typeof r.n === "number" || /^\d+$/.test(r.n) ? `第${r.n}回` : r.n);
+    // ゴールの階段：最新の回答の段に印、0の段に旗
+    const lastF = (j.series.slice().reverse().find(s => (s.F || []).length) || {}).F || [];
+    if (j.goals.length) {
+      $("#goals").innerHTML = j.goals.map(g => {
+        const now = (lastF.find(f => String(f.no) === String(g.no)) || {}).step || "";
+        const left = now === "" ? "" : Math.max(0, 0 - Number(now));
+        return `<div class="sub-q"><span><b>${esc(g.goal)}</b>${now !== "" ? `　<span class="tag">${left ? "ゴールまであと" + left + "段" : "ゴール達成！"}</span>` : ""}</span><div class="ladder-fig">${STEPS.map(s => {
+          const i = ["-2", "-1", "0", "+1", "+2"].indexOf(s);
+          return `<div class="${s === now ? "now" : s === "0" ? "goal" : ""}"><b>${s}</b>${esc(g.steps[i])}<em>${s === now ? "📍いまここ" : s === "0" ? "🚩ゴール" : ""}</em></div>`; }).join("")}</div></div>`;
+      }).join("");
+      $("#goalBox").classList.remove("hide");
+    }
+    // 小さな勝ち：累計の棒と一覧
+    let sum = 0; const cum = j.series.map(s => (sum += s.C ? 1 : 0));
+    const mx = Math.max(1, ...cum);
+    $("#wins").innerHTML = `<div class="bars2">${cum.map(c => `<div style="height:${c / mx * 100}%"><span>${c}</span></div>`).join("")}</div>
+      <div class="xl">${j.series.map(s => `<span>第${esc(s.n)}回</span>`).join("")}</div>
+      <ul style="margin:10px 0 0;padding-left:1.2em">${(R.wins_top && R.wins_top.length ? R.wins_top : j.series.map(s => s.C).filter(Boolean)).map(w => `<li>${esc(w)}</li>`).join("")}</ul>`;
+    const vr = j.series.filter(s => s.B).map(s => Object.assign({}, s, { rate: { "やれた": 100, "一部": 50, "まだ": 0 }[s.B] }));
+    if (vr.length) { $("#vowBox").classList.remove("hide"); lineChart($("#cB"), vr, [["rate", "var(--c1)", "実行率"]], 0, 100, r => `第${r.n}回`); }
+    if ((R.before_after || []).length) {
+      $("#ba").innerHTML = R.before_after.map(x => `<div class="ba"><div class="quote" style="border-color:var(--muted)"><small>${esc(x.before_when)}</small>${esc(x.before)}</div><div class="quote"><small>${esc(x.after_when)}</small>${esc(x.after)}</div></div>`).join("");
+      $("#baBox").classList.remove("hide");
+    }
+    if ((R.strengths || []).length) {
+      $("#strengths").innerHTML = R.strengths.map(s => `<div class="sub-q"><span><b>${esc(s.name)}</b></span><div class="quote"><small>${esc(s.when)}</small>${esc(s.quote)}</div></div>`).join("");
+      $("#stBox").classList.remove("hide");
+    }
+    if (R.next_step) { $("#nextStep").textContent = R.next_step; $("#nextBox").classList.remove("hide"); }
+    if (R.coach_word) { $("#word").innerHTML = `<small>公嗣さんから</small>${esc(R.coach_word)}`; $("#word").classList.remove("hide"); }
+    $("#feel").innerHTML = scale("feel", 0, 10);
+    $("#feel").querySelectorAll("input").forEach(i => i.onchange = async () => {
+      if (j.state !== "承認済み") { $("#feelMsg").textContent = "（下書きなので記録しません）"; return; }
+      const r = await apiPost({ type: "feel", r: rid, v: i.value });
+      $("#feelMsg").className = "msg ok"; $("#feelMsg").textContent = r.ok ? "ありがとうございます！" : "";
+    });
+    $("#loading").classList.add("hide"); $("#main").classList.remove("hide");
+  } catch (e) { $("#loading").textContent = e.message; }
+})();
+</script>
+</body></html>
