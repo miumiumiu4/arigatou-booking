@@ -80,7 +80,7 @@ function drawPerson(pid) {
     <div class="tile"><b class="sig ${esc(sig)}" style="font-size:1rem;padding:.4em 0">${esc(SIG[sig] || "—")}</b><span>最新のカルテの信号</span></div></div>`;
   // やること
   const todos = [];
-  if (!P["同意日"]) todos.push(`<div class="todo"><span>はじめのシートがまだ（書き起こしを使う前に必要）</span><a class="btn sub" href="nyuryoku.html">リンクを作る</a></div>`);
+  if (!P["開始日"]) todos.push(`<div class="todo"><span>はじめのシートがまだ（スタート地点とゴールの記録）</span><a class="btn sub" href="nyuryoku.html">リンクを作る</a></div>`);
   ses.forEach(s => {
     const link = new URL("a.html?s=" + s.sid, location.href).href;
     if (s["状態"] === "準備完了" && !answered.has(s.sid)) todos.push(`<div class="todo"><span>${md(s["実施日"])} のアンケートを送る</span><a class="btn" target="_blank" rel="noopener" href="${lineText(P["お名前"], link)}">LINEで送る</a></div>`);

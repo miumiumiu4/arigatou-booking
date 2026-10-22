@@ -118,7 +118,7 @@ async function pickPerson(id) {
   P = people.find(p => p.id === id); D = null; list = [];
   ["#rangeBox", "#moreBox", "#doneBox", "#firstOut", "#goalEdit"].forEach(s => show(s, false));
   $("#pName").textContent = P["お名前"] + "（" + (P["コース"] || "個別") + "）";
-  $("#pState").textContent = P["同意日"] ? "はじめのシート：記入ずみ（書き起こしを使った記録ができます）" : "はじめのシートがまだです。まだの間は、書き起こしは読まずにアンケートだけ用意します。";
+  $("#pState").textContent = P["開始日"] ? "はじめのシート：記入ずみ" : "はじめのシートがまだです（スタート地点とゴールの階段を記録するために、最初に1回だけ）。";
   show("#personBox"); show("#docBox"); $("#cands").innerHTML = ""; $("#docMsg").className = "msg"; $("#docMsg").textContent = "カレンダーを探しています…";
   const j = await apiGet({ a: "cands", key: KEY, pid: id });
   const c = j.cands || [];
@@ -162,8 +162,7 @@ $("#makeBtn").onclick = async () => {
   $("#makeBtn").disabled = false;
   if (!j.ok) { $("#makeMsg").className = "msg ng"; $("#makeMsg").textContent = "つくれませんでした（" + j.error + "）"; return; }
   $("#makeMsg").textContent = "";
-  $("#doneText").textContent = `${P["お名前"]}の ${md($("#date").value)} の回を登録しました。その日の書き起こしを読んで、${P["お名前"]}専用のふりかえりアンケートを用意したら、メールでお知らせします（LINEで送るボタンつき）。` +
-    (j.consent ? "" : "はじめのシートがまだなので、今回は書き起こしを読まずに用意します。");
+  $("#doneText").textContent = `${P["お名前"]}の ${md($("#date").value)} の回を登録しました。その日の書き起こしを読んで、${P["お名前"]}専用のふりかえりアンケートを用意したら、メールでお知らせします（LINEで送るボタンつき）。` ;
   $("#coachBtn").href = "coach.html?s=" + j.sid;
   show("#doneBox"); $("#doneBox").scrollIntoView({ behavior: "smooth" });
 };
