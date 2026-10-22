@@ -19,6 +19,12 @@
   </div>
 
   <div class="q">
+    <b>メールアドレス<span class="req">必須</span></b>
+    <p class="hint">3回ごとに、あなたの成長レポートをこのアドレスにお届けします。</p>
+    <input type="email" name="email" id="email" autocomplete="email" inputmode="email" placeholder="例：name@example.com">
+  </div>
+
+  <div class="q">
     <b>A　前回から今日までをふり返って、今のあなたは？<span class="req">必須</span></b>
     <p class="hint">0＝とても悪い、10＝とても良い</p>
     <div id="A"></div>
@@ -94,6 +100,7 @@ const block = (items) => items.map(([k, t]) => `<div class="sub-q"><span>${esc(t
     $("#ttl").textContent = `${j.name}、今日のふりかえり`;
     $("#sub").textContent = `${md(j.date)}　第${j.n}回${j.title ? "　" + j.title : ""}`;
     if (j.done) $("#already").classList.remove("hide");
+    if (j.email) $("#email").value = j.email;
     if (j.summary) { $("#summary").textContent = j.summary; $("#recap").classList.remove("hide"); }
     if (j.vow) { $("#vow").textContent = j.vow; $("#vowBox").classList.remove("hide"); $("#next").placeholder = "例：" + j.vow; }
     $("#A").innerHTML = block(A_ITEMS);
@@ -113,7 +120,8 @@ const block = (items) => items.map(([k, t]) => `<div class="sub-q"><span>${esc(t
 $("#f").onsubmit = async ev => {
   ev.preventDefault();
   const fd = new FormData($("#f")), v = k => (fd.get(k) || "").toString().trim();
-  const a = {}, miss = [];
+  const a = {}, miss = [], email = v("email");
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) miss.push("メールアドレス");
   A_ITEMS.forEach(([k]) => a[k] = v(k)); if (A_ITEMS.some(([k]) => a[k] === "")) miss.push("A");
   if (S.prevVow) { a["B結果"] = v("B結果"); a["B最善"] = v("B最善"); if (!a["B結果"] || a["B最善"] === "") miss.push("B"); }
   a.asks = (S.asks || []).map((q, i) => ({ q, a: v("ask" + i) }));
@@ -125,10 +133,10 @@ $("#f").onsubmit = async ev => {
   if (miss.length) { $("#msg").className = "msg ng"; $("#msg").textContent = "まだのところがあります：" + [...new Set(miss)].join("・"); return; }
   $("#send").disabled = true; $("#msg").className = "msg"; $("#msg").textContent = "送っています…";
   try {
-    const j = await apiPost({ type: "answer", sid, a, ua: navigator.userAgent });
+    const j = await apiPost({ type: "answer", sid, email, a, ua: navigator.userAgent });
     if (!j.ok) throw new Error(j.error);
     $("#f").classList.add("hide"); $("#thanks").classList.remove("hide"); scrollTo(0, 0);
-  } catch (e) { $("#send").disabled = false; $("#msg").className = "msg ng"; $("#msg").textContent = "送れませんでした。電波の良いところでもう一度押してください。"; }
+  } catch (e) { $("#send").disabled = false; $("#msg").className = "msg ng"; $("#msg").textContent = e.message === "email" ? "メールアドレスをもう一度確かめてください。" : "送れませんでした。電波の良いところでもう一度押してください。"; }
 };
 </script>
 </body></html>

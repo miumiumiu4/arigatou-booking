@@ -7,18 +7,19 @@
 const SHEET_ID = "11a9a94h1RceOC80qIPbAYxGvP4unfsHJSj1g1MO9yi8";
 const PASTE_FOLDER = "1QaY1uw1dMo80hKD8SmVFUdc5nx8-SWrA"; // 貼り付けた書き起こしの置き場（Zoom書き起こし）
 const TABS = {
-  people: ["名簿", ["id", "お名前", "カレンダーで探す言葉", "メモ", "登録日時", "区分", "コース", "Zoom表示名", "開始日", "同意日", "初回トークン"]],
+  people: ["名簿", ["id", "お名前", "カレンダーで探す言葉", "メモ", "登録日時", "区分", "コース", "Zoom表示名", "開始日", "同意日", "初回トークン", "メール"]],
   goals: ["ゴール", ["人id", "番号", "ゴール", "-2", "-1", "0", "+1", "+2", "設定日"]],
-  first: ["初回", ["受付日時", "人id", "お名前", "強み_褒められる", "強み_時間を忘れる", "変わりたいこと", "止めているもの", "A1", "A2", "A3", "A4", "同意"]],
+  first: ["初回", ["受付日時", "人id", "お名前", "強み_褒められる", "強み_時間を忘れる", "変わりたいこと", "止めているもの", "A1", "A2", "A3", "A4", "同意", "メール"]],
   sessions: ["回", ["sid", "作成日時", "人id", "お名前", "実施日", "台本タイトル", "台本URL", "範囲", "見出し(JSON)", "書き起こしID", "状態", "回数", "リフレクション回",
     "今日のふりかえり", "宣言", "振り返りの問い(JSON)", "準備日時"]],
   answers: ["回答", ["受付日時", "sid", "人id", "お名前", "実施日", "回数", "A1", "A2", "A3", "A4", "B結果", "B最善", "C小さな勝ち", "D気づき", "D次の一歩", "Eまだ",
-    "F(JSON)", "G1", "G2", "G3", "G4", "G要望", "問いの答え(JSON)", "R変わったこと", "R強みの場面", "R周りの声", "Rゴール見直し", "端末"]],
+    "F(JSON)", "G1", "G2", "G3", "G4", "G要望", "問いの答え(JSON)", "R変わったこと", "R強みの場面", "R周りの声", "Rゴール見直し", "端末", "メール"]],
   coach: ["講師", ["受付日時", "sid", "人id", "お名前", "実施日", "K1", "K2", "K3", "K4", "効いた問い", "次に変えること", "相手の現在地予想", "ひとこと"]],
   extracts: ["抽出", ["sid", "人id", "実施日", "作成日時", "抽出(JSON)", "講師(JSON)"]],
   karte: ["カルテ", ["sid", "人id", "お名前", "実施日", "信号", "カルテ", "作成日時"]],
-  reports: ["レポート", ["rid", "人id", "お名前", "回数", "作成日時", "状態", "レポート(JSON)", "承認日時", "成長を実感(0-10)"]]
+  reports: ["レポート", ["rid", "人id", "お名前", "回数", "作成日時", "状態", "レポート(JSON)", "承認日時", "成長を実感(0-10)", "送信日時", "送信先"]]
 };
+const REPORT_URL = "https://miumiumiu4.github.io/arigatou-booking/consult/report.html?r=";
 const FIRST_PEOPLE = [["mukai", "向井さん", "向井"], ["matsumoto", "松本さん", "松本"], ["akimoto", "秋元さん", "秋元"]];
 
 function ss_() { return SpreadsheetApp.openById(SHEET_ID); }
@@ -53,6 +54,8 @@ const out_ = o => ContentService.createTextOutput(JSON.stringify(o)).setMimeType
 const ymd_ = d => d instanceof Date ? Utilities.formatDate(d, "Asia/Tokyo", "yyyy-MM-dd") : String(d || "");
 const json_ = (s, d) => { try { return JSON.parse(s || ""); } catch (_) { return d; } };
 const token_ = () => Utilities.getUuid().replace(/-/g, "") + Utilities.getUuid().replace(/-/g, "").slice(0, 8);
+const email_ = s => { const m = String(s || "").trim().toLowerCase(); return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m) && m.length <= 200 ? m : ""; };
+function saveEmail_(pid, mail) { const p = rows_("people").find(r => r.id === pid); if (p && String(p["メール"] || "") !== mail) update_("people", p._row, { "メール": mail }); }
 function isAdmin_(key) { const k = PropertiesService.getScriptProperties().getProperty("ADMIN_KEY"); return !!k && key === k; }
 const plain_ = r => { const o = {}; Object.keys(r).forEach(k => { if (k !== "_row") o[k] = r[k] instanceof Date ? (k.match(/日$/) ? ymd_(r[k]) : r[k].toISOString()) : r[k]; }); return o; };
 
@@ -91,7 +94,7 @@ function sessionForAnswer_(s) {
     ready: s["状態"] === "準備完了", summary: s["今日のふりかえり"] || "", vow: s["宣言"] || "",
     asks: json_(s["振り返りの問い(JSON)"], []),
     prevVow: [prevAns ? prevAns["D次の一歩"] : "", prevSes ? prevSes["宣言"] : ""].filter(Boolean).join(" ／ "),
-    goals, course: person["コース"] || "個別", done: ans.some(a => a.sid === s.sid)
+    goals, course: person["コース"] || "個別", done: ans.some(a => a.sid === s.sid), email: String(person["メール"] || "")
   };
 }
 
@@ -106,7 +109,7 @@ function doGet(e) {
       const person = p.t && rows_("people").find(r => r["初回トークン"] === p.t);
       if (!person) return out_({ ok: false, error: "notfound" });
       const goals = rows_("goals").filter(g => g["人id"] === person.id).map(plain_);
-      return out_({ ok: true, name: person["お名前"], goals, done: rows_("first").some(f => f["人id"] === person.id) });
+      return out_({ ok: true, name: person["お名前"], goals, done: rows_("first").some(f => f["人id"] === person.id), email: String(person["メール"] || "") });
     }
     if (p.a === "report") { // 承認済みだけ見える（合言葉があれば承認前の下書きも見える）
       const r = p.r && rows_("reports").find(x => x.rid === p.r && (x["状態"] === "承認済み" || isAdmin_(p.key)));
@@ -144,18 +147,21 @@ function doPost(e) {
     if (d.type === "answer") {
       const s = rows_("sessions").find(r => r.sid === d.sid);
       if (!s) return out_({ ok: false, error: "notfound" });
+      const mail = email_(d.email); if (!mail) return out_({ ok: false, error: "email" });
       const info = sessionForAnswer_(s), a = Object.assign({}, d.a || {});
       const extra = { "F(JSON)": JSON.stringify(a.F || []), "問いの答え(JSON)": JSON.stringify(a.asks || []) };
-      Object.keys(a).forEach(k => { if (TABS.answers[1].indexOf(k) < 0 || /^(受付日時|sid|人id|お名前|実施日|回数|端末)$/.test(k)) delete a[k]; else a[k] = String(a[k]).slice(0, 3000); });
-      append_("answers", Object.assign({ "受付日時": new Date(), sid: d.sid, "人id": s["人id"], "お名前": s["お名前"], "実施日": s["実施日"], "回数": info.n, "端末": String(d.ua || "").slice(0, 200) }, a, extra));
+      Object.keys(a).forEach(k => { if (TABS.answers[1].indexOf(k) < 0 || /^(受付日時|sid|人id|お名前|実施日|回数|端末|メール)$/.test(k)) delete a[k]; else a[k] = String(a[k]).slice(0, 3000); });
+      append_("answers", Object.assign({ "受付日時": new Date(), sid: d.sid, "人id": s["人id"], "お名前": s["お名前"], "実施日": s["実施日"], "回数": info.n, "端末": String(d.ua || "").slice(0, 200), "メール": mail }, a, extra));
+      saveEmail_(s["人id"], mail);
       return out_({ ok: true });
     }
     if (d.type === "first") {
       const person = d.t && rows_("people").find(r => r["初回トークン"] === d.t);
       if (!person) return out_({ ok: false, error: "notfound" });
-      const a = d.a || {};
+      const a = d.a || {}, mail = email_(d.email); if (!mail) return out_({ ok: false, error: "email" });
       append_("first", { "受付日時": new Date(), "人id": person.id, "お名前": person["お名前"], "強み_褒められる": a.s1 || "", "強み_時間を忘れる": a.s2 || "",
-        "変わりたいこと": a.want || "", "止めているもの": a.block || "", A1: a.A1, A2: a.A2, A3: a.A3, A4: a.A4, "同意": a.agree ? "同意する" : "" });
+        "変わりたいこと": a.want || "", "止めているもの": a.block || "", A1: a.A1, A2: a.A2, A3: a.A3, A4: a.A4, "同意": a.agree ? "同意する" : "", "メール": mail });
+      saveEmail_(person.id, mail);
       if (a.agree) update_("people", person._row, { "同意日": new Date() });
       if (!person["開始日"]) update_("people", person._row, { "開始日": new Date() });
       return out_({ ok: true });
@@ -210,7 +216,24 @@ function doPost(e) {
       const r = rows_("reports").find(x => x.rid === d.rid);
       if (!r) return out_({ ok: false, error: "notfound" });
       update_("reports", r._row, { "状態": "承認済み", "承認日時": new Date() });
-      return out_({ ok: true });
+      const person = rows_("people").find(p => p.id === r["人id"]) || {}, to = email_(person["メール"]);
+      if (!to || r["送信日時"]) return out_({ ok: true, mailed: "" });
+      const link = REPORT_URL + r.rid;
+      MailApp.sendEmail({ to, name: "ありがとうグループ 個別コンサル", subject: `【成長レポート】${r["お名前"]}の第${r["回数"]}回までの歩み`,
+        body: `${r["お名前"]}
+
+いつもお楽しみ様です。
+ここまで${r["回数"]}回分のふりかえりから、あなたの成長レポートをまとめました。
+
+${link}
+
+スタートの頃と今を見比べてみてください。最後に1問だけ、感想を教えてもらえるとうれしいです。
+
+愛してるぜ🤟
+
+ありがとうグループ 個別コンサル` });
+      update_("reports", r._row, { "送信日時": new Date(), "送信先": to });
+      return out_({ ok: true, mailed: to });
     }
     return out_({ ok: false, error: "unknown" });
   } catch (err) { return out_({ ok: false, error: String(err) }); }
@@ -218,4 +241,4 @@ function doPost(e) {
 }
 
 // 最初に1回だけ実行すると、許可の確認が出て、タブが作られます
-function setup() { Object.keys(TABS).forEach(tab_); CalendarApp.getDefaultCalendar(); DriveApp.getRootFolder(); }
+function setup() { Object.keys(TABS).forEach(tab_); CalendarApp.getDefaultCalendar(); DriveApp.getRootFolder(); MailApp.getRemainingDailyQuota(); }

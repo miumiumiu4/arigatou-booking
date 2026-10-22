@@ -113,9 +113,9 @@ function drawPerson(pid) {
     lineChart($("#c2"), A, [[gsum, "var(--c2)", "合計"]], 0, 40, r => `第${r["回数"]}回`);
   }
   $("#body").querySelectorAll("button[data-rid]").forEach(bt => bt.onclick = async () => {
-    if (!confirm("このレポートを承認しますか？承認すると本人がリンクから見られるようになります。")) return;
+    if (!confirm("このレポートを承認しますか？承認すると、本人が登録したメールアドレスに成長レポートが届きます。")) return;
     bt.disabled = true; const j = await apiPost({ type: "approve", key: KEY, rid: bt.dataset.rid });
-    if (j.ok) { await load(); drawPerson(pid); } else bt.disabled = false;
+    if (j.ok) { alert(j.mailed ? `${j.mailed} にお送りしました。` : "メールアドレスが未登録のため、メールは送っていません。「LINEで送る」から届けてください。"); await load(); drawPerson(pid); } else bt.disabled = false;
   });
 }
 function gsum(a) { const v = ["G1", "G2", "G3", "G4"].map(k => num(a[k])); return v.some(x => x == null) ? null : v.reduce((s, x) => s + x, 0); }

@@ -19,7 +19,7 @@ h2{font-size:1.15rem;margin:1.4em 0 .4em}
 input[type=radio],input[type=checkbox]{position:absolute;opacity:0;pointer-events:none}
 label:has(input:checked){border-color:var(--or);background:var(--soft);font-weight:700;color:var(--or)}
 .ends{display:flex;justify-content:space-between;font-size:.76rem;color:var(--muted);margin-top:2px}
-input[type=text],input[type=password],input[type=date],input[type=url],textarea{font:inherit;width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+input[type=text],input[type=email],input[type=password],input[type=date],input[type=url],textarea{font:inherit;width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
 textarea{min-height:90px}
 button,.btn{font:inherit;font-weight:700;display:inline-block;text-align:center;text-decoration:none;width:100%;padding:13px;border:0;border-radius:12px;background:var(--or);color:#fff;font-size:1.05rem;cursor:pointer;margin-top:8px}
 button.sub,.btn.sub{background:var(--card);color:var(--or);border:1.5px solid var(--or)}
