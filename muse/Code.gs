@@ -13,6 +13,7 @@ const COLS = [
 ["stage_text","ステージ文"],["stage_n","ステージ番号"],["stage","ステージ名"],
 ["sk1","物差し1:情報を教える"],["sk2","物差し2:効く問いかけ"],["sk3","物差し3:チェックと修正指示"],
 ["sk4","物差し4:任せて見張る"],["sk5","物差し5:数字と次の一手"],["sk6","物差し6:型の再利用"],["skill_score","物差し合計"],
+  ["reflect_taught","振り返り:覚えさせたこと"],["reflect_query","振り返り:立てた問い"],["reflect_deeper","振り返り:深めた問い"],["reflect_next","振り返り:次に任せたいこと"],
 ["trouble_cat","困り事カテゴリ"],["trouble","困り事(詳細)"],["improve","次回までの改善"],
 ["next_want","次回やってみたいこと"],["next_other","次回(その他)"],
 ["recommend","すすめたい度(0-10)"],["good","よかったところ"],["hard","わかりにくかったところ"],["comment","講師へひとこと"],
@@ -116,7 +117,11 @@ const hist = (byEmail[to.toLowerCase()] || []).slice().sort((a, b) => new Date(a
 const idx = hist.indexOf(o);
 const prev = idx > 0? hist[idx - 1]: null;
 const n = +o.stage_n || 0;
-const prompt = PROMPTS[o.trouble_cat] || DEFAULT_PROMPT;
+let prompt = PROMPTS[o.trouble_cat] || DEFAULT_PROMPT;
+    // 自由記述の困り事と「次に任せたいこと」を差し込み、その人専用のプロンプトにする
+    if (o.trouble) prompt += "\n私の状況はこうです：「" + o.trouble + "」この状況に合わせて、最初の一手から始めてください。";
+    if (o.improve) prompt += "\n次回までに改善したいことは「" + o.improve + "」です。進み具合の確かめ方も付けてください。";
+    if (o.reflect_next) prompt += "\n終わったら、私が次に任せたい仕事「" + o.reflect_next + "」の進め方も提案してください。";
 const nextStage = n < 10? STAGES[n + 1]: "";
 let html = '<div style="font-family:sans-serif;line-height:1.8;color:#333;max-width:560px">'
 + '<p>' + esc(o.name || "") + ' 様</p>'
