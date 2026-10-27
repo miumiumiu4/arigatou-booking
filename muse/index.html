@@ -74,6 +74,20 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:30px}
 <div class="hint">今の自分に近いものを気軽に選んでください。第1回と第5回で同じ設問を置き、伸びが見えるようにします</div>
 <div id="skills"></div></div>
 
+<div class="q"><b>振り返り：今日、MUSEに覚えさせたことは何ですか？<span class="req">必須</span></b>
+<div class="hint">思い出すこと自体が、今日の学びを自分のものにします。短くて大丈夫です</div>
+<textarea name="reflect_taught" maxlength="500" placeholder="例：私の仕事の流れと、お客様の層を教えた"></textarea></div>
+
+<div class="q"><b>振り返り：今日あなたがMUSEに立てた「問い」を、1つ書き写してください<span class="req">必須</span></b>
+<textarea name="reflect_query" maxlength="500" placeholder="例：今週の予約を増やすために、まず何から始めるべき？"></textarea></div>
+
+<div class="q"><b>問いを強化する：その問いを一段深くすると、どうなりますか？<span class="opt">任意</span></b>
+<div class="hint">ヒント：「誰のために」「どの数字で」「いつまでに」のどれかを足すと、問いが一段深くなります。書くこと自体が練習です</div>
+<textarea name="reflect_deeper" maxlength="500" placeholder="例：先週予約が0だった平日を埋めるために、金曜までに何をする？"></textarea></div>
+
+<div class="q"><b>次にMUSEに任せたい仕事・活動は何ですか？<span class="opt">任意</span></b>
+<textarea name="reflect_next" maxlength="500" placeholder="例：毎朝の段取り出し／返信の下書き"></textarea></div>
+
 <div class="q"><b>今いちばん困っていること・改善したいことに、いちばん近いものは？<span class="req">必須</span></b>
 <div class="hint">明日の朝6時、この内容に合わせた実践プロンプトをメールで送ります</div>
 <div class="chips col" data-name="trouble_cat" data-opts="時間が足りない・作業に追われる|返信や連絡が追いつかない|集客や発信が続かない|数字やお金の管理ができていない|アイデアや企画が出ない|人に頼む・任せるのが苦手|MUSEの使い方がまだよく分からない|その他"></div></div>
@@ -164,7 +178,7 @@ flush(); setInterval(flush, 15000);
 $("#f").addEventListener("submit", async e => {
   e.preventDefault();
   const fd = new FormData(e.target), msg = $("#msg");
-  const need = { date: "受講した日", name: "お名前", email: "メールアドレス", satisfaction: "満足度", pace: "スピード", stage: "どこまでできたか", trouble_cat: "困っていること", recommend: "すすめたい度" };
+  const need = { date: "受講した日", name: "お名前", email: "メールアドレス", satisfaction: "満足度", pace: "スピード", stage: "どこまでできたか", reflect_taught: "覚えさせたこと", reflect_query: "立てた問い", trouble_cat: "困っていること", recommend: "すすめたい度" };
   const miss = Object.keys(need).filter(k => !String(fd.get(k) || "").trim());
   if (!fd.getAll("reach").length) miss.push("reach");
   const skMiss = SKILLS.filter(([k]) => fd.get(k) === null);
@@ -177,6 +191,7 @@ $("#f").addEventListener("submit", async e => {
     satisfaction: +fd.get("satisfaction"), pace: fd.get("pace"),
     reach: reach.join("、"), reach_n: reach.length, reach_done: reach.some(v => v.indexOf("r3") === 0) ? 1 : 0,
     stage_text: fd.get("stage"), stage_n: parseInt(fd.get("stage"), 10),
+    reflect_taught: fd.get("reflect_taught").trim(), reflect_query: fd.get("reflect_query").trim(), reflect_deeper: fd.get("reflect_deeper").trim(), reflect_next: fd.get("reflect_next").trim(),
     trouble_cat: fd.get("trouble_cat"), trouble: fd.get("trouble").trim(), improve: fd.get("improve").trim(),
     next_want: fd.getAll("next_want").join("、"), next_other: fd.get("next_other").trim(),
     recommend: +fd.get("recommend"), good: fd.get("good").trim(), hard: fd.get("hard").trim(), comment: fd.get("comment").trim(),
