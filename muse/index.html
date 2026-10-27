@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="version" content="2026-10-27a">
+<title>超知能MUSE無料セミナー 終了アンケート</title>
+<style>
+:root{--bg:#fff8f2;--card:#fff;--ink:#33241c;--muted:#8a7a6e;--line:#f0e2d6;--or:#e8590c;--soft:#fdeee2;--ok:#1f8a70;--ng:#b4532a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;line-height:1.8;font-size:17px}
+.wrap{max-width:640px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:1.45rem;line-height:1.4;margin:.3em 0}
+.lead{color:var(--muted);margin:.2em 0 1em}
+.q{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:14px 0}
+.q>b{display:block;margin-bottom:8px}
+.req{font-size:.72rem;background:var(--or);color:#fff;border-radius:99px;padding:1px 8px;margin-left:6px;vertical-align:middle}
+.opt{font-size:.72rem;color:var(--muted);margin-left:6px}
+.scale{display:flex;gap:6px;flex-wrap:wrap}
+.scale label,.chips label{flex:1 1 0;min-width:52px;text-align:center;border:1.5px solid var(--line);border-radius:10px;padding:8px 4px;cursor:pointer;background:var(--bg);font-size:.95rem}
+.scale.wide label{min-width:38px;padding:8px 2px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips label{flex:0 1 auto;padding:8px 12px}
+.chips.col{flex-direction:column}.chips.col label{text-align:left}
+.hint{font-size:.8rem;color:var(--muted);margin:-4px 0 8px}
+.sk{border-top:1px dashed var(--line);padding:8px 0}.sk:first-child{border-top:0}.sk p{margin:0 0 6px;font-size:.95rem}.sk .chips{flex-wrap:nowrap}.sk .chips label{flex:1 1 0;min-width:0;padding:8px 4px;font-size:.82rem;text-align:center;line-height:1.4}
+.lv{display:inline-block;background:var(--or);color:#fff;border-radius:12px;padding:6px 18px;font-size:1.3rem;font-weight:700;margin:8px 0}
+input[type=radio],input[type=checkbox]{position:absolute;opacity:0;pointer-events:none}
+label:has(input:checked){border-color:var(--or);background:var(--soft);font-weight:700;color:var(--or)}
+.ends{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);margin-top:4px}
+input[type=text],input[type=email],input[type=date],textarea{font:inherit;width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+textarea{min-height:90px}
+button{font:inherit;font-weight:700;width:100%;padding:14px;border:0;border-radius:12px;background:var(--or);color:#fff;font-size:1.1rem;cursor:pointer;margin-top:8px}
+button:disabled{opacity:.6}
+.msg{margin-top:12px;font-weight:700;min-height:1.4em}
+.msg.ok{color:var(--ok)}.msg.ng{color:var(--ng)}
+.thanks{display:none;text-align:center;padding:40px 10px}
+.thanks h2{font-size:1.5rem}
+footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:30px}
+</style></head>
+<body><div class="wrap">
+<div id="qbox" style="display:none;background:#e6f4ef;color:#1f8a70;border-radius:12px;padding:12px 16px;margin-bottom:12px;font-weight:700"></div>
+<div id="formArea">
+<h1>📝 超知能MUSE無料セミナー 終了アンケート</h1>
+<p class="lead">今日はお楽しみ様でした！このアンケートが今日の到達確認を兼ねています。答えた人から順次解散です。明日の朝6時、あなたの困り事に合わせた「実践プロンプト」をメールでお送りします。</p>
+<form id="f" novalidate>
+<div class="q"><b>受講した日<span class="req">必須</span></b>
+<input type="date" name="date" id="date" required>
+<input type="hidden" name="kai" id="kai"></div>
+
+<div class="q"><b>お名前（フルネーム）<span class="req">必須</span></b>
+<input type="text" name="name" maxlength="40" placeholder="例：三浦 太郎" required>
+<div class="ends"><span>ニックネームではなく、本名でご記入ください</span></div></div>
+
+<div class="q"><b>メールアドレス<span class="req">必須</span></b>
+<input type="email" name="email" maxlength="100" placeholder="例：taro@example.com" autocomplete="email" inputmode="email" required>
+<div class="ends"><span>翌朝の実践プロンプトと、次回のご案内に使います。毎回同じアドレスで答えると、成長の記録がつながります</span></div></div>
+
+<div class="q"><b>今日のセミナーの満足度は？<span class="req">必須</span></b>
+<div class="scale" data-name="satisfaction"></div>
+<div class="ends"><span>1 いまいち</span><span>5 大満足</span></div></div>
+
+<div class="q"><b>進むスピードは？<span class="req">必須</span></b>
+<div class="chips" data-name="pace" data-opts="ゆっくりすぎた|ちょうどよかった|速すぎた"></div></div>
+
+<div class="q"><b>今日できたこと（到達チェック）<span class="req">必須</span></b>
+<div class="hint">今日実際にできたもの全部にチェックしてください。これが今日の到達確認です</div>
+<div class="chips col" data-name="reach" data-multi="1" data-opts="r1 自分のMUSEを開いて、声で話しかけた|r2 MUSEに、自分の「今一番収入に関わる仕事・活動」の情報を教えた|r3 MUSEに指示を1本出して、成果物が1つ返ってきた|r4 作ったものを共有の場（オプチャ等）に上げた"></div></div>
+
+<div class="q"><b>これまでに、どこまでできましたか？<span class="req">必須</span></b>
+<div class="hint">実際にできたことのうち、いちばん大きい番号を1つ選んでください（今日の分も含みます）。第1回と第5回で同じ物差しを使い、成長が見えるようにしています</div>
+<div class="chips col" data-name="stage" data-opts="0 まだどれもできていない|1 自分のMUSEを開いて、声で話しかけられた|2 MUSEに、自分の「今一番収入に関わる仕事・活動」の情報を教えた（覚えさせた）|3 MUSEに指示を1本出して、成果物（文章・表・下書きなど）が1つ返ってきた|4 その成果物を、実際の仕事・活動で使った|5 MUSEに繰り返しの仕事を1つ任せて、翌日も動いているのを確認した|6 MUSEの報告や提案を見て、その日の仕事・活動を1つ決めた|7 MUSEに任せる仕事の「型」（指示書）を1本書いて保存した|8 その型を使って、2回目も同じ品質で成果物が出た|9 自分の仕事・活動の数字（売上・予約など）をMUSEに集計させて、次の一手を決めた|10 作った仕組みや型を、ほかの人に教えたり紹介したりした"></div></div>
+
+<div class="q"><b>物差しチェック：次のことは、どのくらいできますか？<span class="req">必須</span></b>
+<div class="hint">今の自分に近いものを気軽に選んでください。第1回と第5回で同じ設問を置き、伸びが見えるようにします</div>
+<div id="skills"></div></div>
+
+<div class="q"><b>今いちばん困っていること・改善したいことに、いちばん近いものは？<span class="req">必須</span></b>
+<div class="hint">明日の朝6時、この内容に合わせた実践プロンプトをメールで送ります</div>
+<div class="chips col" data-name="trouble_cat" data-opts="時間が足りない・作業に追われる|返信や連絡が追いつかない|集客や発信が続かない|数字やお金の管理ができていない|アイデアや企画が出ない|人に頼む・任せるのが苦手|MUSEの使い方がまだよく分からない|その他"></div></div>
+
+<div class="q"><b>その困り事を、もう少し詳しく<span class="opt">任意</span></b>
+<textarea name="trouble" maxlength="1000" placeholder="例：見積りの返信がいつも翌日になってしまう／投稿ネタを考える時間がない"></textarea></div>
+
+<div class="q"><b>次回までに改善したいこと<span class="opt">任意</span></b>
+<textarea name="improve" maxlength="1000" placeholder="例：朝イチでMUSEに今日の段取りを出してもらう"></textarea></div>
+
+<div class="q"><b>次回やってみたいこと<span class="opt">複数OK</span></b>
+<div class="hint">集計の上位から、次回以降のテーマを決めます</div>
+<div class="chips" data-name="next_want" data-multi="1" data-opts="仕事を任せる「型」の作り方|数字の集計と次の一手|発信や文章づくり|朝の報告の仕組み|ほかの人の事例を聞く|自分の成果物の発表"></div>
+<input type="text" name="next_other" maxlength="200" placeholder="その他（自由に）" style="margin-top:8px"></div>
+
+<div class="q"><b>このセミナーを友だちにすすめたい度は？<span class="req">必須</span></b>
+<div class="scale wide" data-name="recommend" data-min="0" data-max="10"></div>
+<div class="ends"><span>0 すすめない</span><span>10 ぜひすすめたい</span></div></div>
+
+<div class="q"><b>よかったところ・楽しかったところ<span class="opt">任意</span></b>
+<textarea name="good" maxlength="1000" placeholder="例：自分の仕事の情報で文章が返ってきて驚いた"></textarea></div>
+
+<div class="q"><b>わかりにくかったところ・止まったところ<span class="opt">任意</span></b>
+<textarea name="hard" maxlength="1000" placeholder="例：最初の設定で止まった"></textarea></div>
+
+<div class="q"><b>そのほか、講師へひとこと<span class="opt">任意</span></b>
+<textarea name="comment" maxlength="1000"></textarea></div>
+
+<button id="btn" type="submit">送信する（答えた人から解散です）</button>
+<div class="msg" id="msg"></div>
+</form>
+</div>
+<div class="thanks" id="thanks"><h2>🎉 ありがとうございました！</h2><p>回答を受け取りました。これで今日は解散です、お楽しみ様でした。<br>明日の朝6時、あなたの困り事に合わせた実践プロンプトを、ご入力のメールアドレスにお送りします。</p></div>
+<footer>超知能MUSE無料セミナー</footer>
+</div>
+<script>
+const $ = s => document.querySelector(s);
+const QKEY = "muse_survey_queue_v1";
+document.querySelectorAll("[data-name]").forEach(box => {
+  const name = box.dataset.name, multi = box.dataset.multi;
+  let opts = box.dataset.opts ? box.dataset.opts.split("|") : [];
+  if (!opts.length) { const mn = +(box.dataset.min ?? 1), mx = +(box.dataset.max ?? 5); for (let i = mn; i <= mx; i++) opts.push(String(i)); }
+  box.innerHTML = opts.map(o => `<label><input type="${multi ? "checkbox" : "radio"}" name="${name}" value="${o}">${o}</label>`).join("");
+});
+// 物差し（0:まだやったことがない 1:手伝いがあればできる 2:一人でできる）第1回・第5回で同一設問
+const SKILLS = [
+  ["sk1", "MUSEに、自分の仕事・活動の情報を教える（覚えさせる）"],
+  ["sk2", "目的に合った「効く問いかけ」を書く"],
+  ["sk3", "返ってきた成果物をチェックして、直してほしい点を伝える"],
+  ["sk4", "繰り返しの仕事を任せて、動き続けているか見張る"],
+  ["sk5", "数字を集計させて、次の一手を決める"],
+  ["sk6", "「型」（指示書）を保存して、次も同じ品質で使い回す"]
+];
+const SK_OPTS = ["まだやったことがない", "手伝いがあればできる", "一人でできる"];
+$("#skills").innerHTML = SKILLS.map(([k, t]) => `<div class="sk"><p>${t}</p><div class="chips">${SK_OPTS.map((o, i) => `<label><input type="radio" name="${k}" value="${i}">${o}</label>`).join("")}</div></div>`).join("");
+const STAGE_TEXTS = [...document.querySelectorAll('input[name=stage]')].map(x => x.value.replace(/^\d+ /, ""));
+const p = new URLSearchParams(location.search);
+const today = new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
+$("#date").value = p.get("date") || today;
+$("#kai").value = p.get("kai") || "第1回";
+
+async function gasUrl() {
+  try { const r = await fetch("config.json?t=" + Date.now(), { cache: "no-store" }); const u = (await r.json()).GAS_URL; return u && u.indexOf("script.google.com") >= 0 ? u : ""; } catch (_) { return ""; }
+}
+const loadQ = () => { try { return JSON.parse(localStorage.getItem(QKEY) || "[]"); } catch (_) { return []; } };
+const saveQ = q => { try { localStorage.setItem(QKEY, JSON.stringify(q)); } catch (_) {} };
+async function send(url, data) {
+  if (!url) throw new Error("受付の準備中です");
+  const r = await fetch(url, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(data) });
+  const t = await r.text(); let j; try { j = JSON.parse(t); } catch (_) { throw new Error("受付から想定外の返事（HTTP " + r.status + "）"); }
+  if (!j.ok) throw new Error(j.error || "送信失敗");
+}
+let flushing = false;
+async function flush() {
+  if (flushing) return; const q = loadQ(); if (!q.length) return;
+  flushing = true;
+  try {
+    const url = await gasUrl(); if (!url) return;
+    const rest = [];
+    for (const d of q) { try { await send(url, d); } catch (_) { rest.push(d); } }
+    saveQ(rest);
+    if (q.length > rest.length) { const b = $("#qbox"); b.style.display = "block"; b.textContent = "✅ さっきの回答を送信しました。ありがとうございました！このページは閉じて大丈夫です。"; }
+  } finally { flushing = false; }
+}
+if (loadQ().length) { const b = $("#qbox"); b.style.display = "block"; b.textContent = "⏳ さっきの回答を送信しています。答え直しは不要です。このまま少しお待ちください…"; }
+flush(); setInterval(flush, 15000);
+
+$("#f").addEventListener("submit", async e => {
+  e.preventDefault();
+  const fd = new FormData(e.target), msg = $("#msg");
+  const need = { date: "受講した日", name: "お名前", email: "メールアドレス", satisfaction: "満足度", pace: "スピード", stage: "どこまでできたか", trouble_cat: "困っていること", recommend: "すすめたい度" };
+  const miss = Object.keys(need).filter(k => !String(fd.get(k) || "").trim());
+  if (!fd.getAll("reach").length) miss.push("reach");
+  const skMiss = SKILLS.filter(([k]) => fd.get(k) === null);
+  if (skMiss.length) { msg.className = "msg ng"; msg.textContent = "「物差しチェック」でまだ選ばれていない項目が" + skMiss.length + "つあります"; return; }
+  if (!miss.includes("email") && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fd.get("email").trim())) { msg.className = "msg ng"; msg.textContent = "メールアドレスの形が正しくないようです。もう一度ご確認ください"; return; }
+  if (miss.length) { msg.className = "msg ng"; msg.textContent = "まだ選ばれていない項目があります：" + miss.map(k => need[k] || "今日できたこと").join("、"); return; }
+  const reach = fd.getAll("reach");
+  const data = {
+    type: "survey", date: fd.get("date"), kai: fd.get("kai"), name: fd.get("name").trim(), email: fd.get("email").trim(),
+    satisfaction: +fd.get("satisfaction"), pace: fd.get("pace"),
+    reach: reach.join("、"), reach_n: reach.length, reach_done: reach.some(v => v.indexOf("r3") === 0) ? 1 : 0,
+    stage_text: fd.get("stage"), stage_n: parseInt(fd.get("stage"), 10),
+    trouble_cat: fd.get("trouble_cat"), trouble: fd.get("trouble").trim(), improve: fd.get("improve").trim(),
+    next_want: fd.getAll("next_want").join("、"), next_other: fd.get("next_other").trim(),
+    recommend: +fd.get("recommend"), good: fd.get("good").trim(), hard: fd.get("hard").trim(), comment: fd.get("comment").trim(),
+    ...Object.fromEntries(SKILLS.map(([k]) => [k, +fd.get(k)])),
+    submitted_at: new Date().toISOString(), id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), ua: navigator.userAgent.slice(0, 120)
+  };
+  data.skill_score = SKILLS.reduce((a, [k]) => a + data[k], 0);
+  const nxt = STAGE_TEXTS[data.stage_n + 1];
+  $("#thanks").insertAdjacentHTML("beforeend", nxt ? '<p>あなたの次のチャレンジ（これができたら一段アップ）</p><div class="lv" style="font-size:1rem;line-height:1.6">' + nxt.replace(/[<>&]/g, "") + '</div>' : '<p>すべてのステップを達成しました。本当にすばらしいです！次は、ほかの人に教える側にも挑戦してみてください。</p>');
+  const btn = $("#btn"); btn.disabled = true; btn.textContent = "送信中…";
+  const url = await gasUrl();
+  let err = "";
+  try { await send(url, data); } catch (e2) { err = e2.message || String(e2); const q = loadQ(); q.push(data); saveQ(q); }
+  if (err) $("#thanks").insertAdjacentHTML("beforeend", '<p style="font-size:.8rem;color:#b4532a">※まだ送信できていません。この端末に保存したので、ページを開き直すと自動で再送します。<br>（' + err.replace(/[<>&]/g, "") + '）</p>');
+  $("#formArea").style.display = "none"; $("#thanks").style.display = "block"; window.scrollTo(0, 0);
+});
+</script>
+</body></html>
