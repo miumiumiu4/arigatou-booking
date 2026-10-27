@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>超知能MUSE アンケート集計</title>
+<style>
+:root{--bg:#fff8f2;--card:#fff;--ink:#33241c;--muted:#8a7a6e;--line:#f0e2d6;--or:#e8590c;--bar:#e8590c;--track:#f6ebe1}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#1d1a17;--card:#26221e;--ink:#efe9e1;--muted:#a79d90;--line:#3a342e;--or:#f08a4b;--bar:#f08a4b;--track:#332d27}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;line-height:1.7}
+.wrap{max-width:960px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:1.4rem;margin:.2em 0 .6em}
+h2{font-size:1.05rem;margin:0 0 .6em}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+select,input,button{font:inherit;padding:8px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}
+button{background:var(--or);color:#fff;border:0;font-weight:700;cursor:pointer}
+button.sub{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.tile .k{font-size:.8rem;color:var(--muted)}
+.tile .v{font-size:1.8rem;font-weight:700;line-height:1.3}
+.tile .s{font-size:.75rem;color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px}
+.bars{display:grid;grid-template-columns:minmax(120px,auto) 1fr auto;gap:6px 10px;align-items:center;font-size:.88rem}
+.bars .t{height:14px;background:var(--track);border-radius:4px;overflow:hidden}
+.bars .f{height:100%;background:var(--bar)}
+.bars .n{color:var(--muted);font-variant-numeric:tabular-nums;min-width:3.5em;text-align:right}
+.cm{border-top:1px solid var(--line);padding:8px 0;font-size:.92rem}
+.cm .meta{font-size:.75rem;color:var(--muted)}
+.cm b{font-size:.78rem;color:var(--or);margin-right:6px}
+.muted{color:var(--muted);font-size:.85rem}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{border-bottom:1px solid var(--line);padding:6px 4px;text-align:left}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+#err{color:#c0392b;font-weight:700}
+</style></head>
+<body><div class="wrap">
+<h1>📊 超知能MUSE無料セミナー アンケート集計</h1>
+<div class="row" id="login">
+  <input id="key" type="password" placeholder="合言葉">
+  <button id="go">読み込む</button>
+  <span id="err"></span>
+</div>
+<div id="main" style="display:none">
+<div class="row">
+  <label>表示する回：<select id="sel"></select></label>
+  <button class="sub" id="reload">最新にする</button>
+  <button class="sub" id="csv">CSVをダウンロード</button>
+  <span class="muted" id="upd"></span>
+</div>
+<div id="demo" style="display:none;background:#fff1c2;color:#33241c;border-radius:10px;padding:8px 14px;margin-bottom:12px;font-weight:700">これは見本データです。受付スイッチ（Apps Scriptのデプロイ）が入ると、本物の回答に切り替わります。</div>
+<div class="tiles" id="tiles"></div>
+<div class="card"><h2>🎯 到達と成長（物差し）</h2>
+<h2 style="margin-top:.4em">どこまでできたか（ステージ0〜10）の分布</h2><div class="bars" id="stageBars"></div>
+<h2 style="margin-top:1em">物差しチェックの平均（2点満点／第1回と第5回で同じ設問）</h2><div class="bars" id="skBars"></div></div>
+<div class="card"><h2>🧑‍🎓 参加者ごとの成長（前回比較）</h2><p class="muted" style="margin-top:0">同じメールアドレスの人を1人としてまとめています。初回→最新のステージの伸びが見えます。</p>
+<div style="overflow-x:auto"><table id="people"></table></div></div>
+<div class="card"><h2>🔥 困り事ランキング（次回のテーマ決め）</h2><div class="bars" id="troubleBars"></div>
+<h2 style="margin-top:1em">次回やってみたいこと</h2><div class="bars" id="nextBars"></div></div>
+<div class="card"><h2>回ごとの推移</h2><table id="trend"></table></div>
+<div class="card"><h2>みんなの声</h2><div id="voices"></div></div>
+</div>
+<div class="card"><h2>🔗 回ごとのアンケートリンクを作る</h2>
+<p class="muted">日付と回の名前を入れたリンクを配ると、受講日の入力がいらなくなり、回ごとの集計がきれいに分かれます。台本の締めでこのリンク（とQR）を案内してください。</p>
+<div class="row"><input type="date" id="ld"><input id="lk" placeholder="例：第1回"><button class="sub" id="mk">リンクを作ってコピー</button></div>
+<div id="lo" class="muted" style="word-break:break-all"></div>
+</div>
+</div>
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const BASE = location.href.replace(/kekka\.html.*$/, "");
+let ROWS = [];
+const keyOf = r => r.date + (r.kai ? "｜" + r.kai : "");
+const avg = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : NaN;
+const f1 = n => isNaN(n) ? "–" : n.toFixed(1);
+function nps(rs) { const v = rs.map(r => +r.recommend).filter(n => !isNaN(n)); if (!v.length) return NaN; return Math.round((v.filter(n => n >= 9).length - v.filter(n => n <= 6).length) / v.length * 100); }
+const SK = [["sk1","情報を教える"],["sk2","効く問いかけ"],["sk3","チェックと修正指示"],["sk4","任せて見張る"],["sk5","数字と次の一手"],["sk6","型の再利用"]];
+function barRow(label, v, max, note) { return `<span>${esc(label)}</span><div class="t"><div class="f" style="width:${isNaN(v) || !max ? 0 : Math.min(100, v / max * 100)}%"></div></div><span class="n">${note ?? (isNaN(v) ? "–" : v)}</span>`; }
+function countBars(rs, getter, split) {
+  const m = new Map();
+  rs.forEach(r => { const vals = split ? String(getter(r) || "").split("、").filter(Boolean) : [getter(r)].filter(v => v !== "" && v != null); vals.forEach(v => m.set(v, (m.get(v) || 0) + 1)); });
+  return [...m.entries()].sort((a, b) => b[1] - a[1]);
+}
+function demoData() {
+  const cats = ["時間が足りない・作業に追われる", "返信や連絡が追いつかない", "集客や発信が続かない"];
+  return Array.from({ length: 9 }, (_, i) => ({ date: "2026-11-02", kai: "第1回", name: "見本" + (i + 1), email: "demo" + i + "@example.com", satisfaction: 3 + (i % 3), pace: "ちょうどよかった", stage_n: [2, 3, 3, 4, 5, 3, 6, 2, 4][i], reach_done: i % 4 === 3 ? 0 : 1, sk1: 1, sk2: i % 3, sk3: 1, sk4: 0, sk5: i % 2, sk6: 0, skill_score: 3 + (i % 4), trouble_cat: cats[i % 3], trouble: "", next_want: "仕事を任せる「型」の作り方、数字の集計と次の一手", recommend: 7 + (i % 4), good: "実物が見られてよかった", hard: "", comment: "", at: "2026-11-02 21:5" + i }));
+}
+async function load() {
+  $("#err").textContent = "";
+  try {
+    const url = (await (await fetch("config.json?t=" + Date.now(), { cache: "no-store" })).json()).GAS_URL;
+    let demo = false;
+    if (!url) { ROWS = demoData(); demo = true; }
+    else {
+      const j = await (await fetch(url + "?key=" + encodeURIComponent($("#key").value))).json();
+      if (!j.ok) throw new Error(j.error || "読み込み失敗");
+      ROWS = j.rows || [];
+    }
+    $("#demo").style.display = demo ? "block" : "none";
+    try { localStorage.setItem("muse_survey_key", $("#key").value); } catch (_) {}
+    $("#main").style.display = "block";
+    const keys = [...new Set(ROWS.map(keyOf))].sort().reverse();
+    const cur = $("#sel").value;
+    $("#sel").innerHTML = `<option value="">すべての回（${ROWS.length}件）</option>` + keys.map(k => `<option value="${esc(k)}">${esc(k)}（${ROWS.filter(r => keyOf(r) === k).length}件）</option>`).join("");
+    $("#sel").value = keys.includes(cur) ? cur : "";
+    $("#upd").textContent = "更新 " + new Date().toLocaleTimeString("ja-JP");
+    render();
+  } catch (e) { $("#err").textContent = "読み込めませんでした：" + (e.message || e); }
+}
+function render() {
+  const k = $("#sel").value, rs = k ? ROWS.filter(r => keyOf(r) === k) : ROWS;
+  const reachRate = rs.length ? Math.round(rs.filter(r => +r.reach_done === 1).length / rs.length * 100) : 0;
+  const tile = (kk, v, s) => `<div class="tile"><div class="k">${kk}</div><div class="v">${v}</div><div class="s">${s || ""}</div></div>`;
+  $("#tiles").innerHTML = tile("回答数", rs.length + "人", k || "全回") + tile("到達率（指示を出して成果物が返った）", reachRate + "%", "") + tile("平均ステージ", f1(avg(rs.map(r => +r.stage_n).filter(n => !isNaN(n)))) + " / 10", "") + tile("物差し合計の平均", f1(avg(rs.map(r => +r.skill_score).filter(n => !isNaN(n)))) + " / 12", "") + tile("満足度", f1(avg(rs.map(r => +r.satisfaction).filter(n => !isNaN(n)))) + " / 5", "") + tile("NPS（すすめたい度）", isNaN(nps(rs)) ? "–" : nps(rs), "");
+  const dist = []; for (let i = 0; i <= 10; i++) dist.push(["ステップ" + i, rs.filter(r => +r.stage_n === i).length]);
+  $("#stageBars").innerHTML = dist.map(([l, v]) => barRow(l, v, Math.max(1, ...dist.map(d => d[1])), v + "人")).join("");
+  $("#skBars").innerHTML = SK.map(([f, l]) => { const a = avg(rs.map(r => +r[f]).filter(n => !isNaN(n))); return barRow(l, a, 2, f1(a)); }).join("");
+  $("#troubleBars").innerHTML = countBars(rs, r => r.trouble_cat).map(([l, v]) => barRow(l, v, rs.length, v + "人")).join("") || '<p class="muted">まだ回答がありません</p>';
+  $("#nextBars").innerHTML = countBars(rs, r => r.next_want, true).map(([l, v]) => barRow(l, v, rs.length, v + "人")).join("") || '<p class="muted">まだ回答がありません</p>';
+  // 個人の前回比較
+  const m = new Map();
+  ROWS.filter(r => r.email).sort((a, b) => String(a.at || a.date).localeCompare(String(b.at || b.date))).forEach(r => {
+    const key = String(r.email).trim().toLowerCase(); if (!m.has(key)) m.set(key, []); m.get(key).push(r);
+  });
+  const people = [...m.values()].map(h => ({ name: h[h.length - 1].name || "", times: new Set(h.map(keyOf)).size, first: +h[0].stage_n, last: +h[h.length - 1].stage_n, cat: h[h.length - 1].trouble_cat || "" })).sort((a, b) => (b.last - b.first) - (a.last - a.first));
+  $("#people").innerHTML = `<tr><th>名前</th><th class="num">参加回数</th><th class="num">初回ステップ</th><th class="num">最新ステップ</th><th class="num">伸び</th><th>最新の困り事</th></tr>` + people.map(p => `<tr><td>${esc(p.name)}</td><td class="num">${p.times}</td><td class="num">${isNaN(p.first) ? "–" : p.first}</td><td class="num">${isNaN(p.last) ? "–" : p.last}</td><td class="num">${isNaN(p.first) || isNaN(p.last) ? "–" : (p.last - p.first > 0 ? "+" + (p.last - p.first) : String(p.last - p.first))}</td><td>${esc(p.cat)}</td></tr>`).join("");
+  const keys = [...new Set(ROWS.map(keyOf))].sort();
+  $("#trend").innerHTML = `<tr><th>回</th><th class="num">人数</th><th class="num">到達率</th><th class="num">平均ステージ</th><th class="num">満足度</th><th class="num">NPS</th></tr>` + keys.map(x => { const g = ROWS.filter(r => keyOf(r) === x); const rr = g.length ? Math.round(g.filter(r => +r.reach_done === 1).length / g.length * 100) : 0; return `<tr><td>${esc(x)}</td><td class="num">${g.length}</td><td class="num">${rr}%</td><td class="num">${f1(avg(g.map(r => +r.stage_n).filter(n => !isNaN(n))))}</td><td class="num">${f1(avg(g.map(r => +r.satisfaction).filter(n => !isNaN(n))))}</td><td class="num">${isNaN(nps(g)) ? "–" : nps(g)}</td></tr>`; }).join("");
+  const L = { good: "よかった", hard: "わかりにくかった", trouble: "困り事", improve: "改善したい", comment: "ひとこと" };
+  $("#voices").innerHTML = rs.flatMap(r => Object.keys(L).filter(f => r[f]).map(f => `<div class="cm"><b>${L[f]}</b>${esc(r[f])}<div class="meta">${esc(r.name || "名前なし")}・満足度${esc(r.satisfaction)}・${esc(keyOf(r))}</div></div>`)).join("") || '<p class="muted">まだ声がありません</p>';
+}
+function csv() {
+  const k = $("#sel").value, rs = k ? ROWS.filter(r => keyOf(r) === k) : ROWS;
+  if (!rs.length) return;
+  const cols = [...new Set(rs.flatMap(r => Object.keys(r)))];
+  const q = v => '"' + String(v ?? "").replace(/"/g, '""') + '"';
+  const blob = new Blob(["\ufeff" + cols.join(",") + "\n" + rs.map(r => cols.map(c => q(r[c])).join(",")).join("\n")], { type: "text/csv" });
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "muse_survey.csv"; a.click(); URL.revokeObjectURL(a.href);
+}
+$("#go").onclick = load; $("#reload").onclick = load; $("#csv").onclick = csv;
+$("#sel").onchange = render;
+$("#key").onkeydown = e => { if (e.key === "Enter") load(); };
+$("#mk").onclick = () => {
+  const d = $("#ld").value, kk = $("#lk").value.trim();
+  if (!d || !kk) { $("#lo").textContent = "日付と回の名前を入れてください"; return; }
+  const u = BASE + "?date=" + encodeURIComponent(d) + "&kai=" + encodeURIComponent(kk);
+  $("#lo").textContent = u;
+  if (navigator.clipboard) navigator.clipboard.writeText(u);
+};
+try { const s = localStorage.getItem("muse_survey_key"); if (s) { $("#key").value = s; load(); } } catch (_) {}
+</script>
+</body></html>
