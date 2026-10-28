@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="version" content="2026-10-28a">
+<title>超知能活用力診断</title>
+<style>
+:root{--bg:#fff8f2;--card:#fff;--ink:#33241c;--muted:#7d6e62;--line:#f0e2d6;--or:#d9530b;--soft:#fdeee2;--ok:#1f8a70;--grid:#efe3d8;--btn:#d9530b}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#1d1a17;--card:#26221e;--ink:#efe9e1;--muted:#a79d90;--line:#3a342e;--or:#f08a4b;--soft:#3a2a1f;--ok:#4cc29f;--grid:#38312b;--btn:#b94a0c}}
+:root[data-theme=dark]{--bg:#1d1a17;--card:#26221e;--ink:#efe9e1;--muted:#a79d90;--line:#3a342e;--or:#f08a4b;--soft:#3a2a1f;--ok:#4cc29f;--grid:#38312b;--btn:#b94a0c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;line-height:1.75;font-size:16px}
+.wrap{max-width:640px;margin:0 auto;padding:18px 16px 60px}
+h1{font-size:1.4rem;margin:.2em 0 0}
+h2{font-size:1.05rem;margin:0 0 .5em}
+.sub{color:var(--muted);font-size:.85rem;margin:0 0 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:12px 0}
+.hero{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.hero .big{font-size:2.6rem;font-weight:800;line-height:1;color:var(--or)}
+.hero .of{color:var(--muted)}
+.pid{display:inline-block;background:var(--soft);color:var(--or);font-weight:700;border-radius:99px;padding:2px 12px;font-size:.85rem}
+.chart{position:relative}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);font-size:.78rem;padding:4px 8px;border-radius:6px;white-space:nowrap;transform:translate(-50%,-120%);display:none}
+.sk{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center;padding:7px 0;border-top:1px solid var(--line);font-size:.92rem}
+.sk:first-of-type{border-top:0}
+.dots{letter-spacing:2px;color:var(--or);font-size:1rem}
+.sk .lv{grid-column:1/-1;color:var(--muted);font-size:.78rem}
+.up{color:var(--ok);font-weight:700}
+.cm p{margin:.2em 0}
+pre{white-space:pre-wrap;background:var(--soft);border-radius:10px;padding:12px;font:inherit;font-size:.92rem;margin:8px 0}
+button,.btn{font:inherit;font-weight:700;display:inline-block;padding:10px 16px;border:0;border-radius:10px;background:var(--btn);color:#fff;text-decoration:none;cursor:pointer}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{border-bottom:1px solid var(--line);padding:6px 4px;text-align:left}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+.muted{color:var(--muted);font-size:.85rem}
+#err{color:#c0392b;font-weight:700}
+details summary{cursor:pointer;color:var(--muted);font-size:.85rem}
+footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:30px}
+</style></head>
+<body><div class="wrap">
+<h1>超知能活用力診断</h1>
+<p class="sub">超知能MUSE無料セミナー｜あなた専用のページです。リンクはほかの人に教えないでください</p>
+<div id="loading" class="card muted">読み込んでいます…</div>
+<div id="err"></div>
+<div id="main" style="display:none">
+  <div class="card">
+    <div><span class="pid" id="pid"></span> <b id="name"></b></div>
+    <div class="hero" style="margin-top:8px"><span class="muted">いまの位置</span><span class="big" id="stageNow"></span><span class="of">/ 10 ステップ</span></div>
+    <div class="muted" id="stageText"></div>
+  </div>
+  <div class="card"><h2>ステップの推移</h2>
+    <p class="muted" style="margin-top:-6px">第1回の参加前を起点に、回ごとの参加前・終了の記録をつないでいます。点をタップすると数字が出ます</p>
+    <div class="chart" id="chart"></div>
+    <details style="margin-top:8px"><summary>表で見る</summary><div style="overflow-x:auto"><table id="tbl"></table></div></details>
+  </div>
+  <div class="card cm"><h2>診断コメント</h2><div id="comment"></div></div>
+  <div class="card"><h2>物差し6項目</h2><p class="muted" style="margin-top:-6px">●●＝一人でできる　●○＝手伝いがあればできる　○○＝まだ。<span class="up">↑</span>は最初の記録から伸びた項目</p><div id="skills"></div></div>
+  <div class="card" id="promptCard" style="display:none"><h2>直近で届いたプロンプト</h2><div class="muted" id="promptMeta"></div><pre id="promptText"></pre><p class="muted" id="strengthen"></p><button id="copy">コピーする</button></div>
+  <div class="card" id="nextCard" style="display:none"><h2>次回</h2><p id="nextText" style="margin:.2em 0 .6em"></p><a class="btn" id="nextPre">参加前アンケートに答える</a><p class="muted" style="margin-top:10px">全5回：<span id="sched"></span></p></div>
+</div>
+<footer>超知能MUSE無料セミナー　講師 三浦公嗣</footer>
+</div>
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const p = new URLSearchParams(location.search);
+async function main() {
+  const id = p.get("id"), k = p.get("k");
+  try {
+    if (!id || !k) throw new Error("リンクが正しくないようです。メールに書かれたリンクから開いてください");
+    const url = (await (await fetch("config.json?t=" + Date.now(), { cache: "no-store" })).json()).GAS_URL;
+    if (!url) throw new Error("ただいま準備中です。少し時間をおいて開き直してください");
+    const j = await (await fetch(url + "?action=my&id=" + encodeURIComponent(id) + "&k=" + encodeURIComponent(k))).json();
+    if (!j.ok) throw new Error(j.error || "読み込めませんでした");
+    render(j);
+  } catch (e) { $("#err").textContent = e.message || String(e); }
+  $("#loading").style.display = "none";
+}
+function render(j) {
+  $("#main").style.display = "block";
+  $("#pid").textContent = "参加者番号 " + j.id;
+  $("#name").textContent = j.name ? j.name + " 様" : "";
+  const R = j.records, last = R[R.length - 1];
+  $("#stageNow").textContent = last ? last.stage_n : "–";
+  $("#stageText").textContent = last ? (last.stage_n ? "できたこと：" + j.stages[last.stage_n] : "ここがスタート地点です") : "まだ記録がありません";
+  $("#comment").innerHTML = j.comment.map(t => "<p>" + esc(t) + "</p>").join("");
+  chart(R);
+  $("#tbl").innerHTML = "<tr><th>記録</th><th class='n'>ステップ</th><th class='n'>物差し</th></tr>" + R.map(r => `<tr><td>${esc(r.kai + " " + r.type)}</td><td class="n">${r.stage_n}</td><td class="n">${r.skill_score}/12</td></tr>`).join("");
+  const first = R[0];
+  $("#skills").innerHTML = j.skills.map(([key, t]) => { const a = last ? last[key] : 0, up = first && last && last[key] > first[key]; return `<div class="sk"><span>${esc(t)}${up ? ' <span class="up">↑</span>' : ""}</span><span class="dots" aria-label="${a}/2">${"●".repeat(a)}${"○".repeat(2 - a)}</span><span class="lv">${["まだ", "手伝いがあればできる", "一人でできる"][a]}${R.length > 1 ? "（最初：" + ["まだ", "手伝いがあればできる", "一人でできる"][first[key]] + "）" : ""}</span></div>`; }).join("");
+  if (j.prompt) {
+    $("#promptCard").style.display = "block";
+    $("#promptMeta").textContent = j.prompt.at + "にお届けしたもの（" + (j.prompt.kata || "") + "）";
+    $("#promptText").textContent = j.prompt.text;
+    $("#strengthen").textContent = j.prompt.strengthen;
+    $("#copy").onclick = () => { navigator.clipboard && navigator.clipboard.writeText(j.prompt.text).then(() => { $("#copy").textContent = "コピーしました"; }); };
+  }
+  if (j.next) {
+    $("#nextCard").style.display = "block";
+    $("#nextText").textContent = j.next.kai + "：" + j.next.label;
+    $("#nextPre").href = j.next.pre;
+    $("#nextPre").textContent = j.next.kai + "の参加前アンケートに答える";
+  }
+  $("#sched").textContent = j.schedule.map(s => s.kai + " " + s.label.replace(/ 20:00〜/, "")).join("／");
+}
+// 1本の折れ線（ステップ0〜10）。凡例なし（見出しが系列名）、最初と最新だけ数字を直接表示、タップで数字
+function chart(R) {
+  const box = $("#chart");
+  if (!R.length) { box.innerHTML = '<p class="muted">記録がまだありません</p>'; return; }
+  const W = 360, H = 200, L = 26, Rm = 14, T = 18, B = 40;
+  const n = R.length, x = i => n === 1 ? L + (W - L - Rm) / 2 : L + i * (W - L - Rm) / (n - 1), y = v => T + (10 - v) * (H - T - B) / 10;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="ステップの推移">`;
+  [0, 5, 10].forEach(v => { s += `<line x1="${L}" x2="${W - Rm}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)" stroke-width="1"/><text x="${L - 8}" y="${y(v) + 4}" text-anchor="end" font-size="12" fill="var(--muted)">${v}</text>`; });
+  if (n > 1) s += `<polyline fill="none" stroke="var(--or)" stroke-width="2" stroke-linejoin="round" points="${R.map((r, i) => x(i) + "," + y(r.stage_n)).join(" ")}"/>`;
+  R.forEach((r, i) => {
+    const pre = r.type === "参加前";
+    s += `<circle cx="${x(i)}" cy="${y(r.stage_n)}" r="6" fill="${pre ? "var(--card)" : "var(--or)"}" stroke="var(--or)" stroke-width="2"/>`;
+    s += `<circle class="hit" data-i="${i}" cx="${x(i)}" cy="${y(r.stage_n)}" r="18" fill="transparent"/>`;
+    if (i === 0 || i === n - 1) s += `<text x="${x(i)}" y="${y(r.stage_n) - 12}" text-anchor="middle" font-size="13" font-weight="700" fill="var(--ink)">${r.stage_n}</text>`;
+    if (n <= 6 || i % 2 === 0 || i === n - 1) s += `<text x="${x(i)}" y="${H - 26}" text-anchor="middle" font-size="12" fill="var(--muted)">${esc(r.kai.replace("第", ""))}</text><text x="${x(i)}" y="${H - 11}" text-anchor="middle" font-size="11" fill="var(--muted)">${pre ? "前" : "後"}</text>`;
+  });
+  s += `</svg><div class="tip" id="tip"></div><p class="muted" style="margin:4px 0 0">○＝参加前　●＝終了アンケート</p>`;
+  box.innerHTML = s;
+  const tip = $("#tip"), svg = box.querySelector("svg");
+  box.querySelectorAll(".hit").forEach(c => {
+    const show = () => { const r = R[+c.dataset.i], sc = svg.getBoundingClientRect().width / W; tip.style.left = (+c.getAttribute("cx") * sc) + "px"; tip.style.top = (+c.getAttribute("cy") * sc) + "px"; tip.textContent = `${r.kai} ${r.type}：ステップ ${r.stage_n}・物差し ${r.skill_score}/12`; tip.style.display = "block"; };
+    c.addEventListener("mouseenter", show); c.addEventListener("click", show); c.addEventListener("mouseleave", () => tip.style.display = "none");
+  });
+}
+main();
+</script>
+</body></html>

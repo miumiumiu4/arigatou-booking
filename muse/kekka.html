@@ -53,7 +53,10 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 <div class="card"><h2>🎯 到達と成長（物差し）</h2>
 <h2 style="margin-top:.4em">どこまでできたか（ステージ0〜10）の分布</h2><div class="bars" id="stageBars"></div>
 <h2 style="margin-top:1em">物差しチェックの平均（2点満点／第1回と第5回で同じ設問）</h2><div class="bars" id="skBars"></div></div>
-<div class="card"><h2>🧑‍🎓 参加者ごとの成長（前回比較）</h2><p class="muted" style="margin-top:0">同じメールアドレスの人を1人としてまとめています。初回→最新のステージの伸びが見えます。</p>
+<div class="card"><h2>📈 同じ回の伸び（参加前 → 終了）</h2><p class="muted" style="margin-top:0">選んだ回で、参加前アンケートと終了アンケートの両方に答えた人の変化です（参加者IDで連結）。</p>
+<div class="tiles" id="liftTiles"></div>
+<div style="overflow-x:auto"><table id="lift"></table></div></div>
+<div class="card"><h2>🧑‍🎓 参加者ごとの成長（前回比較）</h2><p class="muted" style="margin-top:0">参加者ID（無ければメールアドレス）で1人にまとめています。参加前アンケートも含めた初回→最新のステージの伸びが見えます。</p>
 <div style="overflow-x:auto"><table id="people"></table></div></div>
 <div class="card"><h2>🔥 困り事ランキング（次回のテーマ決め）</h2><div class="bars" id="troubleBars"></div>
 <h2 style="margin-top:1em">次回やってみたいこと</h2><div class="bars" id="nextBars"></div></div>
@@ -70,7 +73,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const BASE = location.href.replace(/kekka\.html.*$/, "");
-let ROWS = [];
+let ROWS = [], PRE = [], MASTER = [];
 const keyOf = r => r.date + (r.kai ? "｜" + r.kai : "");
 const avg = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : NaN;
 const f1 = n => isNaN(n) ? "–" : n.toFixed(1);
@@ -84,23 +87,22 @@ function countBars(rs, getter, split) {
 }
 function demoData() {
   const cats = ["時間が足りない・作業に追われる", "返信や連絡が追いつかない", "集客や発信が続かない"];
-  return Array.from({ length: 9 }, (_, i) => ({ date: "2026-11-02", kai: "第1回", name: "見本" + (i + 1), email: "demo" + i + "@example.com", satisfaction: 3 + (i % 3), pace: "ちょうどよかった", stage_n: [2, 3, 3, 4, 5, 3, 6, 2, 4][i], reach_done: i % 4 === 3 ? 0 : 1, sk1: 1, sk2: i % 3, sk3: 1, sk4: 0, sk5: i % 2, sk6: 0, skill_score: 3 + (i % 4), trouble_cat: cats[i % 3], trouble: "", next_want: "仕事を任せる「型」の作り方、数字の集計と次の一手", recommend: 7 + (i % 4), good: "実物が見られてよかった", hard: "", comment: "", at: "2026-11-02 21:5" + i }));
+  return Array.from({ length: 9 }, (_, i) => ({ date: "2026-11-02", kai: "第1回", pid: "M" + String(i + 1).padStart(3, "0"), name: "見本" + (i + 1), email: "demo" + i + "@example.com", satisfaction: 3 + (i % 3), pace: "ちょうどよかった", stage_n: [2, 3, 3, 4, 5, 3, 6, 2, 4][i], reach_done: i % 4 === 3 ? 0 : 1, sk1: 1, sk2: i % 3, sk3: 1, sk4: 0, sk5: i % 2, sk6: 0, skill_score: 3 + (i % 4), trouble_cat: cats[i % 3], trouble: "", next_want: "仕事を任せる「型」の作り方、数字の集計と次の一手", recommend: 7 + (i % 4), good: "実物が見られてよかった", hard: "", comment: "", at: "2026-11-02 21:5" + i }));
 }
 async function load() {
   $("#err").textContent = "";
   try {
     const url = (await (await fetch("config.json?t=" + Date.now(), { cache: "no-store" })).json()).GAS_URL;
     let demo = false;
-    if (!url) { ROWS = demoData(); demo = true; }
+    if (!url) { ROWS = demoData(); PRE = ROWS.map(r => ({ ...r, stage_n: Math.max(0, r.stage_n - 2), skill_score: Math.max(0, r.skill_score - 3) })); MASTER = []; demo = true; }
     else {
-      const j = await (await fetch(url + "?key=" + encodeURIComponent($("#key").value))).json();
-      if (!j.ok) throw new Error(j.error || "読み込み失敗");
-      ROWS = j.rows || [];
+      const get = async t => { const j = await (await fetch(url + "?key=" + encodeURIComponent($("#key").value) + (t ? "&type=" + t : ""))).json(); if (!j.ok) throw new Error(j.error || "読み込み失敗"); return j.rows || []; };
+      [ROWS, PRE, MASTER] = await Promise.all([get(""), get("pre"), get("master")]);
     }
     $("#demo").style.display = demo ? "block" : "none";
     try { localStorage.setItem("muse_survey_key", $("#key").value); } catch (_) {}
     $("#main").style.display = "block";
-    const keys = [...new Set(ROWS.map(keyOf))].sort().reverse();
+    const keys = [...new Set(ROWS.concat(PRE).map(keyOf))].sort().reverse();
     const cur = $("#sel").value;
     $("#sel").innerHTML = `<option value="">すべての回（${ROWS.length}件）</option>` + keys.map(k => `<option value="${esc(k)}">${esc(k)}（${ROWS.filter(r => keyOf(r) === k).length}件）</option>`).join("");
     $("#sel").value = keys.includes(cur) ? cur : "";
@@ -112,7 +114,14 @@ function render() {
   const k = $("#sel").value, rs = k ? ROWS.filter(r => keyOf(r) === k) : ROWS;
   const reachRate = rs.length ? Math.round(rs.filter(r => +r.reach_done === 1).length / rs.length * 100) : 0;
   const tile = (kk, v, s) => `<div class="tile"><div class="k">${kk}</div><div class="v">${v}</div><div class="s">${s || ""}</div></div>`;
-  $("#tiles").innerHTML = tile("回答数", rs.length + "人", k || "全回") + tile("到達率（指示を出して成果物が返った）", reachRate + "%", "") + tile("平均ステージ", f1(avg(rs.map(r => +r.stage_n).filter(n => !isNaN(n)))) + " / 10", "") + tile("物差し合計の平均", f1(avg(rs.map(r => +r.skill_score).filter(n => !isNaN(n)))) + " / 12", "") + tile("満足度", f1(avg(rs.map(r => +r.satisfaction).filter(n => !isNaN(n)))) + " / 5", "") + tile("NPS（すすめたい度）", isNaN(nps(rs)) ? "–" : nps(rs), "");
+  $("#tiles").innerHTML = tile("回答数", rs.length + "人", k || "全回") + tile("到達率（指示を出して成果物が返った）", reachRate + "%", "") + tile("平均ステージ", f1(avg(rs.map(r => +r.stage_n).filter(n => !isNaN(n)))) + " / 10", "") + tile("物差し合計の平均", f1(avg(rs.map(r => +r.skill_score).filter(n => !isNaN(n)))) + " / 12", "") + tile("満足度", f1(avg(rs.map(r => +r.satisfaction).filter(n => !isNaN(n)))) + " / 5", "") + tile("NPS（すすめたい度）", isNaN(nps(rs)) ? "–" : nps(rs), "") + tile("参加前の回答数", (k ? PRE.filter(r => keyOf(r) === k) : PRE).length + "人", "参加者マスタ " + MASTER.filter(m => /^M/.test(m.pid || "")).length + "人");
+  // 同じ回の伸び（参加前→終了）
+  const pidOf = r => String(r.pid || String(r.email || "").trim().toLowerCase());
+  const pres = k ? PRE.filter(r => keyOf(r) === k) : PRE;
+  const pairs = rs.map(post => { const pre = pres.filter(x => pidOf(x) === pidOf(post) && x.kai === post.kai).pop(); return pre ? { pid: post.pid || "", name: post.name, kai: post.kai, a: +pre.stage_n, b: +post.stage_n, sa: +pre.skill_score, sb: +post.skill_score } : null; }).filter(Boolean);
+  const sgn = v => isNaN(v) ? "–" : (v > 0 ? "+" + v : String(v));
+  $("#liftTiles").innerHTML = tile("両方に答えた人", pairs.length + "人", "") + tile("ステップの伸び（平均）", pairs.length ? sgn(+avg(pairs.map(x => x.b - x.a)).toFixed(1)) : "–", "") + tile("物差しの伸び（平均）", pairs.length ? sgn(+avg(pairs.map(x => x.sb - x.sa)).toFixed(1)) : "–", "12点満点");
+  $("#lift").innerHTML = `<tr><th>ID</th><th>名前</th><th>回</th><th class="num">参加前</th><th class="num">終了</th><th class="num">伸び</th><th class="num">物差し 前→後</th></tr>` + pairs.sort((x, y) => (y.b - y.a) - (x.b - x.a)).map(x => `<tr><td>${esc(x.pid)}</td><td>${esc(x.name)}</td><td>${esc(x.kai)}</td><td class="num">${x.a}</td><td class="num">${x.b}</td><td class="num">${sgn(x.b - x.a)}</td><td class="num">${x.sa}→${x.sb}</td></tr>`).join("");
   const dist = []; for (let i = 0; i <= 10; i++) dist.push(["ステップ" + i, rs.filter(r => +r.stage_n === i).length]);
   $("#stageBars").innerHTML = dist.map(([l, v]) => barRow(l, v, Math.max(1, ...dist.map(d => d[1])), v + "人")).join("");
   $("#skBars").innerHTML = SK.map(([f, l]) => { const a = avg(rs.map(r => +r[f]).filter(n => !isNaN(n))); return barRow(l, a, 2, f1(a)); }).join("");
@@ -120,11 +129,11 @@ function render() {
   $("#nextBars").innerHTML = countBars(rs, r => r.next_want, true).map(([l, v]) => barRow(l, v, rs.length, v + "人")).join("") || '<p class="muted">まだ回答がありません</p>';
   // 個人の前回比較
   const m = new Map();
-  ROWS.filter(r => r.email).sort((a, b) => String(a.at || a.date).localeCompare(String(b.at || b.date))).forEach(r => {
-    const key = String(r.email).trim().toLowerCase(); if (!m.has(key)) m.set(key, []); m.get(key).push(r);
+  ROWS.concat(PRE).filter(r => r.email || r.pid).sort((a, b) => String(a.at || a.date).localeCompare(String(b.at || b.date))).forEach(r => {
+    const key = String(r.pid || String(r.email).trim().toLowerCase()); if (!m.has(key)) m.set(key, []); m.get(key).push(r);
   });
-  const people = [...m.values()].map(h => ({ name: h[h.length - 1].name || "", times: new Set(h.map(keyOf)).size, first: +h[0].stage_n, last: +h[h.length - 1].stage_n, cat: h[h.length - 1].trouble_cat || "" })).sort((a, b) => (b.last - b.first) - (a.last - a.first));
-  $("#people").innerHTML = `<tr><th>名前</th><th class="num">参加回数</th><th class="num">初回ステップ</th><th class="num">最新ステップ</th><th class="num">伸び</th><th>最新の困り事</th></tr>` + people.map(p => `<tr><td>${esc(p.name)}</td><td class="num">${p.times}</td><td class="num">${isNaN(p.first) ? "–" : p.first}</td><td class="num">${isNaN(p.last) ? "–" : p.last}</td><td class="num">${isNaN(p.first) || isNaN(p.last) ? "–" : (p.last - p.first > 0 ? "+" + (p.last - p.first) : String(p.last - p.first))}</td><td>${esc(p.cat)}</td></tr>`).join("");
+  const people = [...m.values()].map(h => ({ pid: h[0].pid || "", name: h[h.length - 1].name || "", times: new Set(h.map(keyOf)).size, first: +h[0].stage_n, last: +h[h.length - 1].stage_n, cat: h[h.length - 1].trouble_cat || "" })).sort((a, b) => (b.last - b.first) - (a.last - a.first));
+  $("#people").innerHTML = `<tr><th>ID</th><th>名前</th><th class="num">参加回数</th><th class="num">初回ステップ</th><th class="num">最新ステップ</th><th class="num">伸び</th><th>最新の困り事</th></tr>` + people.map(p => `<tr><td>${esc(p.pid)}</td><td>${esc(p.name)}</td><td class="num">${p.times}</td><td class="num">${isNaN(p.first) ? "–" : p.first}</td><td class="num">${isNaN(p.last) ? "–" : p.last}</td><td class="num">${isNaN(p.first) || isNaN(p.last) ? "–" : (p.last - p.first > 0 ? "+" + (p.last - p.first) : String(p.last - p.first))}</td><td>${esc(p.cat)}</td></tr>`).join("");
   const keys = [...new Set(ROWS.map(keyOf))].sort();
   $("#trend").innerHTML = `<tr><th>回</th><th class="num">人数</th><th class="num">到達率</th><th class="num">平均ステージ</th><th class="num">満足度</th><th class="num">NPS</th></tr>` + keys.map(x => { const g = ROWS.filter(r => keyOf(r) === x); const rr = g.length ? Math.round(g.filter(r => +r.reach_done === 1).length / g.length * 100) : 0; return `<tr><td>${esc(x)}</td><td class="num">${g.length}</td><td class="num">${rr}%</td><td class="num">${f1(avg(g.map(r => +r.stage_n).filter(n => !isNaN(n))))}</td><td class="num">${f1(avg(g.map(r => +r.satisfaction).filter(n => !isNaN(n))))}</td><td class="num">${isNaN(nps(g)) ? "–" : nps(g)}</td></tr>`; }).join("");
   const L = { good: "よかった", hard: "わかりにくかった", trouble: "困り事", improve: "改善したい", reflect_taught: "覚えさせたこと", reflect_query: "立てた問い", reflect_deeper: "深めた問い", reflect_next: "次に任せたいこと", comment: "ひとこと" };
@@ -145,7 +154,8 @@ $("#mk").onclick = () => {
   const d = $("#ld").value, kk = $("#lk").value.trim();
   if (!d || !kk) { $("#lo").textContent = "日付と回の名前を入れてください"; return; }
   const u = BASE + "?date=" + encodeURIComponent(d) + "&kai=" + encodeURIComponent(kk);
-  $("#lo").textContent = u;
+  const pre = BASE + "pre.html?date=" + encodeURIComponent(d) + "&kai=" + encodeURIComponent(kk);
+  $("#lo").innerHTML = "終了アンケート（コピー済み）：" + esc(u) + "<br>参加前アンケート：" + esc(pre) + "<br>参加前（広告から来た人用）：" + esc(pre) + "&amp;src=ad";
   if (navigator.clipboard) navigator.clipboard.writeText(u);
 };
 try { const s = localStorage.getItem("muse_survey_key"); if (s) { $("#key").value = s; load(); } } catch (_) {}

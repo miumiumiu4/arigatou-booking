@@ -2,7 +2,7 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<meta name="version" content="2026-10-27a">
+<meta name="version" content="2026-10-28a">
 <title>超知能MUSE無料セミナー 終了アンケート</title>
 <style>
 :root{--bg:#fff8f2;--card:#fff;--ink:#33241c;--muted:#8a7a6e;--line:#f0e2d6;--or:#e8590c;--soft:#fdeee2;--ok:#1f8a70;--ng:#b4532a}
@@ -120,7 +120,7 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:30px}
 <div class="msg" id="msg"></div>
 </form>
 </div>
-<div class="thanks" id="thanks"><h2>🎉 ありがとうございました！</h2><p>回答を受け取りました。これで今日は解散です、お楽しみ様でした。<br>明日の朝6時、あなたの困り事に合わせた実践プロンプトを、ご入力のメールアドレスにお送りします。</p></div>
+<div class="thanks" id="thanks"><h2>🎉 ありがとうございました！</h2><p>回答を受け取りました。これで今日は解散です、お楽しみ様でした。<br>このあとすぐ、あなたの<b>超知能活用力診断</b>の結果（参加者番号と、参加前からの伸び）をメールでお届けします。<br>明日の朝6時、あなたの困り事に合わせた実践プロンプトを、ご入力のメールアドレスにお送りします。</p></div>
 <footer>超知能MUSE無料セミナー</footer>
 </div>
 <script>
@@ -198,6 +198,7 @@ $("#f").addEventListener("submit", async e => {
     ...Object.fromEntries(SKILLS.map(([k]) => [k, +fd.get(k)])),
     submitted_at: new Date().toISOString(), id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), ua: navigator.userAgent.slice(0, 120)
   };
+  if (p.get("id") && p.get("k")) { data.pid = p.get("id"); data.pkey = p.get("k"); }
   data.skill_score = SKILLS.reduce((a, [k]) => a + data[k], 0);
   const nxt = STAGE_TEXTS[data.stage_n + 1];
   $("#thanks").insertAdjacentHTML("beforeend", nxt ? '<p>あなたの次のチャレンジ（これができたら一段アップ）</p><div class="lv" style="font-size:1rem;line-height:1.6">' + nxt.replace(/[<>&]/g, "") + '</div>' : '<p>すべてのステップを達成しました。本当にすばらしいです！次は、ほかの人に教える側にも挑戦してみてください。</p>');
