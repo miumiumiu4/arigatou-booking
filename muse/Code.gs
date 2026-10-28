@@ -10,6 +10,8 @@ const SHEETS = { survey: "回答", pre: "参加前", apply: "申込" };
 const SHEET = SHEETS.survey;
 const MASTER = "参加者マスタ";
 const MASTER_HEAD = ["参加者ID", "お名前", "メールアドレス", "参加経路", "初回回答日時", "参加した回", "最終回答日時"];
+// 参加者マスタの8列目から：広告分析用（最初に来たときの値を残す。後から来た値で上書きしない）
+const MASTER_ATTR = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "ref", "click_id", "industry", "referrer"];
 // テスト用のアドレス（+musetest を含む）は T001〜 の番号になり、本番の M001〜 を使わない。消すときは deleteTestData を実行
 const IS_TEST = email => /\+musetest/i.test(email);
 // 全5回の日程（参加前アンケートのリンクと「次回のお知らせ」に使う）
@@ -29,13 +31,15 @@ const COLS = [
 ["next_want","次回やってみたいこと"],["next_other","次回(その他)"],
 ["recommend","すすめたい度(0-10)"],["good","よかったところ"],["hard","わかりにくかったところ"],["comment","講師へひとこと"],
 ["src","参加経路"],["industry","業種"],["referrer","紹介者"],
+["utm_source","流入元(utm_source)"],["utm_medium","媒体(utm_medium)"],["utm_campaign","キャンペーン(utm_campaign)"],["utm_content","広告(utm_content)"],["utm_term","キーワード(utm_term)"],
+["ref","参照元"],["click_id","広告クリックID"],["landing","最初に開いたページ"],["first_seen","最初に来た日時"],["dur","回答にかかった秒数"],
 ["id","回答ID"],["ua","端末"],["report_sent","診断メール送信日時"],["prompt_sent","プロンプト送信日時"],["kata","問いかけの型"],["prompt_text","送ったプロンプト"]
 ];
 // シートを新しく作るときの見出し（足りない列は回答が来たときに右端へ自動で足される）
 const HEAD = {
   "回答": COLS.filter(c => ["gh","gg","want","next_ai","src","industry","referrer"].indexOf(c[0]) < 0).map(c => c[1]),
-  "参加前": ["at","date","kai","pid","name","email","stage_text","stage_n","stage","sk1","sk2","sk3","sk4","sk5","sk6","skill_score","gh","gg","want","trouble_cat","trouble","next_ai","src","id","ua","report_sent","prompt_sent","kata","prompt_text"].map(k => labelOfKey_(k)),
-  "申込": ["at","pid","name","email","industry","next_ai","gh","gg","referrer","src","id","report_sent"].map(k => labelOfKey_(k))
+  "参加前": ["at","date","kai","pid","name","email","stage_text","stage_n","stage","sk1","sk2","sk3","sk4","sk5","sk6","skill_score","gh","gg","want","trouble_cat","trouble","next_ai","src","utm_source","utm_medium","utm_campaign","utm_content","utm_term","ref","click_id","landing","first_seen","dur","id","ua","report_sent","prompt_sent","kata","prompt_text"].map(k => labelOfKey_(k)),
+  "申込": ["at","pid","name","email","industry","next_ai","gh","gg","referrer","src","utm_source","utm_medium","utm_campaign","utm_content","utm_term","id","report_sent"].map(k => labelOfKey_(k))
 };
 // 翌朝メールに入れる次回予告（書き換えは再デプロイ不要＝スクリプト保存だけで反映）
 const NEXT_TEASER = "次回では、今回のアンケートで多かった困り事を実際に扱います。あなたの困り事がテーマになるかもしれません。";
@@ -49,7 +53,7 @@ function sheet_(name) {
   name = name || SHEET;
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   let sh = ss.getSheetByName(name);
-  if (!sh) { sh = ss.insertSheet(name); sh.appendRow(name === MASTER ? MASTER_HEAD : (HEAD[name] || COLS.map(c => c[1]))); sh.setFrozenRows(1); }
+  if (!sh) { sh = ss.insertSheet(name); sh.appendRow(name === MASTER ? MASTER_HEAD.concat(MASTER_ATTR.map(labelOfKey_)) : (HEAD[name] || COLS.map(c => c[1]))); sh.setFrozenRows(1); }
   return sh;
 }
 function headers_(sh) {
@@ -96,13 +100,14 @@ function participant_(d, label) {
     const r = idx + 1, kais = String(v[idx][5] || "").split("、").filter(Boolean);
     if (label && kais.indexOf(label) < 0) { kais.push(label); sh.getRange(r, 6).setValue(kais.join("、")); }
     if (!v[idx][1] && d.name) sh.getRange(r, 2).setValue(normName_(d.name));
-    if (!v[idx][3] && d.src) sh.getRange(r, 4).setValue(d.src);
+    if ((!v[idx][3] || v[idx][3] === "直接") && d.src && d.src !== "直接") sh.getRange(r, 4).setValue(d.src);
+    MASTER_ATTR.forEach((k, j) => { if (!v[idx][7 + j] && d[k]) sh.getRange(r, 8 + j).setValue(d[k]); });
     sh.getRange(r, 7).setValue(now);
     return String(v[idx][0]);
   }
   const max = v.slice(1).map(r => String(r[0])).filter(id => id.charAt(0) === prefix).map(id => +id.slice(1) || 0).reduce((a, b) => Math.max(a, b), 0);
   const pid = prefix + ("00" + (max + 1)).slice(-3);
-  sh.appendRow([pid, normName_(d.name), email, d.src || "直接", now, label || "", now]);
+  sh.appendRow([pid, normName_(d.name), email, d.src || "直接", now, label || "", now].concat(MASTER_ATTR.map(k => d[k] || "")));
   return pid;
 }
 
@@ -118,7 +123,7 @@ function doPost(e) {
     d.name = normName_(d.name);
     d.at = new Date();
     if (d.stage_n !== undefined && d.stage_n !== "") d.stage = "ステップ " + d.stage_n + " / 10";
-    if (type === "apply") { d.src = "広告"; if (!d.id) d.id = "apply-" + normEmail_(d.email); }
+    if (type === "apply") { d.src = "広告"; if (!d.utm_source) d.utm_source = "utage"; if (!d.id) d.id = "apply-" + normEmail_(d.email); }
     if (type === "pre" && !d.src) d.src = "直接";
     const label = type === "apply" ? "申込" : (d.kai || "") + (type === "pre" ? "参加前" : "終了");
     d.pid = participant_(d, label);

@@ -88,6 +88,7 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:30px}
 <div class="thanks" id="thanks"><h2>🎉 ありがとうございました！</h2><p>回答を受け取りました。<br>ご入力のメールアドレスに、<b>超知能活用力診断</b>の結果と参加者番号をお送りします。<br>数分たっても届かないときは、迷惑メールのフォルダもご確認ください。</p></div>
 <footer>超知能MUSE無料セミナー</footer>
 </div>
+<script src="attr.js"></script>
 <script>
 const $ = s => document.querySelector(s);
 const QKEY = "muse_pre_queue_v1";
@@ -154,10 +155,10 @@ $("#f").addEventListener("submit", async e => {
     gh: fd.get("gh"), gg: fd.get("gg"), want: fd.get("want").trim(),
     trouble_cat: fd.get("trouble_cat"), trouble: fd.get("trouble").trim(), next_ai: fd.get("next_ai").trim(),
     ...Object.fromEntries(SKILLS.map(([k]) => [k, +fd.get(k)])),
-    src: p.get("src") === "ad" ? "広告" : "直接",
     submitted_at: new Date().toISOString(), id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), ua: navigator.userAgent.slice(0, 120)
   };
   if (p.get("id") && p.get("k")) { data.pid = p.get("id"); data.pkey = p.get("k"); }
+  if (window.museAttr) { const at = museAttr(); Object.assign(data, at); }
   data.skill_score = SKILLS.reduce((a, [k]) => a + data[k], 0);
   const btn = $("#btn"); btn.disabled = true; btn.textContent = "送信中…";
   const url = await gasUrl();

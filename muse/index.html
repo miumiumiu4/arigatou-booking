@@ -123,6 +123,7 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:30px}
 <div class="thanks" id="thanks"><h2>🎉 ありがとうございました！</h2><p>回答を受け取りました。これで今日は解散です、お楽しみ様でした。<br>このあとすぐ、あなたの<b>超知能活用力診断</b>の結果（参加者番号と、参加前からの伸び）をメールでお届けします。<br>明日の朝6時、あなたの困り事に合わせた実践プロンプトを、ご入力のメールアドレスにお送りします。</p></div>
 <footer>超知能MUSE無料セミナー</footer>
 </div>
+<script src="attr.js"></script>
 <script>
 const $ = s => document.querySelector(s);
 const QKEY = "muse_survey_queue_v1";
@@ -199,6 +200,7 @@ $("#f").addEventListener("submit", async e => {
     submitted_at: new Date().toISOString(), id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), ua: navigator.userAgent.slice(0, 120)
   };
   if (p.get("id") && p.get("k")) { data.pid = p.get("id"); data.pkey = p.get("k"); }
+  if (window.museAttr) { const at = museAttr(); Object.assign(data, at); }
   data.skill_score = SKILLS.reduce((a, [k]) => a + data[k], 0);
   const nxt = STAGE_TEXTS[data.stage_n + 1];
   $("#thanks").insertAdjacentHTML("beforeend", nxt ? '<p>あなたの次のチャレンジ（これができたら一段アップ）</p><div class="lv" style="font-size:1rem;line-height:1.6">' + nxt.replace(/[<>&]/g, "") + '</div>' : '<p>すべてのステップを達成しました。本当にすばらしいです！次は、ほかの人に教える側にも挑戦してみてください。</p>');

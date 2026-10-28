@@ -22,6 +22,12 @@
 3. 関数 `setup` を1回実行 → Google の許可 → 合言葉・個人リンク用の秘密の文字列・毎朝6時のトリガーができ、合言葉が自分宛てにメールで届く
    - 合言葉と秘密の文字列は「スクリプト プロパティ」に入る。このリポジトリ（公開）には書かない
 
+## 流入経路（広告分析）
+- `attr.js` が、最初に来たときの `utm_source / utm_medium / utm_campaign / utm_content / utm_term`・広告クリックID（fbclid / gclid / yclid / LINE）・参照元ドメインを端末に覚え、回答と一緒に送る
+- 参加者マスタには「最初に来たときの値」を残す（後から上書きしない）。回答ごとの値と回答にかかった秒数は各シートに残る
+- 広告のリンク例：`pre.html?date=2026-11-02&kai=第1回&utm_source=meta&utm_medium=paid&utm_campaign=muse1&utm_content=動画A`
+- 集計ページの「流入経路」で、経路・キャンペーン・広告ごとに「申込 → 参加前 → 終了1回以上 → 3回以上」を数える
+
 ## テストと後片付け
 - テストはメールアドレスに `+musetest` を含める（例：自分のアドレスの `+musetest1`）。番号は `T001`〜 になり、本番の番号を使わない
 - 消すときは Apps Script で `deleteTestData` を実行（`+musetest` の行と `T` の番号を全シートから消す）
