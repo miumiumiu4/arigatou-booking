@@ -44,6 +44,9 @@ const HEAD = {
 // 翌朝メールに入れる次回予告（書き換えは再デプロイ不要＝スクリプト保存だけで反映）
 const NEXT_TEASER = "次回では、今回のアンケートで多かった困り事を実際に扱います。あなたの困り事がテーマになるかもしれません。";
 const MAIL_FROM_NAME = "超知能MUSE無料セミナー";
+// 2026-11-02 オーナー決定：参加前アンケートは廃止、アンケートは参加後（終了アンケート）だけ。
+// false の間は、メールに参加前アンケート・個人ページ（超知能活用力診断）へのリンクを出さない（ページとコードは残す）
+const PRE_FLOW = false;
 const BRAND = "超知能活用力診断";
 const MAIL_RESERVE = 5; // 1日のメール上限（MailApp）のうち、手動の連絡用に残しておく通数
 
@@ -154,9 +157,8 @@ function doGet(e) {
   const p = e.parameter || {};
   if (p.action === "ping") return json_({ ok: true, ready: !!props_().getProperty("LINK_SECRET") });
   if (p.action === "my") return json_(myData_(p.id, p.k));
-  const key = readKey_();
-  if (!key || (p.key || "") !== key) return json_({ ok: false, error: "合言葉が違います" });
-  if (p.action === "testmorning") return json_(testMorning_(p.id));
+  // 2026-11-02 オーナー決定：集計の読み取りは合言葉なし（kekka.html のURLは外に載せない前提）。テスト送信だけは合言葉が要る
+  if (p.action === "testmorning") { const key = readKey_(); if (!key || (p.key || "") !== key) return json_({ ok: false, error: "合言葉が違います" }); return json_(testMorning_(p.id)); }
   const name = p.type === "master" ? MASTER : (SHEETS[p.type] || SHEET);
   const v = sheet_(name).getDataRange().getValues();
   const keys = v[0].map(l => keyOfLabel_(String(l)));
@@ -247,12 +249,12 @@ function sendReport_(type, d) {
       + SKILLS.map(([k, t]) => { const prev = hist.length > 1 ? hist[hist.length - 2] : null, a = +now[k] || 0, b = prev ? +prev[k] || 0 : null; return '<tr><td style="padding:2px 10px 2px 0">' + t + '</td><td style="padding:2px 6px">' + "●".repeat(a) + "○".repeat(2 - a) + '</td><td style="color:#888">' + SK_LABEL[a] + (b !== null && a > b ? ' <b style="color:#1f8a70">↑</b>' : '') + '</td></tr>'; }).join("")
       + '</table>'
       + (hist.length > 1 ? H("これまでの歩み") + '<table style="border-collapse:collapse;font-size:14px">' + hist.map(h => '<tr><td style="padding:2px 10px 2px 0;white-space:nowrap">' + esc_(recLabel_(h)) + '</td><td>ステップ ' + (+h.stage_n) + '・物差し ' + (+h.skill_score || 0) + '/12</td></tr>').join("") + '</table>' : '')
-      + H(BRAND + "（あなた専用ページ）") + '<p>回ごとの伸びをグラフで見られます（あなた専用のリンクです。ほかの人には教えないでください）。</p>' + btn(myUrl_(pid), BRAND + "を開く");
+      + (PRE_FLOW ? H(BRAND + "（あなた専用ページ）") + '<p>回ごとの伸びをグラフで見られます（あなた専用のリンクです。ほかの人には教えないでください）。</p>' + btn(myUrl_(pid), BRAND + "を開く") : "");
     if (type === "pre") {
       const prep = prepDay_(d.date);
       if (prep && ymd_(new Date()) < prep) html += '<p>' + jpDate_(prep) + 'の朝6時に、あなたの困り事に合わせた「当日がスムーズになる準備プロンプト」をお送りします。</p>';
     } else html += '<p>明日の朝6時に、あなたの困り事に合わせた実践プロンプトをお送りします。</p>';
-    if (type === "survey" && ns) html += H("次回のお知らせ") + '<p>' + ns.kai + '：' + jpDate_(ns.date) + ' 20:00〜（Zoom）<br>前日までに参加前アンケートに答えておくと、伸びがはっきり見えます。</p>' + btn(preUrl_(ns.kai, ns.date, pid), ns.kai + "の参加前アンケート");
+    if (type === "survey" && ns) html += H("次回のお知らせ") + '<p>' + ns.kai + '：' + jpDate_(ns.date) + ' 20:00〜（Zoom）' + (PRE_FLOW ? '<br>前日までに参加前アンケートに答えておくと、伸びがはっきり見えます。</p>' + btn(preUrl_(ns.kai, ns.date, pid), ns.kai + "の参加前アンケート") : '</p>');
   }
   html += footer_();
   MailApp.sendEmail({ to: email, subject: subject, htmlBody: html, name: MAIL_FROM_NAME });
@@ -365,9 +367,9 @@ function morningMail_(o) {
     + prompts.map(p => H(esc_(p.title)) + '<p style="margin:0;color:#888;font-size:13px">' + esc_(p.lead) + '（そのままMUSEに貼ってください）</p>' + box(p.text)).join("")
     + '<p><b>' + esc_(STRENGTHEN) + '</b></p>'
     + H("あなたの現在地：ステップ " + n + " / 10") + '<p>' + diagnosis_(hist).lines.map(esc_).join("<br>") + '</p>'
-    + '<p><a href="' + esc_(myUrl_(pid)) + '">' + BRAND + 'を開く（あなた専用のリンク）</a></p>'
+    + (PRE_FLOW ? '<p><a href="' + esc_(myUrl_(pid)) + '">' + BRAND + 'を開く（あなた専用のリンク）</a></p>' : '')
     + (pre ? '<p>' + esc_(o.kai || "") + '：' + (dateStr_(o.date) ? jpDate_(dateStr_(o.date)) : "") + ' 20:00〜（Zoom）でお待ちしています。</p>'
-      : H("次回のお知らせ") + '<p>' + esc_(NEXT_TEASER) + (ns ? '<br>' + ns.kai + '：' + jpDate_(ns.date) + ' 20:00〜（Zoom）<br><a href="' + esc_(preUrl_(ns.kai, ns.date, pid)) + '">' + ns.kai + 'の参加前アンケートに答える</a>' : '') + '</p>')
+      : H("次回のお知らせ") + '<p>' + esc_(NEXT_TEASER) + (ns ? '<br>' + ns.kai + '：' + jpDate_(ns.date) + ' 20:00〜（Zoom）' + (PRE_FLOW ? '<br><a href="' + esc_(preUrl_(ns.kai, ns.date, pid)) + '">' + ns.kai + 'の参加前アンケートに答える</a>' : '') : '') + '</p>')
     + footer_();
   const subject = pre ? "【" + BRAND + "】" + (o.kai || "") + "がスムーズになる準備プロンプト（" + pid + "）" : "【" + BRAND + "】あなたの困り事に合わせた、今日の実践プロンプト（" + pid + "）";
   return { subject, html, prompts, kata: prompts.map(p => p.title.replace(/^.*[（：]/, "").replace("）", "")).join("／") };

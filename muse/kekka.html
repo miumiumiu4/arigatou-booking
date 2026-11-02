@@ -36,11 +36,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 </style></head>
 <body><div class="wrap">
 <h1>📊 超知能MUSE無料セミナー アンケート集計</h1>
-<div class="row" id="login">
-  <input id="key" type="password" placeholder="合言葉">
-  <button id="go">読み込む</button>
-  <span id="err"></span>
-</div>
+<div class="row" id="login"><span id="err"></span></div>
 <div id="main" style="display:none">
 <div class="row">
   <label>表示する回：<select id="sel"></select></label>
@@ -99,11 +95,10 @@ async function load() {
     let demo = false;
     if (!url) { ROWS = demoData(); PRE = ROWS.map(r => ({ ...r, stage_n: Math.max(0, r.stage_n - 2), skill_score: Math.max(0, r.skill_score - 3) })); MASTER = []; demo = true; }
     else {
-      const get = async t => { const j = await (await fetch(url + "?key=" + encodeURIComponent($("#key").value) + (t ? "&type=" + t : ""))).json(); if (!j.ok) throw new Error(j.error || "読み込み失敗"); return j.rows || []; };
+      const get = async t => { const j = await (await fetch(url + (t ? "?type=" + t : ""))).json(); if (!j.ok) throw new Error(j.error || "読み込み失敗"); return j.rows || []; };
       [ROWS, PRE, MASTER] = await Promise.all([get(""), get("pre"), get("master")]);
     }
     $("#demo").style.display = demo ? "block" : "none";
-    try { localStorage.setItem("muse_survey_key", $("#key").value); } catch (_) {}
     $("#main").style.display = "block";
     const keys = [...new Set(ROWS.concat(PRE).map(keyOf))].sort().reverse();
     const cur = $("#sel").value;
@@ -155,9 +150,8 @@ function csv() {
   const blob = new Blob(["\ufeff" + cols.join(",") + "\n" + rs.map(r => cols.map(c => q(r[c])).join(",")).join("\n")], { type: "text/csv" });
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "muse_survey.csv"; a.click(); URL.revokeObjectURL(a.href);
 }
-$("#go").onclick = load; $("#reload").onclick = load; $("#csv").onclick = csv;
+$("#reload").onclick = load; $("#csv").onclick = csv;
 $("#sel").onchange = render; $("#attrBy").onchange = render;
-$("#key").onkeydown = e => { if (e.key === "Enter") load(); };
 $("#mk").onclick = () => {
   const d = $("#ld").value, kk = $("#lk").value.trim();
   if (!d || !kk) { $("#lo").textContent = "日付と回の名前を入れてください"; return; }
@@ -166,6 +160,7 @@ $("#mk").onclick = () => {
   $("#lo").innerHTML = "終了アンケート（コピー済み）：" + esc(u) + "<br>参加前アンケート：" + esc(pre) + "<br>参加前（広告から来た人用）：" + esc(pre) + "&amp;src=ad";
   if (navigator.clipboard) navigator.clipboard.writeText(u);
 };
-try { const s = localStorage.getItem("muse_survey_key"); if (s) { $("#key").value = s; load(); } } catch (_) {}
+try { localStorage.removeItem("muse_survey_key"); } catch (_) {}
+load();
 </script>
 </body></html>
