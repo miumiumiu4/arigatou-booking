@@ -44,6 +44,8 @@ const HEAD = {
 };
 // 翌朝メールに入れる次回予告（書き換えは再デプロイ不要＝スクリプト保存だけで反映）
 const NEXT_TEASER = "次回では、今回のアンケートで多かった困り事を実際に扱います。あなたの困り事がテーマになるかもしれません。";
+// 2026-11-04 オーナー確定（arigatou #47 D1=A）：無料セミナーは第2回で終わり。その先は「MUSE実践編」として案内する
+const AFTER_FREE = "超知能MUSE無料セミナーは全2回で終わりです。ご参加いただき、ありがとうございました。この先は「MUSE実践編」で、さらに一歩進んだ使い方をご案内します。詳しくは、このメールアドレスにお知らせします。";
 const MAIL_FROM_NAME = "超知能MUSE無料セミナー";
 // 2026-11-02 オーナー決定：参加前アンケートは廃止、アンケートは参加後（終了アンケート）だけ。
 // false の間は、メールに参加前アンケート・個人ページ（超知能活用力診断）へのリンクを出さない（ページとコードは残す）
@@ -255,6 +257,7 @@ function sendReport_(type, d) {
       const prep = prepDay_(d.date);
       if (prep && ymd_(new Date()) < prep) html += '<p>' + jpDate_(prep) + 'の朝6時に、あなたの困り事に合わせた「当日がスムーズになる準備プロンプト」をお送りします。</p>';
     } else html += '<p>明日の朝6時に、あなたの困り事に合わせた実践プロンプトをお送りします。</p>';
+    if (type === "survey" && !ns) html += H("この先のご案内") + '<p>' + esc_(AFTER_FREE) + '</p>';
     if (type === "survey" && ns) html += H("次回のお知らせ") + '<p>' + ns.kai + '：' + jpDate_(ns.date) + ' 20:00〜（Zoom）' + (PRE_FLOW ? '<br>前日までに参加前アンケートに答えておくと、伸びがはっきり見えます。</p>' + btn(preUrl_(ns.kai, ns.date, pid), ns.kai + "の参加前アンケート") : '</p>');
   }
   html += footer_();
@@ -370,6 +373,7 @@ function morningMail_(o) {
     + H("あなたの現在地：ステップ " + n + " / 10") + '<p>' + diagnosis_(hist).lines.map(esc_).join("<br>") + '</p>'
     + (PRE_FLOW ? '<p><a href="' + esc_(myUrl_(pid)) + '">' + BRAND + 'を開く（あなた専用のリンク）</a></p>' : '')
     + (pre ? '<p>' + esc_(o.kai || "") + '：' + (dateStr_(o.date) ? jpDate_(dateStr_(o.date)) : "") + ' 20:00〜（Zoom）でお待ちしています。</p>'
+      : !ns ? H("この先のご案内") + '<p>' + esc_(AFTER_FREE) + '</p>'
       : H("次回のお知らせ") + '<p>' + esc_(NEXT_TEASER) + (ns ? '<br>' + ns.kai + '：' + jpDate_(ns.date) + ' 20:00〜（Zoom）' + (PRE_FLOW ? '<br><a href="' + esc_(preUrl_(ns.kai, ns.date, pid)) + '">' + ns.kai + 'の参加前アンケートに答える</a>' : '') : '') + '</p>')
     + footer_();
   const subject = pre ? "【" + BRAND + "】" + (o.kai || "") + "がスムーズになる準備プロンプト（" + pid + "）" : "【" + BRAND + "】あなたの困り事に合わせた、今日の実践プロンプト（" + pid + "）";
