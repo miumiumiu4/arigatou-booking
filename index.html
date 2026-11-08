@@ -202,6 +202,7 @@ let CAMPAIGN = isCampaign();
 const NORMAL = { unit:8900, auto:6000, set3:9500, coat:3000, outdoor:4000, drain:2500, tenkase:23300, nanosol:2500, omatome:5000 };
 // 天カセは2台目から1台につき1,000円引き（11/9 オーナー）。キャンペーン中も同じ
 const TENKASE_ADD = 22300;
+const SET3_REGULAR = 7500;
 // キャンペーン価格（〜9/30）
 const CAMP = { first:6000, add:5000, auto:5000, set3:7000, coat:3000, outdoor:4000, drain:2500, nanosol:2500, omatome:5000 };
 const NAMES = {
@@ -227,7 +228,7 @@ if (CAMPAIGN) {
   $("#p_units").textContent = "8,900円/台";
   $("#p_auto").textContent = "＋6,000円/台";
   $("#campbar").style.display = "none";
-  $("#p_set3").textContent = "防カビ抗菌コート＋室外機＋ドレンホース｜7,000円/台（別々なら9,500円）";
+  $("#p_set3").textContent = "防カビ抗菌コート＋室外機＋ドレンホース｜7,500円/台";
 }
 }
 applyPriceLabels();
@@ -286,7 +287,7 @@ function calc(){
   }
   ["auto","set3","coat","outdoor","drain","nanosol","omatome"].forEach(k => {
     if (st[k]) {
-      const unit = (CAMPAIGN || k==="set3") ? CAMP[k] : NORMAL[k]; // 3点セットは10月以降も7,000円
+      const unit = CAMPAIGN ? CAMP[k] : (k==="set3" ? SET3_REGULAR : NORMAL[k]); // 3点セットはキャンペーン外 7,500円（11/9 オーナー）
       lines.push({ name:NAMES[k]+" "+st[k]+"台", amount:st[k]*unit, normal:st[k]*NORMAL[k], items:[{name:NAMES[k], qty:st[k], unit}] });
     }
   });
