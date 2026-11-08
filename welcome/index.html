@@ -204,7 +204,7 @@
         <div class="row-item"><div class="t"><b>天井埋め込み（天カセ・業務用）</b><span>1台目 23,300円・2台目から 22,300円/台｜対応できない地域があります。担当者よりご連絡します</span></div>
           <div class="ctr"><button type="button" data-k="tenkase" data-d="-1" aria-label="天井埋め込み（天カセ・業務用）を減らす">−</button><output id="o_tenkase">0</output><button type="button" data-k="tenkase" data-d="1" aria-label="天井埋め込み（天カセ・業務用）を増やす">＋</button></div></div>
         <p style="font-weight:700;margin:14px 0 2px">オプション（台数分お選びください）</p>
-        <div class="row-item"><div class="t"><b>3点セット</b><span>防カビ抗菌コート＋室外機＋ドレンホース｜7,000円/台（別々なら9,500円）</span></div>
+        <div class="row-item"><div class="t"><b>3点セット</b><span>防カビ抗菌コート＋室外機＋ドレンホース｜9,500円/台</span></div>
           <div class="ctr"><button type="button" data-k="set3" data-d="-1" aria-label="3点セットを減らす">−</button><output id="o_set3">0</output><button type="button" data-k="set3" data-d="1" aria-label="3点セットを増やす">＋</button></div></div>
         <div class="row-item"><div class="t"><b>防カビ・抗菌コート</b><span>3,000円/台</span></div>
           <div class="ctr"><button type="button" data-k="coat" data-d="-1" aria-label="防カビ・抗菌コートを減らす">−</button><output id="o_coat">0</output><button type="button" data-k="coat" data-d="1" aria-label="防カビ・抗菌コートを増やす">＋</button></div></div>
@@ -449,7 +449,7 @@
   });
   $('goForm').addEventListener('click', function () { showForm('はいから'); });
   // ---------- 予約フォーム（予約ページと同じ計算・同じ必須チェック。送信はしない） ----------
-  var NORMAL = { unit: 8900, auto: 6000, set3: 7000, coat: 3000, outdoor: 4000, drain: 2500, tenkase: 23300, nanosol: 2500, omatome: 5000 };
+  var NORMAL = { unit: 8900, auto: 6000, set3: 9500, coat: 3000, outdoor: 4000, drain: 2500, tenkase: 23300, nanosol: 2500, omatome: 5000 };
   // 天カセは壁掛けと別に数える。ナノソル・おまとめは壁掛け＋天カセの台数まで
   var ZERO = { units: 1, auto: 0, set3: 0, coat: 0, outdoor: 0, drain: 0, tenkase: 0, nanosol: 0, omatome: 0 };
   var st = Object.assign({}, ZERO);
