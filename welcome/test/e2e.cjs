@@ -48,6 +48,10 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   assert.equal(await page.locator('#petCountRow').isVisible(), true);
   await page.fill('#f_petCount', '2');
   await page.getByRole('button', { name: '天井埋め込み（天カセ・業務用）を増やす' }).click();
+  // 天カセ 2台なら 23,300＋22,300（2台目から1,000円引き）
+  await page.getByRole('button', { name: '天井埋め込み（天カセ・業務用）を増やす' }).click();
+  assert.equal(await page.locator('#hdrTotal').innerText(), '63,400'); // 17,800＋45,600
+  await page.getByRole('button', { name: '天井埋め込み（天カセ・業務用）を減らす' }).click();
   await page.getByRole('button', { name: 'ナノソル空間除菌コートを増やす' }).click();
   await page.check('input[name=extra][value^="お風呂換気扇"]');
   assert.equal(await page.locator('#hdrTotal').innerText(), '50,600'); // 17,800＋23,300＋2,500＋7,000
