@@ -212,9 +212,7 @@
           <div class="ctr"><button type="button" data-k="outdoor" data-d="-1" aria-label="室外機クリーニングを減らす">−</button><output id="o_outdoor">0</output><button type="button" data-k="outdoor" data-d="1" aria-label="室外機クリーニングを増やす">＋</button></div></div>
         <div class="row-item"><div class="t"><b>ドレンホース洗浄</b><span>2,500円/台</span></div>
           <div class="ctr"><button type="button" data-k="drain" data-d="-1" aria-label="ドレンホース洗浄を減らす">−</button><output id="o_drain">0</output><button type="button" data-k="drain" data-d="1" aria-label="ドレンホース洗浄を増やす">＋</button></div></div>
-        <div class="row-item"><div class="t"><b>ナノソル空間除菌コート</b><span>2,500円/台</span></div>
-          <div class="ctr"><button type="button" data-k="nanosol" data-d="-1" aria-label="ナノソル空間除菌コートを減らす">−</button><output id="o_nanosol">0</output><button type="button" data-k="nanosol" data-d="1" aria-label="ナノソル空間除菌コートを増やす">＋</button></div></div>
-        <div class="row-item" style="border-bottom:0"><div class="t"><b>おまとめセット</b><span>室外機＋ナノソル｜5,000円/台</span></div>
+        <div class="row-item" style="border-bottom:0"><div class="t"><b>おまとめセット</b><span>室外機＋防カビ・抗菌コート｜5,000円/台</span></div>
           <div class="ctr"><button type="button" data-k="omatome" data-d="-1" aria-label="おまとめセットを減らす">−</button><output id="o_omatome">0</output><button type="button" data-k="omatome" data-d="1" aria-label="おまとめセットを増やす">＋</button></div></div>
         <div class="est"><b>概算金額</b><div class="v">¥<span id="e_total">8,900</span><small> 円（税込・駐車場代別）</small></div></div>
 
@@ -449,9 +447,9 @@
   });
   $('goForm').addEventListener('click', function () { showForm('はいから'); });
   // ---------- 予約フォーム（予約ページと同じ計算・同じ必須チェック。送信はしない） ----------
-  var NORMAL = { unit: 8900, auto: 6000, set3: 7500, coat: 3000, outdoor: 4000, drain: 2500, tenkase: 23300, nanosol: 2500, omatome: 5000 };
-  // 天カセは壁掛けと別に数える。ナノソル・おまとめは壁掛け＋天カセの台数まで
-  var ZERO = { units: 1, auto: 0, set3: 0, coat: 0, outdoor: 0, drain: 0, tenkase: 0, nanosol: 0, omatome: 0 };
+  var NORMAL = { unit: 8900, auto: 6000, set3: 7500, coat: 3000, outdoor: 4000, drain: 2500, tenkase: 23300, omatome: 5000 };
+  // 天カセは壁掛けと別に数える。おまとめは壁掛け＋天カセの台数まで
+  var ZERO = { units: 1, auto: 0, set3: 0, coat: 0, outdoor: 0, drain: 0, tenkase: 0, omatome: 0 };
   var st = Object.assign({}, ZERO);
   var yen = function (n) { return n.toLocaleString('ja-JP'); };
   function total() {
@@ -470,7 +468,7 @@
   }
   function maxOf(k) {
     if (k === 'units' || k === 'tenkase') return 20;
-    if (k === 'nanosol' || k === 'omatome') return st.units + st.tenkase;
+    if (k === 'omatome') return st.units + st.tenkase;
     return st.units;
   }
   function renderEst() {
@@ -568,7 +566,7 @@
     if (ref) { data.ref = ref; data.ref_code = ref; note = '【紹介コード】' + ref + '\n' + note; }
     note = '【希望日】第1 ' + data.date1 + ' ／ 第2 ' + data.date2 + ' ／ 第3 ' + data.date3 + '\n' + note;
     var lines = [{ name: 'エアコンクリーニング ' + st.units + '台', amount: st.units * NORMAL.unit, items: [{ name: 'エアコンクリーニング', qty: st.units, unit: NORMAL.unit }] }];
-    var NAMES = { auto: 'お掃除機能付き加算', set3: '3点セット（防カビ抗菌コート・室外機・ドレンホース）', coat: '防カビ・抗菌コート', outdoor: '室外機クリーニング', drain: 'ドレンホース洗浄', tenkase: '天井埋め込み（天カセ）', nanosol: 'ナノソル空間除菌コート', omatome: 'おまとめセット（室外機＋ナノソル）' };
+    var NAMES = { auto: 'お掃除機能付き加算', set3: '3点セット（防カビ抗菌コート・室外機・ドレンホース）', coat: '防カビ・抗菌コート', outdoor: '室外機クリーニング', drain: 'ドレンホース洗浄', tenkase: '天井埋め込み（天カセ）', omatome: 'おまとめセット（室外機＋防カビ・抗菌コート）' };
     if (!st.units) lines = [];
     Object.keys(NAMES).forEach(function (k) { if (st[k]) lines.push({ name: NAMES[k] + ' ' + st[k] + '台', amount: st[k] * NORMAL[k], items: [{ name: NAMES[k], qty: st[k], unit: NORMAL[k] }] }); });
     document.querySelectorAll('input[name=extra]:checked').forEach(function (c) { var nm = c.value.replace(/（.*）$/, ''); lines.push({ name: nm, amount: +c.dataset.price, items: [{ name: nm, qty: 1, unit: +c.dataset.price }] }); });
@@ -576,7 +574,7 @@
     if ($('f_nominate').checked) lines.push({ name: 'スタッフ指名', amount: 3000, items: [{ name: 'スタッフ指名', qty: 1, unit: 3000 }] });
     Object.assign(data, {
       note: note,
-      units: st.units, tenkase_units: st.tenkase, nanosol_units: st.nanosol, omatome_units: st.omatome, auto_units: st.auto, set3: st.set3 ? 1 : 0, set3_units: st.set3,
+      units: st.units, tenkase_units: st.tenkase, omatome_units: st.omatome, auto_units: st.auto, set3: st.set3 ? 1 : 0, set3_units: st.set3,
       coat_units: st.coat, outdoor_units: st.outdoor, drain_units: st.drain,
       breakdown: '【通常予約】' + lines.map(function (l) { return l.name + '=' + yen(l.amount) + '円'; }).join(' / '),
       items: [].concat.apply([], lines.map(function (l) { return l.items; })),
