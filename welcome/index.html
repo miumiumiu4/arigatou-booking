@@ -457,6 +457,7 @@
   function extrasTotal() {
     var t = 0;
     document.querySelectorAll('input[name=extra]:checked').forEach(function (c) { t += +c.dataset.price || 0; });
+    if ($('f_nominate').checked) t += 3000;
     return t;
   }
   function maxOf(k) {
@@ -500,7 +501,7 @@
     renderEst();
   }
   document.querySelectorAll('input[name=pet]').forEach(function (r) { r.addEventListener('change', function () { $('petCountRow').hidden = !(r.checked && r.value === 'あり'); }); });
-  $('f_nominate').addEventListener('change', function () { $('nominateRow').hidden = !$('f_nominate').checked; });
+  $('f_nominate').addEventListener('change', function () { $('nominateRow').hidden = !$('f_nominate').checked; renderEst(); });
   // 作業希望日は明後日以降（日本時間）
   (function () {
     var now = new Date(Date.now() + 9 * 3600 * 1000);
@@ -563,6 +564,7 @@
     if (!st.units) lines = [];
     Object.keys(NAMES).forEach(function (k) { if (st[k]) lines.push({ name: NAMES[k] + ' ' + st[k] + '台', amount: st[k] * NORMAL[k], items: [{ name: NAMES[k], qty: st[k], unit: NORMAL[k] }] }); });
     document.querySelectorAll('input[name=extra]:checked').forEach(function (c) { var nm = c.value.replace(/（.*）$/, ''); lines.push({ name: nm, amount: +c.dataset.price, items: [{ name: nm, qty: 1, unit: +c.dataset.price }] }); });
+    if ($('f_nominate').checked) lines.push({ name: 'スタッフ指名', amount: 3000, items: [{ name: 'スタッフ指名', qty: 1, unit: 3000 }] });
     Object.assign(data, {
       note: note,
       units: st.units, tenkase_units: st.tenkase, nanosol_units: st.nanosol, omatome_units: st.omatome, auto_units: st.auto, set3: st.set3 ? 1 : 0, set3_units: st.set3,

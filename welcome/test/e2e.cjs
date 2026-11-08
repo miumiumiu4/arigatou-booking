@@ -53,6 +53,7 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   assert.equal(await page.locator('#hdrTotal').innerText(), '50,600'); // 17,800＋23,300＋2,500＋7,000
   await page.fill('#f_model', 'ダイキン AN22');
   await page.check('#f_nominate'); await page.fill('#f_nominateName', '田中');
+  assert.equal(await page.locator('#hdrTotal').innerText(), '53,600');
   await page.fill('#f_coupon', 'CP1');
   await snap('2_form');
   assert.equal(booked.length, 0);
@@ -64,7 +65,7 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
 
   assert.equal(booked.length, 1);
   const b = booked[0];
-  assert.equal(b.units, 2); assert.equal(b.tenkase_units, 1); assert.equal(b.nanosol_units, 1); assert.equal(b.total, 50600);
+  assert.equal(b.units, 2); assert.equal(b.tenkase_units, 1); assert.equal(b.nanosol_units, 1); assert.equal(b.total, 53600);
   assert.match(b.breakdown, /天井埋め込み（天カセ） 1台=23,300円/); assert.match(b.breakdown, /お風呂換気扇分解=7,000円/); assert.equal(b.name, 'テスト');
   for (const re of [/【ふりがな】てすと/, /【ペット】あり 2匹/, /【天カセ】1台/, /【メーカー・型番】ダイキン AN22/, /【その他のお掃除】お風呂換気扇分解/, /【スタッフ指名（＋3,000円）】田中/, /【クーポンコード】CP1/, /^【希望日】第1 /])
     assert.match(b.note, re);
