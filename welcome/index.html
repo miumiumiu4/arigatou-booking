@@ -201,6 +201,8 @@
           <div class="ctr"><button type="button" data-k="units" data-d="-1" aria-label="エアコン台数（壁掛け）を減らす">−</button><output id="o_units">1</output><button type="button" data-k="units" data-d="1" aria-label="エアコン台数（壁掛け）を増やす">＋</button></div></div>
         <div class="row-item"><div class="t"><b>うち、お掃除機能付き</b><span>＋6,000円/台</span></div>
           <div class="ctr"><button type="button" data-k="auto" data-d="-1" aria-label="うち、お掃除機能付きを減らす">−</button><output id="o_auto">0</output><button type="button" data-k="auto" data-d="1" aria-label="うち、お掃除機能付きを増やす">＋</button></div></div>
+        <div class="row-item"><div class="t"><b>天井埋め込み（天カセ・業務用）</b><span>23,300円/台｜対応できない地域があります。担当者よりご連絡します</span></div>
+          <div class="ctr"><button type="button" data-k="tenkase" data-d="-1" aria-label="天井埋め込み（天カセ・業務用）を減らす">−</button><output id="o_tenkase">0</output><button type="button" data-k="tenkase" data-d="1" aria-label="天井埋め込み（天カセ・業務用）を増やす">＋</button></div></div>
         <p style="font-weight:700;margin:14px 0 2px">オプション（台数分お選びください）</p>
         <div class="row-item"><div class="t"><b>3点セット</b><span>防カビ抗菌コート＋室外機＋ドレンホース｜7,000円/台（別々なら9,500円）</span></div>
           <div class="ctr"><button type="button" data-k="set3" data-d="-1" aria-label="3点セットを減らす">−</button><output id="o_set3">0</output><button type="button" data-k="set3" data-d="1" aria-label="3点セットを増やす">＋</button></div></div>
@@ -208,8 +210,12 @@
           <div class="ctr"><button type="button" data-k="coat" data-d="-1" aria-label="防カビ・抗菌コートを減らす">−</button><output id="o_coat">0</output><button type="button" data-k="coat" data-d="1" aria-label="防カビ・抗菌コートを増やす">＋</button></div></div>
         <div class="row-item"><div class="t"><b>室外機クリーニング</b><span>4,000円/台</span></div>
           <div class="ctr"><button type="button" data-k="outdoor" data-d="-1" aria-label="室外機クリーニングを減らす">−</button><output id="o_outdoor">0</output><button type="button" data-k="outdoor" data-d="1" aria-label="室外機クリーニングを増やす">＋</button></div></div>
-        <div class="row-item" style="border-bottom:0"><div class="t"><b>ドレンホース洗浄</b><span>2,500円/台</span></div>
+        <div class="row-item"><div class="t"><b>ドレンホース洗浄</b><span>2,500円/台</span></div>
           <div class="ctr"><button type="button" data-k="drain" data-d="-1" aria-label="ドレンホース洗浄を減らす">−</button><output id="o_drain">0</output><button type="button" data-k="drain" data-d="1" aria-label="ドレンホース洗浄を増やす">＋</button></div></div>
+        <div class="row-item"><div class="t"><b>ナノソル空間除菌コート</b><span>2,500円/台</span></div>
+          <div class="ctr"><button type="button" data-k="nanosol" data-d="-1" aria-label="ナノソル空間除菌コートを減らす">−</button><output id="o_nanosol">0</output><button type="button" data-k="nanosol" data-d="1" aria-label="ナノソル空間除菌コートを増やす">＋</button></div></div>
+        <div class="row-item" style="border-bottom:0"><div class="t"><b>おまとめセット</b><span>室外機＋ナノソル｜5,000円/台</span></div>
+          <div class="ctr"><button type="button" data-k="omatome" data-d="-1" aria-label="おまとめセットを減らす">−</button><output id="o_omatome">0</output><button type="button" data-k="omatome" data-d="1" aria-label="おまとめセットを増やす">＋</button></div></div>
         <div class="est"><b>概算金額</b><div class="v">¥<span id="e_total">8,900</span><small> 円（税込・駐車場代別）</small></div></div>
 
         <h3 style="margin-top:20px">2. ご予約情報を入力する</h3>
@@ -266,19 +272,15 @@
         <label>ペットの有無 <small>必須</small></label>
         <div class="radios" id="pet"><label><input type="radio" name="pet" value="なし">なし</label><label><input type="radio" name="pet" value="あり">あり</label></div>
         <div id="petCountRow" hidden><label for="f_petCount">ペットの数</label><input type="number" id="f_petCount" name="pet_count" min="1" max="20" inputmode="numeric"></div>
-        <label for="f_tenkase">天井埋め込み（天カセ・業務用）の台数 <small>料金は担当者よりご案内します</small></label>
-        <select id="f_tenkase" name="tenkase"><option value="0">0台</option><option>1台</option><option>2台</option><option>3台</option><option>4台</option><option>5台以上</option></select>
         <label for="f_model">メーカー名と型式番号 <small>任意・わかる範囲で</small></label>
         <input type="text" id="f_model" name="model" autocomplete="off" placeholder="例：ダイキン AN22XXX">
-        <label>その他のオプション <small>任意・料金は担当者よりご案内します</small></label>
+        <label>その他のお掃除 <small>任意</small></label>
         <div class="chks">
-          <label><input type="checkbox" name="extra" value="ナノソル空間除菌コート">ナノソル空間除菌コート</label>
-          <label><input type="checkbox" name="extra" value="おまとめセット（室外機＋ナノソル）">おまとめセット（室外機＋ナノソル）</label>
-          <label><input type="checkbox" name="extra" value="お風呂換気扇分解（7,000円）">お風呂換気扇分解（7,000円）</label>
-          <label><input type="checkbox" name="extra" value="レンジフード（15,000円）">レンジフード（15,000円）</label>
-          <label><input type="checkbox" name="extra" value="キッチンの換気扇（8,000円）">キッチンの換気扇（8,000円）</label>
+          <label><input type="checkbox" name="extra" value="お風呂換気扇分解（7,000円）" data-price="7000">お風呂換気扇分解（7,000円）</label>
+          <label><input type="checkbox" name="extra" value="レンジフード（15,000円）" data-price="15000">レンジフード（15,000円）</label>
+          <label><input type="checkbox" name="extra" value="キッチンの換気扇（8,000円）" data-price="8000">キッチンの換気扇（8,000円）</label>
         </div>
-        <p class="note">※上のオプションは概算金額に含みません。</p>
+        <p class="note">※選ぶと上の概算金額に入ります。</p>
         <label><input type="checkbox" id="f_nominate" name="nominate" style="width:18px;height:18px;padding:0;margin-right:6px;vertical-align:middle;accent-color:#e8590c">スタッフの指名を希望する（＋3,000円）</label>
         <div id="nominateRow" hidden><label for="f_nominateName">ご希望のスタッフ名</label><input type="text" id="f_nominateName" name="nominate_name" autocomplete="off"></div>
         <label>エアコン以外のお掃除もご相談いただけます <small>任意・料金は担当者からご案内します</small></label>
@@ -442,11 +444,25 @@
   });
   $('goForm').addEventListener('click', function () { showForm('はいから'); });
   // ---------- 予約フォーム（予約ページと同じ計算・同じ必須チェック。送信はしない） ----------
-  var NORMAL = { unit: 8900, auto: 6000, set3: 7000, coat: 3000, outdoor: 4000, drain: 2500 };
-  var st = { units: 1, auto: 0, set3: 0, coat: 0, outdoor: 0, drain: 0 };
+  var NORMAL = { unit: 8900, auto: 6000, set3: 7000, coat: 3000, outdoor: 4000, drain: 2500, tenkase: 23300, nanosol: 2500, omatome: 5000 };
+  // 天カセは壁掛けと別に数える。ナノソル・おまとめは壁掛け＋天カセの台数まで
+  var ZERO = { units: 1, auto: 0, set3: 0, coat: 0, outdoor: 0, drain: 0, tenkase: 0, nanosol: 0, omatome: 0 };
+  var st = Object.assign({}, ZERO);
   var yen = function (n) { return n.toLocaleString('ja-JP'); };
   function total() {
-    return st.units * NORMAL.unit + st.auto * NORMAL.auto + st.set3 * NORMAL.set3 + st.coat * NORMAL.coat + st.outdoor * NORMAL.outdoor + st.drain * NORMAL.drain;
+    var t = st.units * NORMAL.unit;
+    Object.keys(NORMAL).forEach(function (k) { if (k !== 'unit') t += (st[k] || 0) * NORMAL[k]; });
+    return t + extrasTotal();
+  }
+  function extrasTotal() {
+    var t = 0;
+    document.querySelectorAll('input[name=extra]:checked').forEach(function (c) { t += +c.dataset.price || 0; });
+    return t;
+  }
+  function maxOf(k) {
+    if (k === 'units' || k === 'tenkase') return 20;
+    if (k === 'nanosol' || k === 'omatome') return st.units + st.tenkase;
+    return st.units;
   }
   function renderEst() {
     Object.keys(st).forEach(function (k) { $('o_' + k).textContent = st[k]; });
@@ -455,20 +471,21 @@
     document.querySelectorAll('.bk .ctr button').forEach(function (b) {
       var k = b.dataset.k, d = +b.dataset.d;
       if (d < 0) b.disabled = st[k] <= 0;
-      else b.disabled = k === 'units' ? st.units >= 20 : st[k] >= st.units;
+      else b.disabled = st[k] >= maxOf(k);
     });
   }
   document.querySelectorAll('.bk .ctr button').forEach(function (b) {
     b.addEventListener('click', function () {
       var k = b.dataset.k, d = +b.dataset.d;
       st[k] = Math.max(0, st[k] + d);
-      if (k === 'units') Object.keys(st).forEach(function (x) { if (x !== 'units' && st[x] > st.units) st[x] = st.units; });
+      Object.keys(st).forEach(function (x) { if (st[x] > maxOf(x)) st[x] = maxOf(x); });
       renderEst();
     });
   });
+  document.querySelectorAll('input[name=extra]').forEach(function (c) { c.addEventListener('change', renderEst); });
   function resetForm() {
     $('form').reset();
-    st = { units: 1, auto: 0, set3: 0, coat: 0, outdoor: 0, drain: 0 };
+    st = Object.assign({}, ZERO);
     $('formMsg').hidden = true;
     $('petCountRow').hidden = true; $('nominateRow').hidden = true;
     var sb = $('form').querySelector('button[type=submit]'); sb.disabled = false; sb.textContent = 'この内容で予約する';
@@ -505,6 +522,7 @@
       if (el.type === 'date' && el.min && v < el.min) return { el: el, text: LABELS[id] + 'は ' + el.min.replace(/-/g, '/') + ' 以降の日付を選んでください。' };
     }
     if (!document.querySelector('input[name=housing]:checked')) return { el: $('housing'), text: 'お住まいのタイプを選んでください。' };
+    if (st.units + st.tenkase < 1) return { el: $('o_units'), text: 'エアコンの台数を選んでください。' };
     if (!document.querySelector('input[name=pet]:checked')) return { el: $('pet'), text: 'ペットの有無を選んでください。' };
     return null;
   }
@@ -528,9 +546,9 @@
     var add = [];
     add.push('【ふりがな】' + (data.kana || ''));
     add.push('【ペット】' + (data.pet || '') + (data.pet === 'あり' && data.pet_count ? ' ' + data.pet_count + '匹' : ''));
-    if (data.tenkase && data.tenkase !== '0') add.push('【天カセ】' + data.tenkase);
     if (data.model) add.push('【メーカー・型番】' + data.model);
-    if (extras.length) add.push('【その他のオプション（概算外）】' + extras.join('、'));
+    if (st.tenkase) add.push('【天カセ】' + st.tenkase + '台（対応地域の確認が要ります）');
+    if (extras.length) add.push('【その他のお掃除】' + extras.join('、'));
     if ($('f_nominate').checked) add.push('【スタッフ指名（＋3,000円）】' + (data.nominate_name || '名前未記入'));
     if (data.coupon) add.push('【クーポンコード】' + data.coupon);
     if (consults.length) add.push('【その他のご相談】' + consults.join('、'));
@@ -541,11 +559,13 @@
     if (ref) { data.ref = ref; data.ref_code = ref; note = '【紹介コード】' + ref + '\n' + note; }
     note = '【希望日】第1 ' + data.date1 + ' ／ 第2 ' + data.date2 + ' ／ 第3 ' + data.date3 + '\n' + note;
     var lines = [{ name: 'エアコンクリーニング ' + st.units + '台', amount: st.units * NORMAL.unit, items: [{ name: 'エアコンクリーニング', qty: st.units, unit: NORMAL.unit }] }];
-    var NAMES = { auto: 'お掃除機能付き加算', set3: '3点セット（防カビ抗菌コート・室外機・ドレンホース）', coat: '防カビ・抗菌コート', outdoor: '室外機クリーニング', drain: 'ドレンホース洗浄' };
+    var NAMES = { auto: 'お掃除機能付き加算', set3: '3点セット（防カビ抗菌コート・室外機・ドレンホース）', coat: '防カビ・抗菌コート', outdoor: '室外機クリーニング', drain: 'ドレンホース洗浄', tenkase: '天井埋め込み（天カセ）', nanosol: 'ナノソル空間除菌コート', omatome: 'おまとめセット（室外機＋ナノソル）' };
+    if (!st.units) lines = [];
     Object.keys(NAMES).forEach(function (k) { if (st[k]) lines.push({ name: NAMES[k] + ' ' + st[k] + '台', amount: st[k] * NORMAL[k], items: [{ name: NAMES[k], qty: st[k], unit: NORMAL[k] }] }); });
+    document.querySelectorAll('input[name=extra]:checked').forEach(function (c) { var nm = c.value.replace(/（.*）$/, ''); lines.push({ name: nm, amount: +c.dataset.price, items: [{ name: nm, qty: 1, unit: +c.dataset.price }] }); });
     Object.assign(data, {
       note: note,
-      units: st.units, auto_units: st.auto, set3: st.set3 ? 1 : 0, set3_units: st.set3,
+      units: st.units, tenkase_units: st.tenkase, nanosol_units: st.nanosol, omatome_units: st.omatome, auto_units: st.auto, set3: st.set3 ? 1 : 0, set3_units: st.set3,
       coat_units: st.coat, outdoor_units: st.outdoor, drain_units: st.drain,
       breakdown: '【通常予約】' + lines.map(function (l) { return l.name + '=' + yen(l.amount) + '円'; }).join(' / '),
       items: [].concat.apply([], lines.map(function (l) { return l.items; })),
@@ -559,7 +579,7 @@
         // iPhone 等で返事が読めないときは受付済みとして扱う（いまの予約ページと同じ）
         var j; try { j = JSON.parse(txt); } catch (_) { j = { ok: true, id: '（確認メールをご覧ください）' }; }
         if (!j.ok) throw new Error(j.error || '送信失敗');
-        track('申込完了', '台数:' + st.units + ' 概算:' + total() + (ref ? ' 紹介コードあり' : ''));
+        track('申込完了', '台数:' + st.units + (st.tenkase ? ' 天カセ:' + st.tenkase : '') + ' 概算:' + total() + (ref ? ' 紹介コードあり' : ''));
         hideAll();
         $('doneMsg').innerHTML = '受付番号 <b>' + esc(j.id) + '</b><br>確認メールをお送りしました。作業日は担当者よりご連絡のうえ確定します。';
         if (/^R\d{4}-\d+$/.test(String(j.id))) showShare(String(j.id));
