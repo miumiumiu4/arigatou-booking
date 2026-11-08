@@ -31,6 +31,11 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   await snap('1_greet');
   await page.getByRole('button', { name: 'はい' }).click();
   await page.getByRole('button', { name: 'ご予約フォームへ進む' }).click();
+  await page.waitForTimeout(900);
+  { // フォームの見出しが上の帯に隠れていない
+    const hb = await page.locator('header').boundingBox(), fb = await page.locator('#formPanel h2').boundingBox();
+    assert.ok(fb.y >= hb.y + hb.height, `見出し ${fb.y} が帯 ${hb.y + hb.height} に隠れている`);
+  }
   await page.getByRole('button', { name: 'この内容で予約する' }).click();
   assert.match(await page.locator('#formMsg').innerText(), /お名前を入力してください/);
   await page.getByRole('button', { name: 'エアコン台数（壁掛け）を増やす' }).click();

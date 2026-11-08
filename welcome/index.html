@@ -94,7 +94,7 @@
   .panel {
     background: var(--panel); border-radius: 16px; padding: 16px;
     margin-top: 20px; box-shadow: 0 1px 3px rgba(0,0,0,.12);
-    animation: pop .35s ease-out both;
+    animation: pop .35s ease-out both; transform-origin: 50% 0;
   }
   .panel h2 { font-size: 18px; margin: 0 0 12px; }
   .menu { list-style: none; margin: 0; padding: 0; }
@@ -414,7 +414,12 @@
     if (menuCode) presetFromMenu(menuCode);
     $('formPanel').hidden = false;
     $('hdrEst').hidden = false;
-    $('formPanel').scrollIntoView({ block: 'start', behavior: reduce ? 'auto' : 'smooth' });
+    // 上の帯（名前と概算）に隠れないよう、帯の高さぶん下げて見出しから見せる
+    var hdr = document.querySelector('header');
+    // 出てくるときの動き（拡大）の途中の位置で計算しないよう、動きの影響を受けない位置から求める
+    var y = 0, el = $('formPanel');
+    while (el) { y += el.offsetTop; el = el.offsetParent; }
+    window.scrollTo({ top: Math.max(0, y - (hdr ? hdr.offsetHeight : 0) - 8), behavior: reduce ? 'auto' : 'smooth' });
     track('フォーム遷移', note);
   }
 
