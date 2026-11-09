@@ -1,0 +1,473 @@
+// このファイルは welcome/tools/build-thanks-data.mjs が dialect/src/es.json から作ります。直接書きかえないでください。
+(window.THANKS_DIALECTS = window.THANKS_DIALECTS || {})["es"] = {
+ "pref": "Español",
+ "lang": "es",
+ "chars": {
+  "hello": [
+   "¡Hola! Soy Bruce. Gracias por elegirme.",
+   "Soy un bulldog de intercambio que vino de Gran Bretaña. Aprendí español con mis compañeros de clase. Pregúntame lo que quieras sobre tu reserva.",
+   "Un aviso: este chat es en español, pero nuestro personal el día del servicio, el teléfono y LINE son en japonés."
+  ],
+  "check": "¿Te sirvió? Pregunta todo lo que quieras.",
+  "more": "Muy bien, toca cualquier otra cosa que quieras saber.",
+  "miss": "Perdona, no lo he entendido bien. Prueba con otras palabras o elige un botón de abajo.",
+  "handoff": [
+   "Ay, esa no la sé. Inventarme una respuesta sería lo peor que podría hacer, así que te paso con una persona.",
+   "Diles tu número de reserva {id} y todo irá más rápido. Por teléfono o por LINE, como prefieras (en japonés)."
+  ],
+  "bye": [
+   "¡Nos vemos ese día! Haremos un buen trabajo.",
+   "Si un amigo te dice \"yo también lo quiero\", pásale este enlace. Más trabajo para mí, ¡genial!"
+  ]
+ },
+ "my": [
+  "Esto es lo que escribiste en el formulario (se muestra en japonés, tal como lo escribiste).",
+  "Si algo está mal, avísanos por LINE o por teléfono con tu número de reserva {id}."
+ ],
+ "mine": {
+  "A02_what": "Tu reserva es para {what}.",
+  "A02_span": "Debería llevar más o menos {span}.",
+  "C04_pay": "En el formulario elegiste \"{pay}\".",
+  "C04_change": "Si quieres cambiarlo, escríbenos por LINE o llámanos.",
+  "A01_day": "Tu primera opción es {day}, {time}.",
+  "B03_in": "Nos dijiste que podemos aparcar en tu propiedad. Estupendo.",
+  "B03_coin": "Entonces usaremos un aparcamiento de pago (coin parking) cercano.",
+  "C08_codes": "Tu reserva incluía {codes}. La tienda lo revisará y lo aplicará.",
+  "C08_id": "Guarda tu número de reserva {id}. Lo necesitarás cuando nos contactes.",
+  "E03_pet": "Mencionaste mascotas en tu reserva, así que una vez al año es lo mejor para tu casa.",
+  "C07_has": "Tu reserva ya incluye el pack de 3 servicios para {n} aparato(s). ¡Buena elección!",
+  "C07_left": "Si lo quieres también para los otros {left} aparato(s), usa el botón de abajo.",
+  "B06_model": "Escribiste el modelo como \"{model}\". ¡Nos ayuda muchísimo, gracias!",
+  "B06_none": "Si nos lo puedes decir, preparar todo para ese día es mucho más fácil.",
+  "C05_name": "Tu recibo se hará a nombre de \"{name}\".",
+  "C05_none": "No pasa nada si olvidaste el nombre para el recibo. Escríbelo en el campo de abajo.",
+  "B04_ok": "Las mascotas no son ningún problema.",
+  "B04_count": "Escribiste que tienes {n}. También se lo diremos a nuestro personal.",
+  "B04_next": "Si algo te preocupa, toca \"No\" a continuación y te paso con una persona.",
+  "INFO_mail": "Toca \"Enviar por correo\" abajo y se abrirá un correo con este mensaje. Envíalo tal cual. Sale de tu dirección registrada, así que lo encontramos enseguida por el número de reserva.",
+  "INFO_reply": "Responde al correo de confirmación que acabas de recibir y pega este mensaje. Sale de tu dirección registrada, así que lo encontramos enseguida por el número de reserva.",
+  "INFO_got": "\"{val}\", anotado. He copiado el mensaje para la tienda (está en japonés para que la tienda pueda leerlo).",
+  "ADD_ask": "¡Genial! ¿Para cuántos aparatos?",
+  "F04_has": "Tu reserva incluye {n} aparato(s) de cassette de techo.",
+  "F05_has": "Tu reserva solicita {who}."
+ },
+ "items": {
+  "A01": [
+   "¿Te preguntas por la hora? Buena pregunta.",
+   "Llegamos dentro de una de estas franjas: (1) 8:00–9:00, (2) 12:00–14:00, (3) 15:00–18:00. Nuestro personal te dirá la hora confirmada cuando se ponga en contacto contigo.",
+   "Nuestro personal te avisará de la hora confirmada, tranquilo."
+  ],
+  "A02": [
+   "Normal, el tiempo importa. Aquí lo tienes.",
+   "Como referencia, el trabajo lleva 60–90 minutos para un aparato normal, 90–120 minutos para un aparato con autolimpieza y 20–30 minutos para una unidad exterior. Normalmente va un técnico, y puede tardar más según el modelo y la instalación.",
+   "Déjate un poco de margen en el día, por si acaso."
+  ],
+  "A03": [
+   "¿Te preocupa no estar? Lo entiendo.",
+   "Ese día pedimos que haya alguien en casa mientras trabajamos. Dile a nuestro personal quién estará cuando te contacte para confirmar.",
+   "Si el horario no te viene bien, avísanos con tiempo."
+  ],
+  "A04": [
+   "Esperar es lo peor, ¡lo sé!",
+   "Nuestro personal se pondrá en contacto contigo de nuevo para confirmar la fecha. Te enviamos un correo de confirmación cuando recibimos tu reserva.",
+   "Si preguntas por ello, incluye tu número de reserva."
+  ],
+  "A05": [
+   "¿Días de lluvia? Yo también lo pensé.",
+   "También trabajamos los días de lluvia. Además, cambiar la fecha por el tiempo, el tráfico, una enfermedad o imprevistos de nuestro técnico siempre es gratis.",
+   "Los cambios por el tiempo son gratis, así que no te preocupes."
+  ],
+  "B01": [
+   "Esto es lo que conviene ordenar antes.",
+   "Deja libre un espacio de trabajo de unos 2 tatamis (unos 3 metros cuadrados) debajo del aire acondicionado. Antes de que lleguemos, aparta muebles, objetos, plantas y pósteres o fotos de la pared. Si hay algo que no se puede mover, como una cama o un piano, envía una foto a nuestro personal.",
+   "¿No puedes mover algo? No pasa nada, lo vemos juntos con la foto."
+  ],
+  "B02": [
+   "Sobre la electricidad y el agua.",
+   "Te pediremos prestados un enchufe y el agua. Lavamos las piezas en el baño, o en un balcón o garaje con grifo. No las lavamos en el fregadero de la cocina ni en el lavabo. También usaremos el inodoro para tirar el agua sucia. Usamos además una hidrolimpiadora a presión. Hace mucho ruido, así que te avisaremos antes de empezar.",
+   "Ese día solo enséñanos dónde está cada cosa."
+  ],
+  "B03": [
+   "El aparcamiento. La primera preocupación de todos.",
+   "Si no hay sitio para aparcar, cobramos aparte el coste real de un aparcamiento de pago (coin parking) cercano.",
+   "Decidir antes dónde aparcar hace que el día vaya sobre ruedas."
+  ],
+  "B04": [
+   "Mascotas, ¿eh? Te cuento.",
+   "Las mascotas no son problema. Lo que escribiste sobre tus mascotas en el formulario de reserva se le pasará a nuestro personal.",
+   "Si algo te preocupa, toca \"No\" a continuación y te paso con una persona."
+  ],
+  "B05": [
+   "¿Hay peques en casa? Qué bien.",
+   "Los niños pequeños no son problema. Trabajaremos con mucho cuidado. Usamos una escalera y líquido de limpieza, así que ayuda que alguien los mantenga lejos del aire acondicionado.",
+   "Estamos acostumbrados a trabajar en casas con niños, así que tranquilo."
+  ],
+  "B06": [
+   "El número de modelo es lo primero que me gustaría saber.",
+   "Si lo escribes en \"Marca y número de modelo\" en el formulario de reserva, podemos prepararnos mejor para ese día. El precio cambia según si el aparato tiene autolimpieza.",
+   "Si no estás seguro, lo comprobamos juntos más tarde."
+  ],
+  "C01": [
+   "Te he hecho las cuentas.",
+   "Esto es una estimación automática. El importe y las condiciones finales son los que comprobaste en la pantalla de confirmación de la reserva.",
+   "Tómalo como referencia y mira el importe en la pantalla de confirmación."
+  ],
+  "C02": [
+   "Esta es la parte de la que estoy más seguro.",
+   "No cobramos nada por encima del total (impuestos incluidos) que te indicamos. Las únicas excepciones: (1) El aparcamiento es aparte (coste real). (2) Si en el lugar encontramos otro modelo, otro número de aparatos o un trabajo especial (sitios altos, aparatos que no se pueden desmontar, etc.), te mostramos el motivo y fotos, y no trabajamos ni cobramos hasta que lo apruebes (eres libre de decir que no).",
+   "Esas son las únicas excepciones. Pregunta si algo no está claro."
+  ],
+  "C03": [
+   "Me adelanto con lo de la autolimpieza.",
+   "Los aparatos con autolimpieza cuestan 6000 yenes más cada uno. Se aplica el mismo extra si ese día descubrimos que el aparato tiene autolimpieza.",
+   "El extra es el mismo si lo descubrimos ese día, así que compruébalo antes."
+  ],
+  "C04": [
+   "El pago. Deja que te lo explique primero.",
+   "Se paga cuando el trabajo ha terminado. Puedes pagar en efectivo el mismo día, con PayPay el mismo día, o con una factura de PayPal (enviada por correo, se puede pagar con tarjeta). Usaremos el método que elegiste en el formulario de reserva.",
+   "El método que elegiste en el formulario está bien."
+  ],
+  "C05": [
+   "¿Recibo? Claro que sí.",
+   "Si necesitas recibo, escribe el nombre en \"Nombre en el recibo\" en el formulario de reserva. Nuestro personal te explicará cómo se emitirá.",
+   "Si olvidaste escribir el nombre, dínoslo por LINE o por teléfono."
+  ],
+  "C06": [
+   "¿Sale más barato pedir más? Buena pregunta.",
+   "En los aparatos de pared, a partir del segundo cuestan lo mismo que el primero. Normalmente no hacemos descuento. En los de cassette de techo, son 1000 yenes menos por aparato a partir del segundo. Todos los precios son totales con impuestos incluidos.",
+   "Entre nosotros, a veces hacemos campañas solo para los lectores de nuestra newsletter. ¡Reservar entonces sale muy a cuenta!"
+  ],
+  "C07": [
+   "Tenía muchas ganas de explicarte este pack.",
+   "El pack de 3 servicios es recubrimiento antimoho, limpieza de la unidad exterior y limpieza de la manguera de desagüe, por 7500 yenes por aparato (9500 yenes si se piden por separado). El pack combinado es unidad exterior más recubrimiento antimoho, por 5000 yenes por aparato.",
+   "Si no te decides, miramos las opciones juntos."
+  ],
+  "C08": [
+   "Déjame echar un vistazo a los códigos.",
+   "Cualquier código de cupón o de recomendación que hayas puesto en el formulario de reserva lo revisará y aplicará la tienda.",
+   "Deja los códigos en manos de la tienda."
+  ],
+  "D01": [
+   "Cancelaciones. Mejor saberlo pronto.",
+   "La cancelación es gratis hasta dos días antes, cuesta el 50% el día anterior y el 100% el mismo día.",
+   "Decidirlo pronto nos ayuda mucho."
+  ],
+  "D02": [
+   "¿Necesitas otra fecha? Lo arreglamos.",
+   "Cambiar la fecha por el tiempo, el tráfico, una enfermedad o imprevistos de nuestro técnico siempre es gratis. Los demás cambios de fecha siguen las mismas reglas que las cancelaciones (gratis hasta dos días antes, 50% el día anterior, 100% el mismo día). Para cambiarla, contáctanos por teléfono o por LINE.",
+   "Para cambiarla, contáctanos por teléfono o por LINE."
+  ],
+  "D03": [
+   "¿Quieres añadir más? ¡Qué bien!",
+   "Si se puede añadir depende de la agenda de nuestro personal ese día. Si quieres cambiar el número de aparatos o las opciones, contáctanos con tu número de reserva. Te explicaremos el nuevo desglose y el total, y solo lo cambiaremos cuando estés de acuerdo.",
+   "Nunca cambiamos nada sin tu OK."
+  ],
+  "E01": [
+   "Garantía. Así funciona.",
+   "Garantizamos nuestro trabajo durante 7 días (1 semana) después. Si hay un problema en el lugar donde trabajamos causado por nuestro trabajo, volvemos y lo rehacemos gratis.",
+   "No te cortes en pedirnos que lo rehagamos."
+  ],
+  "E02": [
+   "¿Olor o una fuga? Vale, mantengamos la calma.",
+   "La primera semana después del trabajo es el periodo de garantía. Si hay un problema causado por nuestro trabajo, volvemos y lo rehacemos gratis. Primero, contáctanos por teléfono o por LINE.",
+   "Sin pánico. Primero ponte en contacto con nosotros."
+  ],
+  "E03": [
+   "¿Cuándo toca la próxima? Bien pensado.",
+   "Como referencia, limpiar el aire acondicionado cada 2 años es suficiente. En casas con mascotas se acumulan pelos y olores más rápido, así que lo mejor es una vez al año. Incluso los aparatos con autolimpieza se ensucian por dentro. Las mejores épocas son el principio de la primavera y el principio del otoño.",
+   "Apúntalo en tu calendario para la próxima vez."
+  ],
+  "F01": [
+   "¿La lavadora o el baño también? ¡Venga!",
+   "Marca \"Otras solicitudes de limpieza\" en el formulario de reserva y nuestro personal también te informará. Desmontar el extractor del baño y cosas así se pueden elegir en \"Otras limpiezas\".",
+   "Puedes consultarlo todo de una vez."
+  ],
+  "F02": [
+   "La limpieza del inodoro. ¡Déjame contarte una historia!",
+   "Una madre de Saitama nos contó una vez: \"Somos cuatro. Trabajo a jornada completa y hago sola todas las tareas de casa y la crianza. Todos usan el inodoro pero nadie lo limpia, y acabamos discutiendo por eso.\"",
+   "Seguro que hay casas así por todo Japón. Así que decidimos regalar la limpieza del inodoro a todos los que reservan la limpieza del aire acondicionado.",
+   "Sí. Todos los que piden la limpieza del aire acondicionado reciben de regalo la limpieza del inodoro. Escribir una reseña no es una condición.",
+   "Un aire acondicionado y un inodoro relucientes, un motivo menos para discutir y más sonrisas en casa. ¡Eso me haría feliz!"
+  ],
+  "F03": [
+   "Tu dirección. Deja que te lo explique primero.",
+   "Tu nombre, dirección, teléfono y correo solo se usan dentro de esta tienda. Nuestros técnicos de limpieza solo ven lo necesario para el trabajo. La central y otras tiendas solo reciben números, como tu número de reserva y el importe.",
+   "Si algo te preocupa, pregunta sin más."
+  ],
+  "F04": [
+   "¿Cassette de techo? ¡Sin problema!",
+   "Sí, los limpiamos. Los aparatos de cassette de techo cuestan 23300 yenes el primero y 22300 yenes cada uno a partir del segundo. Hay zonas que no podemos cubrir, así que nuestro personal se pondrá en contacto contigo.",
+   "Los aparatos de techo acumulan suciedad donde no se ve."
+  ],
+  "F05": [
+   "¡Puedes pedir a alguien!",
+   "Sí, puedes. Elegir un técnico cuesta +3000 yenes. Marca \"Quiero elegir un técnico\" en el formulario de reserva y escribe su nombre.",
+   "A nuestro personal le hace muchísima ilusión que lo pidan."
+  ],
+  "F06": [
+   "Buena pregunta. Te seré sincero.",
+   "Este guía es un robot de IA. La información oficial de nuestro personal tiene prioridad. Si quieres hablar con una persona, toca \"No\" a continuación y te paso.",
+   "Si prefieres una persona, solo tienes que pedirlo."
+  ]
+ },
+ "t": {
+  "ui_more": "Ver más preguntas",
+  "ui_ph": "Escribe tu pregunta",
+  "ui_send": "Enviar",
+  "ui_hint": "Por favor, no escribas tu nombre, teléfono ni dirección.",
+  "ui_human": "Hablar con una persona",
+  "ui_human_out": "Quiero hablar con una persona",
+  "ui_menu": "Otras preguntas",
+  "ui_bye": "Terminar (con un regalo)",
+  "ui_bye_out": "Eso es todo",
+  "ui_set": "OK",
+  "ui_mail": "Enviar por correo",
+  "ui_mail_line": "¿No puedes usar el correo? Envíalo por LINE",
+  "ui_copy_again": "Copiar otra vez",
+  "ui_copied": "Copiado",
+  "ui_add_set3": "Quiero añadir el pack de 3 servicios",
+  "ui_yes": "Sí",
+  "ui_no": "No",
+  "ui_about": "Respondiendo: \"{q}\"",
+  "ui_contact": "Hablar con una persona",
+  "ui_tell_id": "Indica tu número de reserva {id}.",
+  "ui_ja_only": "El teléfono, LINE y nuestro personal el día del servicio hablan japonés.",
+  "ui_call": "Llamar",
+  "ui_line": "Preguntar por LINE",
+  "ui_line_note": "También puedes escribir a nuestra cuenta oficial de LINE \"ありがとうエアコンサポート\".",
+  "ui_copy_msg": "Copiar un mensaje para la tienda (en japonés)",
+  "ui_stars": "¿Qué te ha parecido tu guía?",
+  "ui_thanks": "¡Gracias!",
+  "u_h": "{n} h",
+  "u_m": "{n} min",
+  "u_to": " a ",
+  "u_and": " y ",
+  "u_colon": ": ",
+  "v_ac": "{n} aire(s) acondicionado(s)",
+  "v_auto": " ({n} con autolimpieza)",
+  "v_out": " y {n} unidad(es) exterior(es)",
+  "v_coupon": "código de cupón \"{code}\"",
+  "v_ref": "código de recomendación \"{code}\"",
+  "v_who": "a \"{name}\" como técnico",
+  "v_staff": "un técnico concreto",
+  "v_pets": "{n} mascota(s)",
+  "pay_onsite": "efectivo el mismo día",
+  "pay_paypay": "PayPay el mismo día",
+  "pay_paypal": "factura de PayPal (enviada por correo)",
+  "A02_note": " (Es una estimación para un técnico. Puede tardar más según el modelo y la instalación.)",
+  "A02_tenkase": "Para el/los {n} aparato(s) de cassette de techo, depende del modelo, así que nuestro personal te lo dirá.",
+  "C04_after": "Se paga cuando el trabajo ha terminado.",
+  "A01_arrive": "En esta franja, llegamos entre {arr} (no es la hora de terminar).",
+  "A01_fix": "La fecha se confirma cuando nuestro personal se ponga en contacto contigo.",
+  "B03_in_note": "Solo si no hay sitio para aparcar, cobramos aparte el coste real de un aparcamiento de pago cercano.",
+  "B03_coin_note": "En ese caso, cobramos aparte el coste real del aparcamiento de pago.",
+  "C08_none": "Cualquier código de cupón o de recomendación que hayas puesto en el formulario de reserva lo revisará y aplicará la tienda.",
+  "E03_base": "Como referencia, limpiar el aire acondicionado cada 2 años es suficiente. Pero en casas con mascotas se acumulan pelos y olores más rápido, así que lo mejor es una vez al año. Las mejores épocas son el principio de la primavera y el principio del otoño.",
+  "F04_note": "Los aparatos de cassette de techo cuestan 23300 yenes el primero y 22300 yenes cada uno a partir del segundo. Hay zonas que no podemos cubrir, así que nuestro personal se pondrá en contacto contigo.",
+  "F05_note": "Elegir un técnico cuesta +3000 yenes.",
+  "C07_note": "El pack de 3 servicios es recubrimiento antimoho, limpieza de la unidad exterior y limpieza de la manguera de desagüe, por 7500 yenes por aparato (9500 yenes si se piden por separado).",
+  "B06_note": "El precio cambia según si el aparato tiene autolimpieza, así que dinos lo que sepas.",
+  "C05_note": "Nuestro personal te explicará cómo se emitirá el recibo.",
+  "info_receipt": "Nombre en el recibo",
+  "info_receipt_ph": "p. ej. Empresa ABC S.L. / Ana García",
+  "info_receipt_has": "Rellénalo solo si quieres cambiar el nombre.",
+  "info_receipt_none": "Si olvidaste el nombre para el recibo, escríbelo aquí.",
+  "info_set3": "Añadir el pack de 3 servicios",
+  "info_set3_ph": "¿Cuántos aparatos? (p. ej. 2)",
+  "info_set3_none": "Escribe cuántos aparatos quieres añadir. Si se puede añadir depende de la agenda de ese día, así que nuestro personal te contactará para confirmarlo.",
+  "info_model": "Marca y número de modelo",
+  "info_model_ph": "p. ej. Daikin AN22XXX",
+  "info_model_has": "Escribe aquí si estaba mal, o para otros aparatos.",
+  "info_model_none": "Si lo sabes, escríbelo aquí. Está en una etiqueta en el lateral o en la parte de abajo del aparato."
+ },
+ "q": {
+  "MY": "Ver mi reserva",
+  "A01": "¿A qué hora llegan?",
+  "A02": "¿Cuánto tarda?",
+  "A03": "¿Tengo que estar en casa?",
+  "A04": "¿Cuándo se confirma la fecha?",
+  "A05": "¿Trabajan los días de lluvia?",
+  "B01": "¿Debo despejar la zona del aire acondicionado?",
+  "B02": "¿Usarán mi electricidad y agua?",
+  "B03": "¿Y el aparcamiento?",
+  "B04": "¿Hay problema si tengo mascotas?",
+  "B05": "Tengo niños pequeños. ¿Algo a tener en cuenta?",
+  "B06": "¿Debo decirles el número de modelo?",
+  "C01": "¿Cuánto me va a costar?",
+  "C02": "¿Puede haber cargos extra ese día?",
+  "C03": "¿La autolimpieza cambia el precio?",
+  "C04": "¿Cuándo y cómo pago?",
+  "C05": "¿Me pueden dar un recibo?",
+  "C06": "¿Sale más barato a partir del segundo aparato?",
+  "C07": "¿Qué incluye el pack de 3 servicios?",
+  "C08": "¿Puedo usar un cupón o código de recomendación?",
+  "D01": "¿Cuánto cuesta cancelar?",
+  "D02": "¿Y si quiero cambiar la fecha?",
+  "D03": "¿Puedo añadir aparatos u opciones después?",
+  "E01": "¿Hay garantía?",
+  "E02": "¿Y si después hay olor o una fuga?",
+  "E03": "¿Cada cuánto debo limpiarlo?",
+  "F01": "¿Puedo pedir también la lavadora o el baño?",
+  "F02": "¿De verdad la limpieza del inodoro es gratis?",
+  "F03": "¿Quién puede ver mi nombre y dirección?",
+  "F04": "¿Limpian aparatos de cassette de techo?",
+  "F05": "¿Puedo pedir un técnico concreto?",
+  "F06": "¿Este chat es una persona?"
+ },
+ "kw": {
+  "A01": [
+   "llegan",
+   "llegada",
+   "qué hora",
+   "hora"
+  ],
+  "A02": [
+   "cuánto tarda",
+   "duración",
+   "tiempo"
+  ],
+  "A03": [
+   "en casa",
+   "ausente",
+   "salir"
+  ],
+  "A04": [
+   "confirma",
+   "confirmación",
+   "confirmada"
+  ],
+  "A05": [
+   "lluvia",
+   "llueve"
+  ],
+  "B01": [
+   "despejar",
+   "ordenar",
+   "muebles"
+  ],
+  "B02": [
+   "electricidad",
+   "agua",
+   "enchufe",
+   "luz"
+  ],
+  "B03": [
+   "aparcamiento",
+   "aparcar",
+   "estacionamiento",
+   "coche"
+  ],
+  "B04": [
+   "mascota",
+   "perro",
+   "gato"
+  ],
+  "B05": [
+   "niño",
+   "niños",
+   "bebé",
+   "hijo"
+  ],
+  "B06": [
+   "modelo",
+   "marca",
+   "fabricante"
+  ],
+  "C01": [
+   "cuánto",
+   "precio",
+   "coste",
+   "costo"
+  ],
+  "C02": [
+   "extra",
+   "adicional",
+   "recargo"
+  ],
+  "C03": [
+   "autolimpieza",
+   "limpieza automática"
+  ],
+  "C04": [
+   "pagar",
+   "pago",
+   "efectivo",
+   "paypay",
+   "paypal"
+  ],
+  "C05": [
+   "recibo",
+   "factura"
+  ],
+  "C06": [
+   "descuento",
+   "segundo",
+   "más barato"
+  ],
+  "C07": [
+   "3 servicios",
+   "pack"
+  ],
+  "C08": [
+   "cupón",
+   "recomendación",
+   "código"
+  ],
+  "D01": [
+   "cancelar",
+   "cancelación"
+  ],
+  "D02": [
+   "cambiar la fecha",
+   "otro día",
+   "reprogramar"
+  ],
+  "D03": [
+   "añadir",
+   "más aparatos",
+   "opción"
+  ],
+  "E01": [
+   "garantía"
+  ],
+  "E02": [
+   "olor",
+   "fuga",
+   "gotea"
+  ],
+  "E03": [
+   "cada cuánto",
+   "frecuencia"
+  ],
+  "F01": [
+   "lavadora",
+   "baño",
+   "bañera"
+  ],
+  "F02": [
+   "inodoro",
+   "váter",
+   "wc"
+  ],
+  "F03": [
+   "privacidad",
+   "datos personales",
+   "dirección"
+  ],
+  "F04": [
+   "techo",
+   "cassette"
+  ],
+  "F05": [
+   "elegir",
+   "técnico",
+   "pedir a alguien"
+  ],
+  "F06": [
+   "humano",
+   "robot",
+   "ia",
+   "bot"
+  ]
+ }
+};
