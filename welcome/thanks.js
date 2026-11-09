@@ -245,7 +245,7 @@
     S.miss = 0;
     say(answerLines(it, it.a[S.chara]), function () { after(it); });
   }
-  // 領収書の宛名の記入欄。宛名は裏側にも計測にも送らず、受付番号つきの文にして LINE で送ってもらう
+  // 領収書の宛名の記入欄。宛名は裏側にも計測にも送らず、受付番号つきの文にして確認メールへの返信で送ってもらう（登録のメアドから届き、受付番号で拾える。11/10 三浦さん）。見つからない時は LINE
   // （予約サイトの GAS は凍結中で、あとから宛名を書き足す受け口がまだ無い。受け口ができたらここから直接送る）
   function copyText(t, done) {
     done = done || function () {};
@@ -271,14 +271,16 @@
         buruyan: '「' + name + '」やな。この文をコピーしといたで。', buruko: '「' + name + '」ですね。この文をコピーしておきました。',
         burusama: '「' + name + '」ね。この文、コピーしておいたわ。', buruseijin: '「' + name + '」、受信しました。下の文を複製済みであります。'
       }), msg, V({
-        buruyan: '下の「LINE で送る」を押して、貼り付けて送ってな。それで受付完了や。', buruko: '下の「LINE で送る」を押して、貼り付けて送ってくださいね。',
-        burusama: '下の「LINE で送る」から、貼り付けて送ってちょうだい。', buruseijin: '下の「LINE で送る」から、貼り付けて送信してください。以上であります。'
-      })], function () {
-        controls((o.lineUrl ? '<a class="btn line wide" href="' + esc(o.lineUrl) + '" target="_blank" rel="noopener">LINE で送る</a>' : '')
+        buruyan: 'さっき届いた確認メールに「返信」して、この文を貼り付けて送ってな。登録したメアドから届くから、受付番号ですぐ見つけられるねん。',
+        buruko: 'さきほど届いた確認メールに「返信」して、この文を貼り付けて送ってくださいね。登録のメールアドレスから届くので、受付番号ですぐに見つけられます。',
+        burusama: 'さっき届いた確認メールに「返信」して、この文を貼り付けて送ってちょうだい。登録したメアドから届くから、すぐ見つけられるのよ。',
+        buruseijin: '先ほど受信した確認メールに「返信」し、この文を貼り付けて送信してください。登録アドレスからの通信は、受付番号で即座に照合できます。'
+      }), 'メールが見つからない時は、LINE でも受け付けます。'], function () {
+        controls((o.lineUrl ? '<a class="btn ghost wide" href="' + esc(o.lineUrl) + '" target="_blank" rel="noopener">メールが見つからない時は LINE で送る</a>' : '')
           + '<button type="button" class="tc-link tc-copy" data-copy="1">もう一度コピーする</button>'
           + '<div class="tc-foot"><button type="button" class="tc-link" data-menu="1">ほかの質問</button><button type="button" class="tc-link" data-bye="1">おしまい</button></div>');
         on('[data-copy]', function (b) { copyText(msg, function (ok) { b.textContent = ok ? 'コピーしました' : msg; }); });
-        S.ctl.querySelectorAll('a.line').forEach(function (a) { a.addEventListener('click', function () { o.track('連絡', 'LINE:領収書'); }); });
+        S.ctl.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { o.track('連絡', 'LINE:領収書'); }); });
         on('[data-menu]', function () { S.gen++; controls(''); say([ch().more], menu); });
         on('[data-bye]', bye);
       });

@@ -192,7 +192,7 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   await page.locator('#thanksPanel').getByRole('button', { name: '支払い' }).click();
   await page.locator('#thanksPanel').getByRole('button', { name: 'はい' }).waitFor();
   await snap('8_seijin');
-  // 領収書：宛名を書き忘れた人には記入欄。宛名は計測に送らず、受付番号つきの文にして LINE で送ってもらう
+  // 領収書：宛名を書き忘れた人には記入欄。宛名は計測に送らず、受付番号つきの文にして確認メールへの返信で送ってもらう
   await page.locator('#thanksPanel').getByRole('button', { name: 'はい' }).click();
   await page.locator('#thanksPanel').getByRole('button', { name: 'ほかの質問も見る' }).click();
   await page.locator('#thanksPanel').getByRole('button', { name: '領収書はもらえますか？' }).click();
@@ -200,8 +200,9 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   assert.match(await page.locator('#thanksPanel').innerText(), /書き忘れた方は、こちらに書いてください/);
   await page.locator('#thanksPanel .tc-rcpt input').fill('株式会社ブル');
   await page.locator('#thanksPanel').getByRole('button', { name: '決める' }).click();
-  await page.locator('#thanksPanel').getByRole('link', { name: 'LINE で送る' }).waitFor();
+  await page.locator('#thanksPanel').getByRole('link', { name: 'メールが見つからない時は LINE で送る' }).waitFor();
   assert.match(await page.locator('#thanksPanel').innerText(), /受付番号 R0000-0 の領収書の宛名：株式会社ブル/);
+  assert.match(await page.locator('#thanksPanel').innerText(), /確認メールに「返信」/);
   assert.ok(!JSON.stringify(logged).includes('株式会社ブル'));
   assert.ok(logged.some(e => e.event === '領収書' && e.note === '宛名を入力'));
   assert.ok(logged.length && logged.every(e => e.test === 'thanks-chat-test'));
