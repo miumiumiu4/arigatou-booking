@@ -703,7 +703,11 @@
       + '<a class="line" href="https://line.me/R/share?text=' + encodeURIComponent(text) + '" target="_blank" rel="noopener">LINEで送る</a>'
       + '<p>あなたの紹介コード：<b style="display:inline">' + esc(id) + '</b></p>'
       + '<p>SNSに載せるときは、紹介料が出ることがわかるよう「PR」と書いてください。</p>';
+    // 紹介リンクのコピー・LINEで送る：誰が押したか分かるよう受付番号を備考に付ける（名前・連絡先は送らない）
+    var shareTest = /^(R0000-|T)/.test(id) ? 'thanks-chat-test' : 'thanks-chat';
+    box.querySelector('a.line').addEventListener('click', function () { track('紹介リンク', 'LINEで送る 受付:' + id, shareTest); });
     box.querySelector('button').addEventListener('click', function (e) {
+      track('紹介リンク', 'コピー 受付:' + id, shareTest);
       try { navigator.clipboard.writeText(url).then(function () { e.target.textContent = 'コピーしました'; }); }
       catch (_) { box.querySelector('input').select(); e.target.textContent = '選択しました'; }
     });
@@ -753,7 +757,7 @@
     window.ThanksChat.start({
       id: id, mount: $('thanksPanel'), summary: sum, ctx: ctx, mine: mine,
       faqbotUrl: CONFIG.FAQBOT_URL, lineUrl: CONFIG.LINE_URL, phone: CONFIG.PHONE, mailTo: CONFIG.MAIL_TO,
-      track: function (ev, note) { track(ev, note, test); },
+      track: function (ev, note) { track(ev, (note ? note + ' ' : '') + '受付:' + id, test); }, // 誰の操作か（星・おしまい・質問など）を受付番号で分かるように
       showShare: function (el) { showShare(id, el); }
     });
   }
