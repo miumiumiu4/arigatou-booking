@@ -63,6 +63,7 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   await page.check('#f_nominate'); await page.fill('#f_nominateName', '田中');
   assert.equal(await page.locator('#hdrTotal').innerText(), '51,100');
   await page.fill('#f_coupon', 'CP1');
+  await page.fill('#f_receiptName', '株式会社テスト');
   await snap('2_form');
   assert.equal(booked.length, 0);
   await page.getByRole('button', { name: 'この内容で予約する' }).click();
@@ -84,18 +85,21 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   await tc.getByRole('button', { name: /ブルやん/ }).click();
   await tc.getByRole('button', { name: '駐車場' }).waitFor();
   assert.match(await tc.innerText(), /ブルやんです/);
-  assert.equal(await tc.locator('.tc-quick .btn').count(), 6);
-  // ① ボタン：台帳の文がそのまま入る
+  assert.equal(await tc.locator('.tc-quick .btn').count(), 7);
+  // ① ボタン：さっきの予約に合わせて答える（敷地内に駐車可を選んだ）
   await tc.getByRole('button', { name: '駐車場' }).click();
   await tc.getByRole('button', { name: 'はい' }).waitFor();
   const B03 = (await page.evaluate(() => THANKS_DATA.items.find(i => i.id === 'B03').a.buruyan));
-  for (const l of B03) assert.ok((await tc.innerText()).includes(l), l);
+  assert.ok((await tc.innerText()).includes(B03[0]));
+  assert.match(await tc.innerText(), /敷地内に停められるって書いてくれてたな/);
   await snap('5_answer');
   await tc.getByRole('button', { name: 'はい' }).click();
   await tc.getByRole('button', { name: 'キャンセル' }).waitFor();
   // ② 自由入力（電話番号は伏せてから扱う）。「ペット」は人に回す形 → 連絡先
   await tc.locator('.tc-ask input').fill('090-1234-5678 ペットがいます');
   await tc.getByRole('button', { name: '送る' }).click();
+  await waitText(/ペット2匹おるって書いてくれてたな/);
+  await tc.getByRole('button', { name: 'いいえ' }).click();
   await tc.getByText('人とお話しする').waitFor();
   assert.match(await tc.innerText(), /「ペットがいても大丈夫ですか？」のことでお答えします/);
   assert.match(await tc.innerText(), /○○ ペットがいます/);
@@ -119,6 +123,13 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   await tc.getByRole('button', { name: '3点セットは何が入っていますか？' }).click();
   await tc.getByText('人とお話しする').waitFor();
   assert.doesNotMatch(await tc.innerText(), /防カビ抗菌コート・室外機クリーニング・ドレンホース洗浄の3つ|別々だと/);
+  // 事務マニュアルから足した答え（片づけ）は、人へ回さずに答える
+  await tc.getByRole('button', { name: 'ほかの質問' }).click();
+  await tc.locator('.tc-ask input').waitFor();
+  await tc.locator('.tc-ask input').fill('エアコンの下は片づけた方がいい？');
+  await tc.getByRole('button', { name: '送る' }).click();
+  await waitText(/畳2畳ほどの作業スペース/);
+  await tc.getByRole('button', { name: 'はい' }).click();
   // 台帳にない質問が2回続いたら人へ（裏側の URL が空のあいだ）
   await tc.getByRole('button', { name: 'ほかの質問' }).click();
   await tc.locator('.tc-ask input').waitFor();
@@ -142,9 +153,10 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   const b = booked[0];
   assert.equal(b.units, 2); assert.equal(b.tenkase_units, 1); assert.equal(b.total, 51100);
   assert.match(b.breakdown, /天井埋め込み（天カセ） 1台=23,300円/); assert.match(b.breakdown, /お風呂換気扇分解=7,000円/); assert.equal(b.name, 'テスト');
-  for (const re of [/【ふりがな】てすと/, /【ペット】あり 2匹/, /【天カセ】1台/, /【メーカー・型番】ダイキン AN22/, /【その他のお掃除】お風呂換気扇分解/, /【スタッフ指名（＋3,000円）】田中/, /【クーポンコード】CP1/, /^【希望日】第1 /])
+  for (const re of [/【ふりがな】てすと/, /【ペット】あり 2匹/, /【天カセ】1台/, /【メーカー・型番】ダイキン AN22/, /【その他のお掃除】お風呂換気扇分解/, /【スタッフ指名（＋3,000円）】田中/, /【クーポンコード】CP1/, /【領収書の宛名】株式会社テスト/, /^【希望日】第1 /])
     assert.match(b.note, re);
   assert.match(b.src, /^welcome\?/);
+  assert.equal(b.receipt_name, undefined); // 宛名は備考の1行だけで送る
   const hp = logged.filter(e => e.test === 'hp-chat'), th = logged.filter(e => e.test === 'thanks-chat');
   const ev = hp.map(e => e.event);
   assert.deepEqual(ev, ['到着', 'はい', 'フォーム遷移', '申込完了']);
@@ -163,9 +175,13 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   await page.getByRole('button', { name: 'はい' }).waitFor();
   assert.match(await page.locator('#chat').innerText(), /またお会いできて嬉しいです/);
 
-  // ?thanks=test：送らずに送信後の画面。前に選んだ案内係を覚えていて、帯のボタンで選び直せる
+  // ?thanks=test：送らずに送信後の画面。毎回キャラ選びから始まり、前に選んだ子に「前回」の印。帯のボタンで選び直せる
   logged.length = 0;
   await page.goto(url + '?thanks=test');
+  await page.locator('#thanksPanel .tc-card.last').waitFor();
+  assert.equal(await page.locator('#thanksPanel .tc-card').count(), 4);
+  assert.match(await page.locator('#thanksPanel .tc-card.last').innerText(), /前回[\s\S]*ブルやん/);
+  await page.locator('#thanksPanel').getByRole('button', { name: /ブルやん/ }).click();
   await page.locator('#thanksPanel').getByRole('button', { name: '駐車場' }).waitFor();
   assert.match(await page.locator('#thanksPanel').innerText(), /ブルやんです/);
   assert.equal(booked.length, 1);

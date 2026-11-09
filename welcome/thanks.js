@@ -89,8 +89,8 @@
   }
   function picker() {
     var html = '<div class="tc-pick">' + Object.keys(D.chars).map(function (k) {
-      var c = D.chars[k];
-      return '<button type="button" class="tc-card" data-c="' + k + '"><img src="' + HERE + c.img + '" alt=""><b>' + esc(c.name) + '</b><span>' + esc(c.pick) + '</span></button>';
+      var c = D.chars[k], last = store(KEY) === k;
+      return '<button type="button" class="tc-card' + (last ? ' last' : '') + '" data-c="' + k + '">' + (last ? '<i>前回</i>' : '') + '<img src="' + HERE + c.img + '" alt=""><b>' + esc(c.name) + '</b><span>' + esc(c.pick) + '</span></button>';
     }).join('') + '</div>';
     controls(html);
     on('.tc-card', function (b) { choose(b.dataset.c, false); });
@@ -129,9 +129,100 @@
   }
 
   // ---------- 3. 答え ----------
+  // 「さっきの予約」に合わせた答え。opts.mine（このページの中だけにある予約の中身）から作り、どこにも送らない。
+  // 金額・時間の数字は台帳の決まり（作業時間の目安・到着の幅・駐車場の扱い）から計算するだけで、新しい約束は作らない。
+  function V(o) { return o[S.chara] || o.buruko; }
+  function hm(min) { var h = Math.floor(min / 60), m = min % 60; return (h ? h + '時間' : '') + (m ? m + '分' : (h ? '' : '0分')); }
+  var PAY = { onsite: '作業当日に現金', paypay: '作業当日に PayPay', paypal: 'PayPal の請求書（メールで届きます）' };
+  var ARRIVE = { '9時〜12時': '8〜9時', '12時〜15時': '12〜14時', '15時〜18時': '15〜18時' };
+  function dayLabel(d) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(d || '')) return '';
+    var t = new Date(d + 'T12:00:00+09:00');
+    return (t.getUTCMonth() + 1) + '月' + t.getUTCDate() + '日（' + '日月火水木金土'.charAt(t.getUTCDay()) + '）';
+  }
+  var MINE = {
+    A02: function (m) { // 作業時間：通常60〜90分・お掃除機能付き90〜120分・室外機20〜30分（事務マニュアル01）
+      var auto = Math.min(m.auto || 0, m.wall || 0), normal = (m.wall || 0) - auto, out = m.outdoorUnits || 0;
+      if (!normal && !auto) return null;
+      var lo = normal * 60 + auto * 90 + out * 20, hi = normal * 90 + auto * 120 + out * 30;
+      var what = 'エアコン' + (normal + auto) + '台' + (auto ? '（うちお掃除機能付き' + auto + '台）' : '') + (out ? 'と室外機' + out + '台' : '');
+      var span = hm(lo) + '〜' + hm(hi);
+      var r = [V({
+        buruyan: 'お客さんの予約は、' + what + 'やな。', buruko: 'ご予約は、' + what + 'ですね。',
+        burusama: 'あなたの予約は、' + what + 'ね。', buruseijin: '記録によると、' + what + 'であります。'
+      }), V({
+        buruyan: 'それやと、だいたい' + span + 'くらい見といてな。', buruko: 'それだと、だいたい' + span + 'くらいです。',
+        burusama: 'それなら、だいたい' + span + 'ってところね。', buruseijin: '計算結果は、およそ' + span + 'です。'
+      }) + '（スタッフ1名で伺う目安です。機種や設置の状況で長くなることがあります）'];
+      if (m.tenkase) r.push('天井埋め込み（天カセ）' + m.tenkase + '台の分は、機種で変わるので担当者からご案内します。');
+      return r;
+    },
+    C04: function (m) {
+      var pay = PAY[m.payment];
+      if (!pay) return null;
+      return [V({
+        buruyan: 'さっきのフォームで「' + pay + '」を選んでくれてたで。', buruko: 'さきほどのフォームで「' + pay + '」を選んでいただいてます。',
+        burusama: 'さっきのフォームで「' + pay + '」を選んでたわよ。', buruseijin: '記録によると、選択は「' + pay + '」であります。'
+      }), 'お支払いは、作業が終わってからです。', V({
+        buruyan: '変えたい時は、LINE か電話でひと言くれたらええよ。', buruko: '変えたい時は、LINE かお電話でひと言くださいね。',
+        burusama: '変えたくなったら、LINE か電話でひと言ちょうだい。', buruseijin: '変更の際は、LINE か電話での連絡を推奨します。'
+      })];
+    },
+    A01: function (m) {
+      var day = dayLabel(m.date1), arr = ARRIVE[m.time1];
+      if (!day || !arr) return null;
+      return [V({
+        buruyan: '第1希望は ' + day + ' の' + m.time1 + 'やな。', buruko: '第1希望は ' + day + ' の' + m.time1 + 'ですね。',
+        burusama: '第1希望は ' + day + ' の' + m.time1 + 'ね。', buruseijin: '第1希望は ' + day + ' の' + m.time1 + 'と記録しています。'
+      }), 'この時間帯だと、到着は ' + arr + ' のあいだです（作業が終わる時刻ではありません）。', '作業日は、担当者からのご連絡で確定します。'];
+    },
+    B03: function (m) {
+      if (m.parking === '敷地内に駐車可') return [V({
+        buruyan: '敷地内に停められるって書いてくれてたな。', buruko: '敷地内に停められると書いていただいてますね。',
+        burusama: '敷地内に停められるのね、助かるわ。', buruseijin: '敷地内に駐車可能、と記録しています。'
+      }), '駐車場がない場合にだけ、近くのコインパーキングの実費を別にいただきます。'];
+      if (m.parking === '近隣コインパーキング利用') return [V({
+        buruyan: '近くのコインパーキングを使う形やな。', buruko: '近くのコインパーキングを使う形ですね。',
+        burusama: '近くのコインパーキングを使うのね。', buruseijin: '近隣のコインパーキング使用、と記録しています。'
+      }), 'その場合は、コインパーキングの実費を別にいただきます。'];
+      return null;
+    },
+    B04: function (m) {
+      if (m.pet !== 'あり') return null;
+      var n = m.petCount ? m.petCount + '匹' : '';
+      return [V({
+        buruyan: 'ペット' + n + 'おるって書いてくれてたな。', buruko: 'ペットが' + n + 'いると書いていただいてますね。',
+        burusama: 'ペット' + n + 'がいるのね。', buruseijin: 'ペット' + n + '、と記録しています。'
+      }), 'フォームに書いていただいた内容は、担当者に伝わります。', V({
+        buruyan: '気になることがあったら、下の「人へつなぐ」から聞いてな。', buruko: '気になることがあれば、下の「人へつなぐ」からどうぞ。',
+        burusama: '気になることがあれば、下の「人へつなぐ」から聞いてちょうだい。', buruseijin: '詳細の確認は、下の「人へつなぐ」を推奨します。'
+      })];
+    }
+  };
+  // 「予約した内容を確認したい」：このページの中だけで、予約フォームに入れた中身を全部読み上げる
+  var MY_A = {
+    buruyan: ['さっきの予約、読み上げるで。', '{detail}', '違うとこあったら、受付番号 {id} と一緒に LINE か電話で教えてな。'],
+    buruko: ['さきほどのご予約、確認しますね。', '{detail}', '違うところがあれば、受付番号 {id} と一緒に LINE かお電話で教えてくださいね。'],
+    burusama: ['さっきの予約、ちゃんと見せるわね。', '{detail}', '違うところがあったら、受付番号 {id} を添えて LINE か電話で言ってちょうだい。'],
+    buruseijin: ['先ほどの予約の記録を、読み上げます。', '{detail}', '相違があれば、受付番号 {id} を添えて LINE か電話での連絡を推奨します。以上であります。']
+  };
+  function addMine(m) {
+    if (!m || !m.detail || !m.detail.length || item('MY')) return;
+    D.items.unshift({ id: 'MY', q: '予約した内容を確認したい', aliases: ['予約内容', '予約の内容', '予約の中身', '何を予約', '何台', '住所', '場所', 'どこに来る', '希望日', '確認したい'], open: true, human: false, a: MY_A });
+    D.quick.unshift(['MY', '予約の中身']);
+  }
+  function mine(it) {
+    var f = MINE[it.id], m = S.opts.mine;
+    if (!f || !m) return null;
+    try { return f(m); } catch (e) { return null; }
+  }
   function answerLines(it, lines) {
     lines = lines.map(fill);
     if (it.id === 'C01' && S.opts.summary) lines.splice(1, 0, S.opts.summary); // 「私の料金は？」はこの画面の内訳をそのまま
+    if (it.id === 'MY') { var dt = S.opts.mine.detail; S.mine = true; return [lines[0], dt.join('\n')].concat(lines.slice(2)); } // 一覧は1つの吹き出しにまとめる
+    var p = mine(it);
+    if (p) { S.mine = true; return it.human ? p : [lines[0]].concat(p); } // 一言目は案内係のまま、中身はこの予約の話
+    S.mine = false;
     return lines;
   }
   function ask(id, via, shown) {
@@ -145,7 +236,7 @@
     say(answerLines(it, it.a[S.chara]), function () { after(it); });
   }
   function after(it) {
-    if (it.human) return contact(); // 人に回す形の問は、答えのあとに連絡先を出す
+    if (it.human && !S.mine) return contact(); // 人に回す形の問で、この予約から言えることも無いときだけ連絡先を出す
     S.last = it.id;
     say([ch().check], function () {
       controls('<div class="choices tc-yn"><button type="button" class="btn primary" data-y="1">はい</button><button type="button" class="btn ghost" data-n="1">いいえ</button></div>');
@@ -255,17 +346,17 @@
   }
 
   window.ThanksChat = {
-    // opts: { id, mount, track(event, note), summary, ctx, faqbotUrl, lineUrl, phone, showShare(el) }
+    // opts: { id, mount, track(event, note), summary, ctx, mine, faqbotUrl, lineUrl, phone, showShare(el) }
     start: function (opts) {
       if (S) S.timers.forEach(clearTimeout);
       S = { opts: opts, id: opts.id, chara: null, gen: 0, miss: 0, timers: [] };
+      addMine(opts.mine);
       opts.mount.innerHTML = '<div class="chat tc-log" aria-live="polite"></div><div class="tc-ctl" hidden></div>'
         + '<p class="tc-ai">このチャットは AI の案内係ロボが答えています。正式なご案内は担当者からの連絡が優先されます。</p>';
       opts.mount.hidden = false;
       S.log = opts.mount.querySelector('.tc-log');
       S.ctl = opts.mount.querySelector('.tc-ctl');
-      var saved = store(KEY);
-      if (saved && D.chars[saved]) choose(saved, true); else intro();
+      intro(); // 毎回、最初に案内係を選んでもらう（前に選んだ子は「前回」の印だけ付ける。11/10 三浦さん）
     },
     active: function () { return !!S; },
     pick: function () { if (S) { S.opts.mount.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' }); intro(true); } },
