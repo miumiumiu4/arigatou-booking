@@ -1,0 +1,351 @@
+{
+ "pref": "Deutsch",
+ "lang": "de",
+ "order": 14,
+ "note": "外国の言葉の束（ドイツ語）：答えを丸ごと訳す（台帳の元文の金額・時間・条件は変えない）。当日のスタッフ・電話・LINE は日本語であることを最初に伝える。",
+ "chars": {
+  "hello": [
+   "Hallo! Hier ist Bruce. Danke, dass du mich ausgewählt hast.",
+   "Ich bin eine Bulldogge und Austauschstudent aus Großbritannien. Deutsch habe ich von meinen Freunden an der Uni gelernt. Frag mich alles zu deiner Buchung.",
+   "Nur zur Info: Dieser Chat ist auf Deutsch, aber unser Team vor Ort, das Telefon und LINE sind auf Japanisch."
+  ],
+  "check": "Hilft dir das? Frag ruhig so viel du willst.",
+  "more": "Na dann, tippe einfach auf alles, was du noch wissen möchtest.",
+  "miss": "Sorry, das habe ich nicht ganz verstanden. Versuch es mit anderen Worten oder wähle unten einen Button.",
+  "handoff": [
+   "Oh, da bin ich überfragt. Mir eine Antwort auszudenken wäre das Schlimmste, was ich tun könnte, also leite ich dich an einen Menschen weiter.",
+   "Nenne deine Buchungsnummer {id}, dann geht es schneller. Telefon oder LINE, wie es dir passt (auf Japanisch)."
+  ],
+  "bye": [
+   "Bis zum Termin! Wir machen das ordentlich.",
+   "Wenn ein Freund sagt „Das will ich auch“, gib ihm gern diesen Link. Mehr Arbeit für mich, wunderbar."
+  ]
+ },
+ "my": [
+  "Das hast du im Formular eingegeben (es wird auf Japanisch angezeigt, so wie du es eingetippt hast).",
+  "Falls etwas nicht stimmt, sag uns bitte per LINE oder Telefon mit deiner Buchungsnummer {id} Bescheid."
+ ],
+ "mine": {
+  "A02_what": "Deine Buchung ist für {what}.",
+  "A02_span": "Das dauert ungefähr {span}.",
+  "C04_pay": "Im Formular hast du „{pay}“ gewählt.",
+  "C04_change": "Wenn du das ändern möchtest, schreib uns einfach per LINE oder ruf an.",
+  "A01_day": "Dein Wunschtermin ist {day}, {time}.",
+  "B03_in": "Du hast angegeben, dass wir auf deinem Grundstück parken können. Super.",
+  "B03_coin": "Dann nutzen wir einen kostenpflichtigen Parkplatz (Coin Parking) in der Nähe.",
+  "C08_codes": "Deine Buchung enthielt {codes}. Der Laden prüft das und rechnet es an.",
+  "C08_id": "Bitte bewahre deine Buchungsnummer {id} auf. Du brauchst sie, wenn du uns kontaktierst.",
+  "E03_pet": "Du hast Haustiere in deiner Buchung erwähnt, also ist einmal im Jahr für dein Zuhause am besten.",
+  "C07_has": "Deine Buchung enthält schon das 3er-Set für {n} Gerät(e). Gute Wahl!",
+  "C07_left": "Wenn du es auch für deine anderen {left} Gerät(e) möchtest, nutze den Button unten.",
+  "B06_model": "Du hast als Modell „{model}“ angegeben. Das hilft uns sehr, danke!",
+  "B06_none": "Wenn du es uns sagen kannst, ist die Vorbereitung für den Termin viel einfacher.",
+  "C05_name": "Deine Quittung wird auf „{name}“ ausgestellt.",
+  "C05_none": "Kein Problem, falls du den Namen für die Quittung vergessen hast. Schreib ihn einfach ins Feld unten.",
+  "B04_ok": "Haustiere sind absolut kein Problem.",
+  "B04_count": "Du hast geschrieben, dass du {n} hast. Unser Team wird auch informiert.",
+  "B04_next": "Wenn dich etwas beunruhigt, tippe als Nächstes auf „Nein“ und ich verbinde dich mit einem Menschen.",
+  "INFO_mail": "Tippe unten auf „Per E-Mail senden“, dann öffnet sich eine E-Mail mit dieser Nachricht. Schick sie einfach so ab. Sie kommt von deiner registrierten Adresse, so finden wir sie sofort über die Buchungsnummer.",
+  "INFO_reply": "Bitte antworte auf die Bestätigungs-E-Mail, die du gerade bekommen hast, und füge diese Nachricht ein. Sie kommt von deiner registrierten Adresse, so finden wir sie sofort über die Buchungsnummer.",
+  "INFO_got": "„{val}“, notiert. Ich habe die Nachricht für den Laden kopiert (sie ist auf Japanisch, damit der Laden sie lesen kann).",
+  "ADD_ask": "Klasse! Für wie viele Geräte?",
+  "F04_has": "Deine Buchung enthält {n} Deckenkassettengerät(e).",
+  "F05_has": "Deine Buchung wünscht {who}."
+ },
+ "t": {
+  "ui_more": "Weitere Fragen ansehen",
+  "ui_ph": "Gib deine Frage ein",
+  "ui_send": "Senden",
+  "ui_hint": "Bitte gib keinen Namen, keine Telefonnummer und keine Adresse ein.",
+  "ui_human": "Mit einem Menschen sprechen",
+  "ui_human_out": "Ich möchte mit einem Menschen sprechen",
+  "ui_menu": "Andere Fragen",
+  "ui_bye": "Beenden (mit Geschenk)",
+  "ui_bye_out": "Das war's",
+  "ui_set": "OK",
+  "ui_mail": "Per E-Mail senden",
+  "ui_mail_line": "Keine E-Mail möglich? Per LINE senden",
+  "ui_copy_again": "Nochmal kopieren",
+  "ui_copied": "Kopiert",
+  "ui_add_set3": "Ich möchte das 3er-Set hinzufügen",
+  "ui_yes": "Ja",
+  "ui_no": "Nein",
+  "ui_about": "Antwort auf: „{q}“",
+  "ui_contact": "Mit einem Menschen sprechen",
+  "ui_tell_id": "Bitte nenne deine Buchungsnummer {id}.",
+  "ui_ja_only": "Am Telefon, bei LINE und vor Ort spricht unser Team Japanisch.",
+  "ui_call": "Anrufen",
+  "ui_line": "Per LINE fragen",
+  "ui_line_note": "Du kannst auch unserem offiziellen LINE-Konto „ありがとうエアコンサポート“ schreiben.",
+  "ui_copy_msg": "Nachricht für den Laden kopieren (auf Japanisch)",
+  "ui_stars": "Wie war dein Guide?",
+  "ui_thanks": "Danke!",
+  "u_h": "{n} Std.",
+  "u_m": "{n} Min.",
+  "u_to": " bis ",
+  "u_and": " und ",
+  "u_colon": ": ",
+  "v_ac": "{n} Klimaanlage(n)",
+  "v_auto": " ({n} mit Selbstreinigung)",
+  "v_out": " und {n} Außengerät(e)",
+  "v_coupon": "Gutscheincode „{code}“",
+  "v_ref": "Empfehlungscode „{code}“",
+  "v_who": "„{name}“ als Techniker",
+  "v_staff": "einen bestimmten Techniker",
+  "v_pets": "{n} Haustier(e)",
+  "pay_onsite": "bar am Termin",
+  "pay_paypay": "PayPay am Termin",
+  "pay_paypal": "PayPal-Rechnung (per E-Mail)",
+  "A02_note": " (Richtwert für einen Techniker. Je nach Modell und Einbau kann es länger dauern.)",
+  "A02_tenkase": "Bei {n} Deckenkassettengerät(en) hängt es vom Modell ab, unser Team sagt dir Bescheid.",
+  "C04_after": "Bezahlt wird nach Abschluss der Arbeit.",
+  "A01_arrive": "In diesem Zeitfenster kommen wir zwischen {arr} an (das ist nicht die Endzeit).",
+  "A01_fix": "Der Termin wird bestätigt, wenn unser Team sich bei dir meldet.",
+  "B03_in_note": "Nur wenn es keinen Parkplatz gibt, berechnen wir die tatsächlichen Kosten eines kostenpflichtigen Parkplatzes in der Nähe extra.",
+  "B03_coin_note": "In dem Fall berechnen wir die tatsächlichen Parkkosten extra.",
+  "C08_none": "Gutschein- oder Empfehlungscodes, die du im Buchungsformular eingegeben hast, prüft der Laden und rechnet sie an.",
+  "E03_base": "Als Richtwert reicht eine Klimaanlagenreinigung alle 2 Jahre. Aber in Haushalten mit Haustieren sammeln sich Haare und Gerüche schneller, deshalb ist einmal im Jahr am besten. Die beste Zeit ist der frühe Frühling und der frühe Herbst.",
+  "F04_note": "Deckenkassettengeräte kosten 23300 Yen für das erste und 22300 Yen pro Gerät ab dem zweiten. Manche Gebiete können wir nicht abdecken, unser Team meldet sich bei dir.",
+  "F05_note": "Einen bestimmten Techniker zu wünschen kostet +3000 Yen.",
+  "C07_note": "Das 3er-Set besteht aus Anti-Schimmel-Beschichtung, Reinigung des Außengeräts und Reinigung des Abflussschlauchs, für 7500 Yen pro Gerät (einzeln bestellt 9500 Yen).",
+  "B06_note": "Der Preis hängt davon ab, ob das Gerät eine Selbstreinigung hat, also gib bitte an, was du weißt.",
+  "C05_note": "Unser Team erklärt dir, wie die Quittung ausgestellt wird.",
+  "info_receipt": "Name auf der Quittung",
+  "info_receipt_ph": "z. B. ABC GmbH / Max Mustermann",
+  "info_receipt_has": "Nur ausfüllen, wenn du den Namen ändern möchtest.",
+  "info_receipt_none": "Falls du den Namen für die Quittung vergessen hast, schreib ihn hier hin.",
+  "info_set3": "3er-Set hinzufügen",
+  "info_set3_ph": "Wie viele Geräte? (z. B. 2)",
+  "info_set3_none": "Schreib, für wie viele Geräte du es hinzufügen möchtest. Ob das geht, hängt vom Tagesplan ab, unser Team meldet sich zur Bestätigung.",
+  "info_model": "Hersteller und Modellnummer",
+  "info_model_ph": "z. B. Daikin AN22XXX",
+  "info_model_has": "Schreib hier, falls es falsch war, oder für weitere Geräte.",
+  "info_model_none": "Wenn du sie kennst, schreib sie bitte hier hin. Sie steht auf einem Aufkleber an der Seite oder Unterseite des Geräts."
+ },
+ "q": {
+  "MY": "Meine Buchung ansehen",
+  "A01": "Wann kommt ihr an?",
+  "A02": "Wie lange dauert es?",
+  "A03": "Muss ich zu Hause sein?",
+  "A04": "Wann wird der Termin bestätigt?",
+  "A05": "Arbeitet ihr auch bei Regen?",
+  "B01": "Soll ich den Bereich um die Klimaanlage freiräumen?",
+  "B02": "Nutzt ihr meinen Strom und mein Wasser?",
+  "B03": "Wie ist das mit dem Parken?",
+  "B04": "Ist es okay, wenn ich Haustiere habe?",
+  "B05": "Ich habe kleine Kinder. Worauf achten?",
+  "B06": "Soll ich die Modellnummer angeben?",
+  "C01": "Wie viel kostet es für mich?",
+  "C02": "Kann es am Termin Zusatzkosten geben?",
+  "C03": "Ändert die Selbstreinigung den Preis?",
+  "C04": "Wann und wie bezahle ich?",
+  "C05": "Bekomme ich eine Quittung?",
+  "C06": "Wird es ab dem zweiten Gerät günstiger?",
+  "C07": "Was ist im 3er-Set enthalten?",
+  "C08": "Kann ich einen Gutschein- oder Empfehlungscode nutzen?",
+  "D01": "Wie hoch ist die Stornogebühr?",
+  "D02": "Was, wenn ich den Termin ändern will?",
+  "D03": "Kann ich später Geräte oder Optionen hinzufügen?",
+  "E01": "Gibt es eine Garantie?",
+  "E02": "Was, wenn es danach riecht oder tropft?",
+  "E03": "Wie oft sollte ich reinigen lassen?",
+  "F01": "Kann ich auch Waschmaschine oder Bad buchen?",
+  "F02": "Ist die Toilettenreinigung wirklich gratis?",
+  "F03": "Wer sieht meinen Namen und meine Adresse?",
+  "F04": "Reinigt ihr Deckenkassettengeräte?",
+  "F05": "Kann ich einen Techniker wünschen?",
+  "F06": "Ist dieser Chat ein Mensch?"
+ },
+ "kw": {
+  "A01": ["ankunft", "ankommen", "wann", "uhrzeit"],
+  "A02": ["wie lange", "dauer", "dauert"],
+  "A03": ["zu hause", "abwesend", "anwesend"],
+  "A04": ["bestätig", "bestätigung"],
+  "A05": ["regen", "regnet"],
+  "B01": ["freiräumen", "aufräumen", "möbel"],
+  "B02": ["strom", "wasser", "steckdose"],
+  "B03": ["parken", "parkplatz", "auto"],
+  "B04": ["haustier", "hund", "katze"],
+  "B05": ["kind", "kinder", "baby"],
+  "B06": ["modell", "hersteller", "marke"],
+  "C01": ["wie viel", "preis", "kosten", "kostet"],
+  "C02": ["zusatz", "extra", "aufpreis"],
+  "C03": ["selbstreinigung", "automatische reinigung"],
+  "C04": ["bezahl", "zahlung", "bar", "paypay", "paypal"],
+  "C05": ["quittung", "beleg", "rechnung"],
+  "C06": ["rabatt", "zweite", "günstiger"],
+  "C07": ["3er", "set"],
+  "C08": ["gutschein", "empfehlung", "code"],
+  "D01": ["storn", "absagen"],
+  "D02": ["termin ändern", "verschieben", "anderer tag"],
+  "D03": ["hinzufügen", "mehr geräte", "option"],
+  "E01": ["garantie", "gewährleistung"],
+  "E02": ["geruch", "riecht", "tropft", "leck"],
+  "E03": ["wie oft", "häufigkeit"],
+  "F01": ["waschmaschine", "bad", "badezimmer"],
+  "F02": ["toilette", "wc", "klo"],
+  "F03": ["datenschutz", "persönlich", "adresse"],
+  "F04": ["decke", "kassette"],
+  "F05": ["wünschen", "techniker", "bestimmte"],
+  "F06": ["mensch", "roboter", "ki", "bot"]
+ },
+ "items": {
+  "A01": [
+   "Du fragst dich, wann wir kommen? Gute Frage.",
+   "Wir kommen innerhalb eines dieser Zeitfenster: (1) 8:00–9:00, (2) 12:00–14:00, (3) 15:00–18:00. Die bestätigte Uhrzeit sagt dir unser Team, wenn es sich bei dir meldet.",
+   "Unser Team sagt dir die bestätigte Uhrzeit, keine Sorge."
+  ],
+  "A02": [
+   "Klar, Zeit ist wichtig. Hier bitte.",
+   "Als Richtwert dauert die Arbeit 60–90 Minuten für ein normales Gerät, 90–120 Minuten für ein Gerät mit Selbstreinigung und 20–30 Minuten für ein Außengerät. Meist kommt ein Techniker, und je nach Modell und Einbau kann es länger dauern.",
+   "Plan lieber etwas Puffer in deinen Tag ein, nur für den Fall."
+  ],
+  "A03": [
+   "Sorge, dass du nicht da bist? Verständlich.",
+   "Am Termin bitten wir darum, dass jemand zu Hause ist, während wir arbeiten. Sag unserem Team, wer da sein wird, wenn es sich zur Bestätigung meldet.",
+   "Wenn die Zeit nicht passt, sag uns früh Bescheid."
+  ],
+  "A04": [
+   "Warten ist das Schlimmste, ich weiß!",
+   "Unser Team meldet sich noch einmal bei dir, um den Termin zu bestätigen. Als wir deine Buchung erhalten haben, haben wir dir eine Bestätigungs-E-Mail geschickt.",
+   "Wenn du danach fragst, gib bitte deine Buchungsnummer an."
+  ],
+  "A05": [
+   "Regentage? Daran hab ich auch gedacht.",
+   "Wir arbeiten auch bei Regen. Außerdem ist eine Terminänderung wegen Wetter, Verkehr, Krankheit oder aus Gründen unseres Technikers immer kostenlos.",
+   "Änderungen wegen des Wetters sind kostenlos, also keine Sorge."
+  ],
+  "B01": [
+   "Das solltest du vorher freiräumen.",
+   "Bitte mach unter der Klimaanlage eine Arbeitsfläche von etwa 2 Tatami-Matten (etwa 3 Quadratmeter) frei. Räum Möbel, Sachen, Zimmerpflanzen und Poster oder Fotos an der Wand weg, bevor wir kommen. Wenn sich etwas nicht bewegen lässt, wie ein Bett oder ein Klavier, schick unserem Team bitte ein Foto.",
+   "Etwas lässt sich nicht bewegen? Kein Problem, wir schauen es uns zusammen auf dem Foto an."
+  ],
+  "B02": [
+   "Zu Strom und Wasser.",
+   "Wir leihen uns eine Steckdose und dein Wasser. Die Teile waschen wir im Bad oder auf einem Balkon oder in einer Garage mit Wasserhahn. In der Küchenspüle oder im Waschbecken waschen wir nicht. Außerdem leihen wir uns die Toilette, um das Schmutzwasser wegzuschütten. Wir benutzen auch einen Hochdruckreiniger. Der ist laut, deshalb sagen wir vorher Bescheid.",
+   "Zeig uns am Termin einfach, wo alles ist."
+  ],
+  "B03": [
+   "Parken. Die erste Sorge von allen.",
+   "Wenn es keinen Parkplatz gibt, berechnen wir die tatsächlichen Kosten eines kostenpflichtigen Parkplatzes (Coin Parking) in der Nähe extra.",
+   "Wenn ihr vorher klärt, wo wir parken, läuft der Tag viel glatter."
+  ],
+  "B04": [
+   "Haustiere, was? Ich erzähl's dir.",
+   "Haustiere sind kein Problem. Was du im Buchungsformular über deine Haustiere geschrieben hast, wird an unser Team weitergegeben.",
+   "Wenn dich etwas beunruhigt, tippe als Nächstes auf „Nein“ und ich verbinde dich mit einem Menschen."
+  ],
+  "B05": [
+   "Kleine Kinder im Haus? Wie schön.",
+   "Kleine Kinder sind kein Problem. Wir arbeiten mit viel Rücksicht. Wir benutzen eine Leiter und Reinigungsmittel, daher hilft es, wenn jemand darauf achtet, dass sie von der Klimaanlage fernbleiben.",
+   "Wir sind es gewohnt, in Haushalten mit Kindern zu arbeiten, also ganz entspannt."
+  ],
+  "B06": [
+   "Die Modellnummer möchte ich als Erstes wissen.",
+   "Wenn du sie im Buchungsformular unter „Hersteller und Modellnummer“ einträgst, können wir uns besser auf den Termin vorbereiten. Der Preis hängt davon ab, ob das Gerät eine Selbstreinigung hat.",
+   "Wenn du unsicher bist, prüfen wir es später zusammen."
+  ],
+  "C01": [
+   "Ich hab für dich nachgerechnet.",
+   "Das ist eine automatische Schätzung. Maßgeblich sind der Betrag und die Bedingungen, die du auf dem Bestätigungsbildschirm der Buchung geprüft hast.",
+   "Nimm es als Richtwert und schau auf den Betrag im Bestätigungsbildschirm."
+  ],
+  "C02": [
+   "Hier bin ich mir am allersichersten.",
+   "Wir berechnen nichts über den genannten Gesamtbetrag (inkl. Steuer) hinaus. Die einzigen Ausnahmen: (1) Parken kostet extra (tatsächliche Kosten). (2) Wenn wir vor Ort ein anderes Modell, eine andere Anzahl an Geräten oder Sonderarbeiten (hoch gelegen, nicht zerlegbare Geräte usw.) feststellen, zeigen wir dir den Grund und Fotos und arbeiten und berechnen nichts, bis du zustimmst (du kannst auch frei ablehnen).",
+   "Das sind die einzigen Ausnahmen. Frag, wenn etwas unklar ist."
+  ],
+  "C03": [
+   "Zur Selbstreinigung sag ich's dir lieber gleich.",
+   "Geräte mit Selbstreinigung kosten 6000 Yen extra pro Gerät. Derselbe Aufpreis gilt, wenn wir erst am Termin feststellen, dass das Gerät eine Selbstreinigung hat.",
+   "Der Aufpreis ist derselbe, auch wenn wir es erst am Termin merken, also prüf es lieber vorher."
+  ],
+  "C04": [
+   "Bezahlung. Ich erklär's dir zuerst.",
+   "Bezahlt wird nach Abschluss der Arbeit. Du kannst bar am Termin, mit PayPay am Termin oder per PayPal-Rechnung (kommt per E-Mail, Kartenzahlung möglich) bezahlen. Wir nehmen die Zahlungsart, die du im Buchungsformular gewählt hast.",
+   "Die Zahlungsart aus dem Formular passt so."
+  ],
+  "C05": [
+   "Eine Quittung? Natürlich.",
+   "Wenn du eine Quittung brauchst, trag den Namen im Buchungsformular unter „Name auf der Quittung“ ein. Unser Team erklärt dir, wie sie ausgestellt wird.",
+   "Falls du vergessen hast, den Namen einzutragen, sag es uns per LINE oder Telefon."
+  ],
+  "C06": [
+   "Wird es günstiger, wenn man mehr bucht? Berechtigte Frage.",
+   "Bei Wandgeräten kostet ab dem zweiten jedes Gerät genauso viel wie das erste. Normalerweise geben wir keinen Rabatt. Bei Deckenkassettengeräten gibt es ab dem zweiten 1000 Yen Nachlass pro Gerät. Alle Preise sind Gesamtpreise inkl. Steuer.",
+   "Unter uns: Manchmal machen wir Aktionen nur für Leser unseres Newsletters. Dann zu buchen ist ein echtes Schnäppchen!"
+  ],
+  "C07": [
+   "Ich wollte dir dieses Set schon die ganze Zeit erklären.",
+   "Das 3er-Set besteht aus Anti-Schimmel-Beschichtung, Reinigung des Außengeräts und Reinigung des Abflussschlauchs, für 7500 Yen pro Gerät (einzeln bestellt 9500 Yen). Das Kombi-Set ist Außengerät plus Anti-Schimmel-Beschichtung, für 5000 Yen pro Gerät.",
+   "Wenn du dich nicht entscheiden kannst, schauen wir uns die Optionen zusammen an."
+  ],
+  "C08": [
+   "Ich schau mir die Codes für dich an.",
+   "Gutschein- oder Empfehlungscodes, die du im Buchungsformular eingegeben hast, prüft der Laden und rechnet sie an.",
+   "Die Codes kannst du dem Laden überlassen."
+  ],
+  "D01": [
+   "Stornierungen. Besser früh Bescheid wissen.",
+   "Die Stornogebühr ist bis zwei Tage vorher kostenlos, am Vortag 50% und am Tag selbst 100%.",
+   "Wenn du früh entscheidest, hilft uns das sehr."
+  ],
+  "D02": [
+   "Brauchst du einen anderen Termin? Kriegen wir hin.",
+   "Eine Terminänderung wegen Wetter, Verkehr, Krankheit oder aus Gründen unseres Technikers ist immer kostenlos. Andere Terminänderungen folgen denselben Regeln wie Stornierungen (bis zwei Tage vorher kostenlos, am Vortag 50%, am Tag selbst 100%). Für eine Änderung melde dich bitte per Telefon oder LINE.",
+   "Für eine Änderung melde dich per Telefon oder LINE."
+  ],
+  "D03": [
+   "Du möchtest mehr dazubuchen? Wie schön!",
+   "Ob wir etwas hinzufügen können, hängt vom Tagesplan unseres Teams ab. Wenn du die Anzahl der Geräte oder die Optionen ändern möchtest, melde dich mit deiner Buchungsnummer. Wir erklären dir die neue Aufstellung und den Gesamtbetrag und ändern erst, wenn du zustimmst.",
+   "Wir ändern nie etwas ohne dein OK."
+  ],
+  "E01": [
+   "Garantie. So läuft das.",
+   "Wir geben 7 Tage (1 Woche) Garantie auf unsere Arbeit. Wenn es an der Stelle, an der wir gearbeitet haben, ein Problem gibt, das durch unsere Arbeit verursacht wurde, kommen wir kostenlos wieder und machen es noch einmal.",
+   "Trau dich ruhig, uns um eine Nachbesserung zu bitten."
+  ],
+  "E02": [
+   "Geruch oder ein Leck? Okay, ganz ruhig.",
+   "Die erste Woche nach der Arbeit ist die Garantiezeit. Wenn es ein Problem gibt, das durch unsere Arbeit verursacht wurde, kommen wir kostenlos wieder und machen es noch einmal. Melde dich zuerst bitte per Telefon oder LINE.",
+   "Keine Panik. Melde dich einfach zuerst."
+  ],
+  "E03": [
+   "Wann ist die nächste fällig? Gut mitgedacht.",
+   "Als Richtwert reicht eine Klimaanlagenreinigung alle 2 Jahre. In Haushalten mit Haustieren sammeln sich Haare und Gerüche schneller, deshalb ist einmal im Jahr am besten. Auch Geräte mit Selbstreinigung werden innen schmutzig. Die beste Zeit ist der frühe Frühling und der frühe Herbst.",
+   "Trag dir den nächsten Termin doch gleich in den Kalender ein."
+  ],
+  "F01": [
+   "Waschmaschine oder Bad auch? Na los.",
+   "Kreuze im Buchungsformular „Weitere Reinigungswünsche“ an, dann informiert dich unser Team auch darüber. Das Zerlegen des Badlüfters und Ähnliches kannst du unter „Sonstige Reinigung“ auswählen.",
+   "Du kannst alles auf einmal anfragen."
+  ],
+  "F02": [
+   "Toilettenreinigung. Lass mich dir eine Geschichte erzählen!",
+   "Eine Mutter aus Saitama hat uns einmal erzählt: „Wir sind zu viert. Ich arbeite Vollzeit und mache den ganzen Haushalt und die Kinderbetreuung allein. Alle benutzen die Toilette, aber keiner putzt sie, und am Ende streiten wir uns deswegen.“",
+   "Solche Haushalte gibt es bestimmt in ganz Japan. Deshalb haben wir beschlossen, allen, die eine Klimaanlagenreinigung buchen, die Toilettenreinigung zu schenken.",
+   "Ja. Alle, die eine Klimaanlagenreinigung bestellen, bekommen die Toilettenreinigung geschenkt. Eine Bewertung zu schreiben ist keine Bedingung.",
+   "Eine blitzblanke Klimaanlage und Toilette, ein Streitthema weniger und mehr Lächeln zu Hause. Das würde mich freuen!"
+  ],
+  "F03": [
+   "Deine Adresse. Ich erklär's dir zuerst.",
+   "Dein Name, deine Adresse, Telefonnummer und E-Mail werden nur innerhalb dieses Ladens verwendet. Unsere Reinigungstechniker sehen nur, was sie für die Arbeit brauchen. Die Zentrale und andere Läden bekommen nur Zahlen, wie deine Buchungsnummer und den Betrag.",
+   "Wenn dich etwas beunruhigt, frag einfach."
+  ],
+  "F04": [
+   "Deckenkassetten? Kein Problem!",
+   "Ja, machen wir. Deckenkassettengeräte kosten 23300 Yen für das erste und 22300 Yen pro Gerät ab dem zweiten. Manche Gebiete können wir nicht abdecken, unser Team meldet sich bei dir.",
+   "Deckengeräte sammeln Schmutz, wo man ihn nicht sieht."
+  ],
+  "F05": [
+   "Du kannst dir jemanden wünschen!",
+   "Ja, das geht. Einen bestimmten Techniker zu wünschen kostet +3000 Yen. Kreuze im Buchungsformular „Ich möchte einen bestimmten Techniker“ an und schreib den Namen dazu.",
+   "Unser Team freut sich riesig, wenn es gewünscht wird."
+  ],
+  "F06": [
+   "Berechtigte Frage. Ich bin ehrlich.",
+   "Dieser Guide ist ein KI-Roboter. Offizielle Informationen von unserem Team haben Vorrang. Wenn du mit einem Menschen sprechen möchtest, tippe als Nächstes auf „Nein“ und ich verbinde dich.",
+   "Wenn dir ein Mensch lieber ist, sag einfach Bescheid."
+  ]
+ }
+}

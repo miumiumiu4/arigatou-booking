@@ -75,9 +75,10 @@ window.THANKS_DATA = {
    "img": "chara/bruce.svg",
    "ask": [
     "ハロー、ブルースです。イギリスから来た留学生のブルドッグです。",
-    "日本の田舎の学校で育ったので、その土地の言葉で話します。あなたの生まれ故郷はどこですか？"
+    "日本の田舎の学校で育ったので、その土地の言葉で話します。あなたの生まれ故郷はどこですか？ 外国の言葉でも話せますよ。"
    ],
-   "soon": "ほかの県は、順番に増やしています。",
+   "langs": "ほかの国の言葉 / Other languages",
+   "soon": "ほかの県や国の言葉も、順番に増やしています。",
    "fail": "ごめんなさい、いまは言葉の準備ができませんでした。ほかの案内係を選んでください。",
    "hello": [],
    "check": "",
@@ -1072,8 +1073,122 @@ window.THANKS_DATA = {
  ],
  "dialects": [
   {
+   "id": "en",
+   "pref": "English",
+   "lang": "en"
+  },
+  {
+   "id": "hokkaido",
+   "pref": "北海道"
+  },
+  {
+   "id": "aomori",
+   "pref": "青森"
+  },
+  {
+   "id": "zh-cn",
+   "pref": "中文（简体）",
+   "lang": "zh-CN"
+  },
+  {
+   "id": "iwate",
+   "pref": "岩手"
+  },
+  {
+   "id": "zh-tw",
+   "pref": "中文（繁體）",
+   "lang": "zh-TW"
+  },
+  {
+   "id": "ko",
+   "pref": "한국어",
+   "lang": "ko"
+  },
+  {
    "id": "akita",
    "pref": "秋田"
+  },
+  {
+   "id": "vi",
+   "pref": "Tiếng Việt",
+   "lang": "vi"
+  },
+  {
+   "id": "ne",
+   "pref": "नेपाली",
+   "lang": "ne"
+  },
+  {
+   "id": "yamagata",
+   "pref": "山形"
+  },
+  {
+   "id": "tl",
+   "pref": "Tagalog",
+   "lang": "tl"
+  },
+  {
+   "id": "ibaraki",
+   "pref": "茨城"
+  },
+  {
+   "id": "id",
+   "pref": "Bahasa Indonesia",
+   "lang": "id"
+  },
+  {
+   "id": "th",
+   "pref": "ไทย",
+   "lang": "th"
+  },
+  {
+   "id": "pt",
+   "pref": "Português",
+   "lang": "pt-BR"
+  },
+  {
+   "id": "es",
+   "pref": "Español",
+   "lang": "es"
+  },
+  {
+   "id": "ru",
+   "pref": "Русский",
+   "lang": "ru"
+  },
+  {
+   "id": "fr",
+   "pref": "Français",
+   "lang": "fr"
+  },
+  {
+   "id": "de",
+   "pref": "Deutsch",
+   "lang": "de"
+  },
+  {
+   "id": "hiroshima",
+   "pref": "広島"
+  },
+  {
+   "id": "kochi",
+   "pref": "高知"
+  },
+  {
+   "id": "fukuoka",
+   "pref": "福岡"
+  },
+  {
+   "id": "nagasaki",
+   "pref": "長崎"
+  },
+  {
+   "id": "kagoshima",
+   "pref": "鹿児島"
+  },
+  {
+   "id": "okinawa",
+   "pref": "沖縄"
   }
  ]
 };
