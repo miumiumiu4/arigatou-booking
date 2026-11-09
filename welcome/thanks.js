@@ -6,6 +6,7 @@
   'use strict';
   var D = window.THANKS_DATA;
   var KEY = 'thanks_chara';
+  var PREF = 'thanks_pref'; // ブルースの「生まれ故郷」（この端末だけ）
   var AI_MAX = 20; // 1受付番号あたり（裏側でも数える）
   var S = null;
   // 絵はこのファイルと同じ場所（welcome/）から読む。welcome-test/ から読まれても同じ絵になる
@@ -16,7 +17,15 @@
   function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
   function later(fn, ms) { S.timers.push(setTimeout(fn, reduce ? 0 : ms)); }
   function fill(t) { return String(t).replace(/\{id\}/g, S.id); }
-  function ch() { return D.chars[S.chara]; }
+  // ブルース（4人目）は、選んだ県の言葉の束（welcome/dialect/<県>.js）で話す。束が無い台詞は、ブルこ（ていねい語）の言い方
+  function ch() {
+    var c = D.chars[S.chara];
+    if (S.chara !== 'bruce' || !S.dl) return c;
+    var o = {}, k;
+    for (k in c) o[k] = c[k];
+    for (k in S.dl.chars) o[k] = S.dl.chars[k];
+    return o;
+  }
   function item(id) { for (var i = 0; i < D.items.length; i++) if (D.items[i].id === id) return D.items[i]; return null; }
 
   // 送る前に電話・メール・郵便番号の形を伏せる（設計書 7節）
@@ -103,7 +112,45 @@
     controls('');
     S.opts.track('キャラ選択', c + (remembered ? ':覚えていた' : ''));
     if (!remembered) row('out', esc(D.chars[c].name) + 'にする');
+    if (c === 'bruce') return hometown();
     say(ch().hello, menu);
+  }
+  // ブルース：生まれ故郷を聞いて、その県の言葉の束を読み込む。選んだ県はこの端末の中だけ（計測にも送らない）
+  function hometown() {
+    var list = D.dialects || [], last = store(PREF);
+    say(D.chars.bruce.ask, function () {
+      controls('<div class="tc-quick tc-pref">' + list.map(function (d) {
+        return '<button type="button" class="btn ghost' + (d.id === last ? ' last' : '') + '" data-pref="' + d.id + '">' + esc(d.pref) + (d.id === last ? '（前回）' : '') + '</button>';
+      }).join('') + '</div><p class="tc-hint">' + esc(D.chars.bruce.soon) + '</p>');
+      on('[data-pref]', function (b) {
+        var d = list.filter(function (x) { return x.id === b.dataset.pref; })[0];
+        controls('');
+        row('out', esc(d.pref));
+        loadDialect(d.id, function (dl) {
+          if (!dl) { say([D.chars.bruce.fail], function () { intro(true); }); return; }
+          store(PREF, d.id);
+          useDialect(dl);
+          say(ch().hello, menu);
+        });
+      });
+    });
+  }
+  function loadDialect(id, done) {
+    var all = window.THANKS_DIALECTS = window.THANKS_DIALECTS || {};
+    if (all[id]) return done(all[id]);
+    var gen = S.gen, sc = document.createElement('script');
+    sc.src = HERE + 'dialect/' + id + '.js';
+    sc.onload = function () { if (gen === S.gen) done(all[id] || null); };
+    sc.onerror = function () { if (gen === S.gen) done(null); };
+    document.head.appendChild(sc);
+  }
+  function useDialect(dl) {
+    S.dl = dl;
+    D.items.forEach(function (it) {
+      if (!it.a || !it.a.buruko) return;
+      var b = it.a.buruko, p = dl.items[it.id];
+      it.a.bruce = it.id === 'MY' ? [dl.my[0], '{detail}', dl.my[1]] : p ? p.slice(0, -1).concat([b[b.length - 2]], p.slice(-1)) : b; // 束は [はじめ…, おわり]。間に台帳の元文（標準語）を挟む
+    });
   }
 
   // ---------- 2. 質問のボタン＋自由入力 ----------
@@ -131,7 +178,11 @@
   // ---------- 3. 答え ----------
   // 「さっきの予約」に合わせた答え。opts.mine（このページの中だけにある予約の中身）から作り、どこにも送らない。
   // 金額・時間の数字は台帳の決まり（作業時間の目安・到着の幅・駐車場の扱い）から計算するだけで、新しい約束は作らない。
-  function V(o) { return o[S.chara] || o.buruko; }
+  function V(o, key, vars) {
+    if (S.chara !== 'bruce') return o[S.chara] || o.buruko;
+    var t = S.dl && S.dl.mine[key];
+    return t ? t.replace(/\{(\w+)\}/g, function (_, k) { return vars && vars[k] != null ? vars[k] : ''; }) : o.buruko;
+  }
   function hm(min) { var h = Math.floor(min / 60), m = min % 60; return (h ? h + '時間' : '') + (m ? m + '分' : (h ? '' : '0分')); }
   var PAY = { onsite: '作業当日に現金', paypay: '作業当日に PayPay', paypal: 'PayPal の請求書（メールで届きます）' };
   var ARRIVE = { '9時〜12時': '8〜9時', '12時〜15時': '12〜14時', '15時〜18時': '15〜18時' };
@@ -149,11 +200,11 @@
       var span = hm(lo) + '〜' + hm(hi);
       var r = [V({
         buruyan: 'お客さんの予約は、' + what + 'やな。', buruko: 'ご予約は、' + what + 'ですね。',
-        burusama: 'あなたの予約は、' + what + 'ね。', buruseijin: '記録によると、' + what + 'であります。'
-      }), V({
+        burusama: 'あなたの予約は、' + what + 'ね。'
+      }, 'A02_what', {what: what}), V({
         buruyan: 'それやと、だいたい' + span + 'くらい見といてな。', buruko: 'それだと、だいたい' + span + 'くらいです。',
-        burusama: 'それなら、だいたい' + span + 'ってところね。', buruseijin: '計算結果は、およそ' + span + 'です。'
-      }) + '（スタッフ1名で伺う目安です。機種や設置の状況で長くなることがあります）'];
+        burusama: 'それなら、だいたい' + span + 'ってところね。'
+      }, 'A02_span', {span: span}) + '（スタッフ1名で伺う目安です。機種や設置の状況で長くなることがあります）'];
       if (m.tenkase) r.push('天井埋め込み（天カセ）' + m.tenkase + '台の分は、機種で変わるので担当者からご案内します。');
       return r;
     },
@@ -162,77 +213,92 @@
       if (!pay) return null;
       return [V({
         buruyan: 'さっきのフォームで「' + pay + '」を選んでくれてたで。', buruko: 'さきほどのフォームで「' + pay + '」を選んでいただいてます。',
-        burusama: 'さっきのフォームで「' + pay + '」を選んでたわよ。', buruseijin: '記録によると、選択は「' + pay + '」であります。'
-      }), 'お支払いは、作業が終わってからです。', V({
+        burusama: 'さっきのフォームで「' + pay + '」を選んでたわよ。'
+      }, 'C04_pay', {pay: pay}), 'お支払いは、作業が終わってからです。', V({
         buruyan: '変えたい時は、LINE か電話でひと言くれたらええよ。', buruko: '変えたい時は、LINE かお電話でひと言くださいね。',
-        burusama: '変えたくなったら、LINE か電話でひと言ちょうだい。', buruseijin: '変更の際は、LINE か電話での連絡を推奨します。'
-      })];
+        burusama: '変えたくなったら、LINE か電話でひと言ちょうだい。'
+      }, 'C04_change')];
     },
     A01: function (m) {
       var day = dayLabel(m.date1), arr = ARRIVE[m.time1];
       if (!day || !arr) return null;
       return [V({
         buruyan: '第1希望は ' + day + ' の' + m.time1 + 'やな。', buruko: '第1希望は ' + day + ' の' + m.time1 + 'ですね。',
-        burusama: '第1希望は ' + day + ' の' + m.time1 + 'ね。', buruseijin: '第1希望は ' + day + ' の' + m.time1 + 'と記録しています。'
-      }), 'この時間帯だと、到着は ' + arr + ' のあいだです（作業が終わる時刻ではありません）。', '作業日は、担当者からのご連絡で確定します。'];
+        burusama: '第1希望は ' + day + ' の' + m.time1 + 'ね。'
+      }, 'A01_day', {day: day, time: m.time1}), 'この時間帯だと、到着は ' + arr + ' のあいだです（作業が終わる時刻ではありません）。', '作業日は、担当者からのご連絡で確定します。'];
     },
     B03: function (m) {
       if (m.parking === '敷地内に駐車可') return [V({
         buruyan: '敷地内に停められるって書いてくれてたな。', buruko: '敷地内に停められると書いていただいてますね。',
-        burusama: '敷地内に停められるのね、助かるわ。', buruseijin: '敷地内に駐車可能、と記録しています。'
-      }), '駐車場がない場合にだけ、近くのコインパーキングの実費を別にいただきます。'];
+        burusama: '敷地内に停められるのね、助かるわ。'
+      }, 'B03_in'), '駐車場がない場合にだけ、近くのコインパーキングの実費を別にいただきます。'];
       if (m.parking === '近隣コインパーキング利用') return [V({
         buruyan: '近くのコインパーキングを使う形やな。', buruko: '近くのコインパーキングを使う形ですね。',
-        burusama: '近くのコインパーキングを使うのね。', buruseijin: '近隣のコインパーキング使用、と記録しています。'
-      }), 'その場合は、コインパーキングの実費を別にいただきます。'];
+        burusama: '近くのコインパーキングを使うのね。'
+      }, 'B03_coin'), 'その場合は、コインパーキングの実費を別にいただきます。'];
       return null;
     },
     C08: function (m) { // クーポン・紹介コード：入れたコードを返し、受付番号を取っておくよう伝える（20%引きの案内は 11/10 三浦さんの指示で外した）
       var codes = [m.coupon && 'クーポンコード「' + m.coupon + '」', m.refCode && '紹介コード「' + m.refCode + '」'].filter(Boolean).join('と');
       return [codes ? V({
         buruyan: 'さっきの予約に、' + codes + 'が入ってたで。お店で確認して反映するからな。', buruko: 'さきほどのご予約に、' + codes + 'が入っていました。お店で確認して反映しますね。',
-        burusama: 'さっきの予約に、' + codes + 'が入ってたわ。お店で確認して反映するわね。', buruseijin: '先ほどの予約に、' + codes + 'を確認しました。お店で照合して反映します。'
-      }) : '予約フォームに入れていただいたクーポンコード・紹介コードは、お店で確認して反映します。', V({
+        burusama: 'さっきの予約に、' + codes + 'が入ってたわ。お店で確認して反映するわね。'
+      }, 'C08_codes', {codes: codes}) : '予約フォームに入れていただいたクーポンコード・紹介コードは、お店で確認して反映します。', V({
         buruyan: '受付番号 ' + S.id + ' は、問い合わせの時に使うから取っといてな。', buruko: '受付番号 ' + S.id + ' は、お問い合わせの時に使うので取っておいてくださいね。',
-        burusama: '受付番号 ' + S.id + ' は、問い合わせの時に使うから取っておきなさい。', buruseijin: '受付番号 ' + S.id + ' は、照会時に必要です。保管を推奨します。'
-      })];
+        burusama: '受付番号 ' + S.id + ' は、問い合わせの時に使うから取っておきなさい。'
+      }, 'C08_id', {id: S.id})];
     },
     E03: function (m) { // ペットがいる家は1年に1回（11/10 三浦さん）
       if (m.pet !== 'あり') return null;
       return ['エアコンクリーニングは、2年に1回が目安です。ただ、ペットを飼っているお家は、毛やにおいがたまりやすいので1年に1回がベストです。おすすめの時期は、春先と秋口です。', V({
         buruyan: 'さっきの予約、ペットおるって書いてくれてたやろ。せやから、うちは1年に1回がベストやで。', buruko: 'さきほどのご予約でペットがいると書いてくださったので、1年に1回がおすすめですよ。',
-        burusama: 'あなたの家はペットがいるんだから、1年に1回にしておきなさい。', buruseijin: 'ペットあり、と記録しています。推奨周期は1年に1回です。'
-      })];
+        burusama: 'あなたの家はペットがいるんだから、1年に1回にしておきなさい。'
+      }, 'E03_pet')];
+    },
+    F04: function (m) { // 天カセ：予約に入っていればその台数（11/10 三浦さん）
+      if (!m.tenkase) return null;
+      return [V({
+        buruyan: '今回の予約に、天カセが' + m.tenkase + '台入ってるで。', buruko: '今回のご予約に、天カセが' + m.tenkase + '台入っていますね。',
+        burusama: '今回の予約には、天カセが' + m.tenkase + '台入ってるわね。'
+      }, 'F04_has', {n: m.tenkase}), '天井埋め込み（天カセ）は1台目23,300円、2台目から22,300円/台です。対応できない地域があるので、担当者からご連絡します。'];
+    },
+    F05: function (m) { // 指名：予約で選んでいればそれを返す
+      if (!m.nominate) return null;
+      var who = m.nominateName ? '「' + m.nominateName + '」さん' : 'スタッフ';
+      return [V({
+        buruyan: 'さっきの予約で、' + who + 'の指名を受けてるで。', buruko: 'さきほどのご予約で、' + who + 'のご指名を承っています。',
+        burusama: 'さっきの予約で、' + who + 'を指名してるわね。'
+      }, 'F05_has', {who: who}), 'スタッフの指名は＋3,000円です。'];
     },
     C07: function (m) { // 3点セット：予約に入っていればそれを返す
       if (!m.set3) return null;
       var left = Math.max(0, (m.wall || 0) - m.set3);
       return [V({
         buruyan: '今回の予約に、3点セットがもう' + m.set3 + '台分入ってるで。ええ選択や。', buruko: '今回のご予約に、3点セットが' + m.set3 + '台分入っています。いい選択です！',
-        burusama: '今回の予約には、3点セットがもう' + m.set3 + '台分入ってるわよ。見る目あるわね。', buruseijin: '記録によると、3点セットは' + m.set3 + '台分、選択済みであります。'
-      }), '3点セットは、防カビ抗菌コート・室外機クリーニング・ドレンホース洗浄の3つで1台7,500円です（別々だと9,500円）。'
+        burusama: '今回の予約には、3点セットがもう' + m.set3 + '台分入ってるわよ。見る目あるわね。'
+      }, 'C07_has', {n: m.set3}), '3点セットは、防カビ抗菌コート・室外機クリーニング・ドレンホース洗浄の3つで1台7,500円です（別々だと9,500円）。'
       ].concat(left ? [V({
         buruyan: 'ほかの' + left + '台にも付けたかったら、下のボタンからどうぞ。', buruko: 'ほかの' + left + '台にも付けたい時は、下のボタンからどうぞ。',
-        burusama: 'ほかの' + left + '台にも付けたいなら、下のボタンからね。', buruseijin: '残り' + left + '台への追加は、下のボタンから申請できます。'
-      })] : []);
+        burusama: 'ほかの' + left + '台にも付けたいなら、下のボタンからね。'
+      }, 'C07_left', {left: left})] : []);
     },
     B06: function (m) { // 型番：書いてあればそれを返す。無ければ、このあと記入欄を出す
       return [m.model ? V({
         buruyan: '型番は「' + m.model + '」って書いてくれてたな。ありがとうな。', buruko: '型番は「' + m.model + '」と書いていただいてますね。助かります！',
-        burusama: '型番は「' + m.model + '」ね。ちゃんと書いてあって偉いわ。', buruseijin: '型番は「' + m.model + '」と記録しています。'
-      }) : V({
+        burusama: '型番は「' + m.model + '」ね。ちゃんと書いてあって偉いわ。'
+      }, 'B06_model', {model: m.model}) : V({
         buruyan: '伝えてもらえると、当日の準備がぐっと楽になるねん。', buruko: '伝えていただけると、当日の準備がスムーズになります。',
-        burusama: '伝えてもらえると、当日の段取りが楽になるのよ。', buruseijin: '型番の事前受信は、作業の精度を高めます。'
-      }), 'お掃除機能付きかどうかで料金が変わるので、分かる範囲で教えてください。'];
+        burusama: '伝えてもらえると、当日の段取りが楽になるのよ。'
+      }, 'B06_none'), 'お掃除機能付きかどうかで料金が変わるので、分かる範囲で教えてください。'];
     },
     C05: function (m) { // 領収書：予約で書いた宛名を返す。書き忘れた人には、このあと記入欄を出す
       var r = m.receiptName ? V({
         buruyan: '領収書の宛名は「' + m.receiptName + '」で受けとるで。', buruko: '領収書の宛名は「' + m.receiptName + '」で承っています。',
-        burusama: '領収書の宛名は「' + m.receiptName + '」で受けてるわよ。', buruseijin: '領収書の宛名は「' + m.receiptName + '」と記録しています。'
-      }) : V({
+        burusama: '領収書の宛名は「' + m.receiptName + '」で受けてるわよ。'
+      }, 'C05_name', {name: m.receiptName}) : V({
         buruyan: '宛名を書き忘れてても大丈夫や。下の欄に書いてな。', buruko: '宛名を書き忘れても大丈夫ですよ。下の欄に書いてくださいね。',
-        burusama: '宛名を書き忘れたなら、下の欄に書けばいいのよ。', buruseijin: '宛名の記入漏れは、下の欄で補えます。'
-      });
+        burusama: '宛名を書き忘れたなら、下の欄に書けばいいのよ。'
+      }, 'C05_none');
       return [r, '領収書の発行のしかたは、担当者からご案内します。'];
     },
     B04: function (m) { // 「大丈夫」を先に言い、そのあとで書いてくれた中身を返す（11/10 三浦さん）
@@ -240,22 +306,21 @@
       var n = m.petCount ? m.petCount + '匹' : '';
       return [V({
         buruyan: 'ペットがおっても大丈夫やで。', buruko: 'ペットがいても大丈夫ですよ。',
-        burusama: 'ペットがいても大丈夫よ。', buruseijin: 'ペットがいても問題ありません。'
-      }), V({
+        burusama: 'ペットがいても大丈夫よ。'
+      }, 'B04_ok'), V({
         buruyan: 'ペット' + n + 'おるって書いてくれてたな。担当者にもちゃんと伝わるで。', buruko: 'ペットが' + n + 'いると書いていただいてますね。担当者にも伝わります。',
-        burusama: 'ペット' + n + 'がいるのね。担当者にもちゃんと伝わるわ。', buruseijin: 'ペット' + n + '、と記録しています。担当者にも伝達されます。'
-      }), V({
+        burusama: 'ペット' + n + 'がいるのね。担当者にもちゃんと伝わるわ。'
+      }, 'B04_count', {n: n}), V({
         buruyan: '気になることがあったら、このあと「いいえ」を押してな。人につなぐで。', buruko: '気になることがあれば、このあと「いいえ」を押してくださいね。人におつなぎします。',
-        burusama: '気になることがあれば、このあと「いいえ」を押してちょうだい。人につなぐわ。', buruseijin: '懸念がある場合は、このあと「いいえ」を押してください。人に接続します。'
-      })];
+        burusama: '気になることがあれば、このあと「いいえ」を押してちょうだい。人につなぐわ。'
+      }, 'B04_next')];
     }
   };
   // 「予約した内容を確認したい」：このページの中だけで、予約フォームに入れた中身を全部読み上げる
   var MY_A = {
     buruyan: ['さっきの予約、読み上げるで。', '{detail}', '違うとこあったら、受付番号 {id} と一緒に LINE か電話で教えてな。'],
     buruko: ['さきほどのご予約、確認しますね。', '{detail}', '違うところがあれば、受付番号 {id} と一緒に LINE かお電話で教えてくださいね。'],
-    burusama: ['さっきの予約、ちゃんと見せるわね。', '{detail}', '違うところがあったら、受付番号 {id} を添えて LINE か電話で言ってちょうだい。'],
-    buruseijin: ['先ほどの予約の記録を、読み上げます。', '{detail}', '相違があれば、受付番号 {id} を添えて LINE か電話での連絡を推奨します。以上であります。']
+    burusama: ['さっきの予約、ちゃんと見せるわね。', '{detail}', '違うところがあったら、受付番号 {id} を添えて LINE か電話で言ってちょうだい。']
   };
   function addMine(m) {
     if (!m || !m.detail || !m.detail.length || item('MY')) return;
@@ -324,18 +389,16 @@
       var how = mail ? V({
         buruyan: '下の「メールで送る」を押したら、この文が入ったメールが開くで。そのまま送ってな。登録したメアドから届くから、受付番号ですぐ見つけられるねん。',
         buruko: '下の「メールで送る」を押すと、この文が入ったメールが開きます。そのまま送ってくださいね。登録のメールアドレスから届くので、すぐに見つけられます。',
-        burusama: '下の「メールで送る」を押せば、この文が入ったメールが開くわ。そのまま送ってちょうだい。',
-        buruseijin: '下の「メールで送る」を押すと、この文が入ったメールが起動します。そのまま送信してください。'
-      }) : V({
+        burusama: '下の「メールで送る」を押せば、この文が入ったメールが開くわ。そのまま送ってちょうだい。'
+      }, 'INFO_mail') : V({
         buruyan: 'さっき届いた確認メールに「返信」して、この文を貼り付けて送ってな。登録したメアドから届くから、受付番号ですぐ見つけられるねん。',
         buruko: 'さきほど届いた確認メールに「返信」して、この文を貼り付けて送ってくださいね。登録のメールアドレスから届くので、受付番号ですぐに見つけられます。',
-        burusama: 'さっき届いた確認メールに「返信」して、この文を貼り付けて送ってちょうだい。登録したメアドから届くから、すぐ見つけられるのよ。',
-        buruseijin: '先ほど受信した確認メールに「返信」し、この文を貼り付けて送信してください。登録アドレスからの通信は、受付番号で即座に照合できます。'
-      });
+        burusama: 'さっき届いた確認メールに「返信」して、この文を貼り付けて送ってちょうだい。登録したメアドから届くから、すぐ見つけられるのよ。'
+      }, 'INFO_reply');
       say([V({
         buruyan: '「' + val + '」やな。この文をコピーしといたで。', buruko: '「' + val + '」ですね。この文をコピーしておきました。',
-        burusama: '「' + val + '」ね。この文、コピーしておいたわ。', buruseijin: '「' + val + '」、受信しました。下の文を複製済みであります。'
-      }), msg, how], function () {
+        burusama: '「' + val + '」ね。この文、コピーしておいたわ。'
+      }, 'INFO_got', {val: val}), msg, how], function () {
         controls((mail ? '<a class="btn primary wide" data-ch="メール" href="' + esc(mail) + '">メールで送る</a>' : '')
           + (o.lineUrl ? '<a class="btn ghost wide" data-ch="LINE" href="' + esc(o.lineUrl) + '" target="_blank" rel="noopener">メールが使えない時は LINE で送る</a>' : '')
           + '<button type="button" class="tc-link tc-copy" data-copy="1">もう一度コピーする</button>'
@@ -357,8 +420,8 @@
         controls('<button type="button" class="btn primary wide" data-add="1">3点セットを追加したい</button>'
           + '<div class="tc-foot"><button type="button" class="tc-link" data-menu="1">ほかの質問</button><button type="button" class="tc-link" data-bye="1">おしまい</button></div>');
         on('[data-add]', function () { S.opts.track('追加したい', '3点セット'); row('out', '3点セットを追加したい'); controls(''); say([V({
-          buruyan: 'ええやん！何台分にする？', buruko: 'うれしいです！何台分にしますか？', burusama: 'いい判断よ。何台分にする？', buruseijin: '追加申請を受信。台数を入力してください。'
-        })], function () { infoForm('set3'); }); });
+          buruyan: 'ええやん！何台分にする？', buruko: 'うれしいです！何台分にしますか？', burusama: 'いい判断よ。何台分にする？'
+      }, 'ADD_ask')], function () { infoForm('set3'); }); });
         on('[data-menu]', function () { S.gen++; controls(''); say([ch().more], menu); });
         on('[data-bye]', bye);
         return;
@@ -392,7 +455,7 @@
     store('thanks_ai_' + S.id, String(used + 1));
     var gen = S.gen;
     var r = row('in', '<span class="typing" aria-label="入力中"><i></i><i></i><i></i></span>');
-    var body = { action: 'ask', id: S.id, chara: S.chara, text: t, ctx: S.opts.ctx || {} };
+    var body = { action: 'ask', id: S.id, chara: S.chara === 'bruce' ? 'buruko' : S.chara, text: t, ctx: S.opts.ctx || {} }; // 県は送らない
     fetch(S.opts.faqbotUrl, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) })
       .then(function (res) { return res.json(); })
       .then(function (j) {
@@ -403,7 +466,7 @@
           S.opts.track('質問', '入力:AI:' + it.id + ':' + t.slice(0, 80));
           note('「' + it.q + '」のことでお答えします');
           S.miss = 0;
-          var lines = Array.isArray(j.bubbles) && j.bubbles.length && j.bubbles.length <= 3 ? j.bubbles : it.a[S.chara];
+          var lines = S.chara !== 'bruce' && Array.isArray(j.bubbles) && j.bubbles.length && j.bubbles.length <= 3 ? j.bubbles : it.a[S.chara];
           return say(answerLines(it, lines), function () { after(it); });
         }
         var closed = j && j.ok && j.kind === 'handoff' && item(j.item_id);
