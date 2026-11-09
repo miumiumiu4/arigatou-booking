@@ -87,6 +87,12 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   await page.goto(url + '?ref=R1109-999');
   await page.getByRole('button', { name: 'はい' }).waitFor();
   assert.match(await page.locator('#chat').innerText(), /またお会いできて嬉しいです/);
+  // 紹介コードは覚えておき、あとで ?ref= なし（ホームページ等）から来ても入っている
+  await page.goto(url + '?src=klp');
+  await page.getByRole('button', { name: 'はい' }).click();
+  await page.getByRole('button', { name: 'ご予約フォームへ進む' }).click();
+  assert.equal(await page.inputValue('#ref_code'), 'R1109-999');
+  assert.equal(await page.locator('#refnote').isVisible(), true);
   assert.deepEqual(errs, []);
   await browser.close();
   console.log('e2e ok:', ev.join(' → '));

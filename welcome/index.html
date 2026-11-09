@@ -515,8 +515,20 @@
     var min = now.toISOString().slice(0, 10);
     ['date1', 'date2', 'date3'].forEach(function (n) { $(n).min = min; });
   })();
-  // 紹介リンク（?ref=紹介コード）で来た方は、紹介コードを自動で入れる
-  var refFromUrl = String(cfg.ref || '').trim().slice(0, 30);
+  // 紹介リンク（?ref=紹介コード）で来た方は、紹介コードを自動で入れる。
+  // いまの予約ページと同じく90日間このブラウザに覚えておく（同じ置き場所 arigatou_ref を使うので、
+  // 紹介リンクで前の予約ページを開いた方が、あとでホームページからこのページに来ても紹介コードが残る）
+  var refFromUrl = (function () {
+    var KEY = 'arigatou_ref', DAYS = 90, code = String(cfg.ref || '').trim().slice(0, 30);
+    try {
+      if (code) localStorage.setItem(KEY, JSON.stringify({ code: code, at: Date.now() }));
+      else {
+        var v = JSON.parse(localStorage.getItem(KEY) || 'null');
+        if (v && v.code && Date.now() - v.at < DAYS * 864e5) code = String(v.code).trim().slice(0, 30);
+      }
+    } catch (_) {}
+    return code;
+  })();
   function applyRef() {
     if (refFromUrl) { $('ref_code').value = refFromUrl; $('refnote').hidden = false; }
   }
