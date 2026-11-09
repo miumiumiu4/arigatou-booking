@@ -344,8 +344,9 @@
   </main>
   <footer>ありがとうエアコンお掃除専門店 ☎ <a href="tel:08041772272">080-4177-2272</a><br>© エイムポイント合同会社</footer>
 
-<script src="thanks-data.js"></script>
-<script src="thanks.js"></script>
+<!-- welcome-test/ からも同じ部品を読むので ../welcome/ から -->
+<script src="../welcome/thanks-data.js"></script>
+<script src="../welcome/thanks.js"></script>
 <script>
 (function () {
   'use strict';
@@ -673,7 +674,7 @@
       units: st.units, auto: st.auto, tenkase: st.tenkase, set3: st.set3, coat: st.coat, outdoor: st.outdoor, drain: st.drain, omatome: st.omatome,
       total: total(), weekday: wd, slot: data.time1 || '', housing: data.housing || '', pet: data.pet || ''
     };
-    var test = /^R0000-/.test(id) ? 'thanks-chat-test' : 'thanks-chat';
+    var test = /^(R0000-|T)/.test(id) ? 'thanks-chat-test' : 'thanks-chat'; // 試し（?thanks=test）とテスト版（welcome-test/）は分けて数える
     $('reset').textContent = '案内係を変える';
     window.ThanksChat.start({
       id: id, mount: $('thanksPanel'), summary: sum, ctx: ctx,
@@ -693,8 +694,8 @@
   if (new URLSearchParams(location.search).get('thanks') === 'test') {
     hideAll();
     st = Object.assign({}, ZERO, { units: 2, set3: 1 });
-    $('doneMsg').innerHTML = '受付番号 <b>R0000-0</b>（試し）<br>確認メールをお送りしました。作業日は担当者よりご連絡のうえ確定します。';
-    $('waitPanel').hidden = false;
+    $('doneMsg').innerHTML = '受付番号 <b>R0000-0</b>（試し）<br>（試しの画面です。予約は送っていません）';
+    $('waitPanel').removeAttribute('hidden');
     startThanks('R0000-0', [{ name: 'エアコンクリーニング 2台', amount: 17800 }, { name: '3点セット（防カビ抗菌コート・室外機・ドレンホース） 1台', amount: 7500 }], { date1: '', time1: '9時〜12時', housing: '戸建て', pet: 'なし' });
   } else {
     track('到着');

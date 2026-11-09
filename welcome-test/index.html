@@ -167,6 +167,38 @@
   .bk .note { font-size: 13px; color: var(--muted); margin: 8px 0 0; }
   .bk .ng { background: #fbe9e2; color: #b4532a; border-radius: 10px; padding: 10px 12px; margin-top: 12px; }
   .bk .refnote { background: #fdeee2; border-radius: 10px; padding: 8px 12px; font-size: 14px; margin-top: 8px; }
+  /* 送信後の案内係チャット（thanks.js） */
+  #thanksPanel { margin-top: 16px; }
+  .tc-ctl { margin-top: 12px; }
+  .tc-pick { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .tc-card { display: flex; flex-direction: column; align-items: center; gap: 2px; background: #fff; border: 2px solid transparent; border-radius: 16px; padding: 10px 8px 12px; cursor: pointer; font: inherit; color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+  .tc-card:active, .tc-card:focus-visible { border-color: var(--accent); }
+  .tc-card img { width: 96px; height: auto; }
+  .tc-card b { font-size: 17px; }
+  .tc-card span { font-size: 13px; color: var(--muted); }
+  .tc-quick { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .tc-quick .btn { min-height: 44px; padding: 8px 10px; font-size: 15px; border-radius: 14px; }
+  .tc-quick.all { grid-template-columns: 1fr; }
+  .tc-quick.all .btn { text-align: left; font-weight: 600; }
+  .tc-ask { display: flex; gap: 8px; margin-top: 12px; }
+  .tc-ask input { flex: 1 1 auto; min-width: 0; }
+  .tc-ask .btn { flex: 0 0 auto; padding: 10px 18px; }
+  .tc-hint { font-size: 12px; color: #fff; margin: 6px 2px 0; }
+  .tc-link { appearance: none; border: 0; background: transparent; color: #fff; text-decoration: underline; font: inherit; font-size: 15px; padding: 10px 4px; cursor: pointer; }
+  .tc-foot { display: flex; justify-content: space-between; gap: 8px; }
+  .tc-note { text-align: center; font-size: 12px; color: #fff; margin: 10px 0 0; opacity: .9; }
+  .tc-contact { background: #fff; border-radius: 16px; padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+  .tc-contact p { font-size: 14px; margin: 6px 0 10px; }
+  .tc-contact .btn { display: block; text-align: center; text-decoration: none; margin-top: 8px; }
+  .tc-contact .btn.line { background: #06c755; color: #fff; }
+  .tc-contact .tc-link { color: var(--text); font-size: 14px; }
+  .tc-share .share { background: #fff; margin-top: 0; }
+  .tc-stars { background: #fff; border-radius: 16px; padding: 12px 14px; margin-top: 10px; text-align: center; }
+  .tc-stars b { display: block; font-size: 15px; }
+  .tc-stars button { appearance: none; border: 0; background: transparent; font-size: 34px; color: #f2b705; cursor: pointer; padding: 0 4px; }
+  .tc-stars b span { color: #d8dee5; }
+  .tc-stars p { margin: 4px 0 0; font-size: 14px; }
+  .tc-ai { font-size: 12px; color: #fff; text-align: center; margin: 14px 0 0; }
   [hidden] { display: none !important; }
 
   .testband { background: #ffd400; color: #1f2328; font-weight: 700; font-size: 14px; line-height: 1.5; padding: 8px 16px; text-align: center; }
@@ -314,9 +346,15 @@
       <p id="doneTitle">ご予約を受け付けました。</p>
       <div id="doneMsg" class="donemsg"></div>
     </section>
+
+    <!-- 送信後の案内係チャット（thanks.js が中身を作る） -->
+    <section id="thanksPanel" hidden></section>
   </main>
   <footer>ありがとうエアコンお掃除専門店 ☎ <a href="tel:08041772272">080-4177-2272</a><br>© エイムポイント合同会社</footer>
 
+<!-- welcome-test/ からも同じ部品を読むので ../welcome/ から -->
+<script src="../welcome/thanks-data.js"></script>
+<script src="../welcome/thanks.js"></script>
 <script>
 (function () {
   'use strict';
@@ -326,7 +364,12 @@
     // 予約の受付（いまの予約ページ arigatou-booking/index.html と同じ送り先）
     GAS_URL: "",
     // 計測（【テスト】汎用イベント計測ログ の受け口。1イベント＝1行）
-    EVLOG_URL: "https://script.google.com/macros/s/AKfycbyJF8nIuQ5vjsrftOO5L82dJ-RkIOf3nhbEb-iW7WjMNmL0KnBee3pHk3aIBdSKQqm1/exec"
+    EVLOG_URL: "https://script.google.com/macros/s/AKfycbyJF8nIuQ5vjsrftOO5L82dJ-RkIOf3nhbEb-iW7WjMNmL0KnBee3pHk3aIBdSKQqm1/exec",
+    // 送信後チャットの裏側（arigatou 本体 apps/faqbot）。空のあいだはボタンと端末内の照合だけで答える
+    FAQBOT_URL: "",
+    // LINE 公式「ありがとうエアコンサポート」の友だち追加・トークのリンク。空なら文で案内する
+    LINE_URL: "",
+    PHONE: "080-4177-2272"
   };
   window.EVLOG_ENDPOINT = CONFIG.EVLOG_URL;
   var cfg = {};
@@ -367,8 +410,8 @@
 
   // ---------- 記録 ----------
   window.__events = [];
-  function track(event, note) {
-    var ev = { test: cfg.test, page: cfg.page, event: event, visitor: visitor, source: cfg.source || '', note: note || '' };
+  function track(event, note, test) {
+    var ev = { test: test || cfg.test, page: cfg.page, event: event, visitor: visitor, source: cfg.source || '', note: note || '' };
     window.__events.push(ev);
     try {
       if (window.google && google.script && google.script.run) {
@@ -423,7 +466,7 @@
       if (then) then();
     }, reduce ? 0 : 900);
   }
-  function hideAll() { ['choices', 'toForm', 'menuPanel', 'formPanel', 'waitPanel', 'hdrEst'].forEach(function (id) { $(id).hidden = true; }); }
+  function hideAll() { ['choices', 'toForm', 'menuPanel', 'formPanel', 'waitPanel', 'thanksPanel', 'hdrEst'].forEach(function (id) { $(id).hidden = true; }); }
 
   function start() {
     timers.forEach(clearTimeout); timers = [];
@@ -617,9 +660,10 @@
         track('申込完了', '台数:' + st.units + (st.tenkase ? ' 天カセ:' + st.tenkase : '') + ' 概算:' + total() + (ref ? ' 紹介コードあり' : ''));
         hideAll();
         $('doneMsg').innerHTML = '受付番号 <b>' + esc(j.id) + '</b><br>（テスト版なので確認メールは届きません）作業日は担当者よりご連絡のうえ確定します。';
-        if (/^[RT]\d{4}-(TEST)?\d+$/.test(String(j.id))) showShare(String(j.id));
         testShowSent();
         $('waitPanel').hidden = false;
+        // 受付番号が読めたときだけ、案内係チャットへ（紹介リンクは会話の最後にキャラが渡す）
+        if (/^[RT]\d{4}-(TEST)?\d+$/.test(String(j.id))) startThanks(String(j.id), lines, data);
         window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
       })
       .catch(function (err) {
@@ -629,7 +673,7 @@
       });
   });
   // 予約した方に、ご自身の紹介リンクを表示（紹介コード＝受付番号。いまの予約ページと同じ）
-  function showShare(id) {
+  function showShare(id, into) {
     var url = location.origin + location.pathname + '?ref=' + encodeURIComponent(id);
     var text = '【紹介リンク・PR】エアコンクリーニングはここに頼みました。予約はこちらから → ' + url;
     var box = document.createElement('div');
@@ -644,16 +688,46 @@
       try { navigator.clipboard.writeText(url).then(function () { e.target.textContent = 'コピーしました'; }); }
       catch (_) { box.querySelector('input').select(); e.target.textContent = '選択しました'; }
     });
-    $('doneMsg').appendChild(box);
+    (into || $('doneMsg')).appendChild(box);
+  }
+
+  // ---------- 送信後の案内係チャット ----------
+  // チャットに渡すのは受付番号・内訳・曜日と時間帯・住まいのタイプ・ペットの有無だけ（設計書 7節）。名前・住所・電話・メールは渡さない
+  function startThanks(id, lines, data) {
+    var sum = 'いまの内訳：' + lines.map(function (l) { return l.name + '=' + yen(l.amount) + '円'; }).join(' ／ ') + '。概算 ' + yen(total()) + '円（税込・駐車場代別）。';
+    var d1 = String(data.date1 || '').slice(0, 10);
+    var wd = /^\d{4}-\d{2}-\d{2}$/.test(d1) ? '日月火水木金土'.charAt(new Date(d1 + 'T12:00:00+09:00').getUTCDay()) : '';
+    var ctx = {
+      units: st.units, auto: st.auto, tenkase: st.tenkase, set3: st.set3, coat: st.coat, outdoor: st.outdoor, drain: st.drain, omatome: st.omatome,
+      total: total(), weekday: wd, slot: data.time1 || '', housing: data.housing || '', pet: data.pet || ''
+    };
+    var test = /^(R0000-|T)/.test(id) ? 'thanks-chat-test' : 'thanks-chat'; // 試し（?thanks=test）とテスト版（welcome-test/）は分けて数える
+    $('reset').textContent = '案内係を変える';
+    window.ThanksChat.start({
+      id: id, mount: $('thanksPanel'), summary: sum, ctx: ctx,
+      faqbotUrl: CONFIG.FAQBOT_URL, lineUrl: CONFIG.LINE_URL, phone: CONFIG.PHONE,
+      track: function (ev, note) { track(ev, note, test); },
+      showShare: function (el) { showShare(id, el); }
+    });
   }
   $('reset').addEventListener('click', function () {
+    if (window.ThanksChat && ThanksChat.active()) { ThanksChat.pick(); return; }
     track('選び直し');
     window.scrollTo({ top: 0 });
     start();
   });
 
-  track('到着');
-  start();
+  // ?thanks=test：スタッフの試し読み用。予約は送らず、試しの受付番号で送信後の画面だけを出す
+  if (new URLSearchParams(location.search).get('thanks') === 'test') {
+    hideAll();
+    st = Object.assign({}, ZERO, { units: 2, set3: 1 });
+    $('doneMsg').innerHTML = '受付番号 <b>R0000-0</b>（試し）<br>（試しの画面です。予約は送っていません）';
+    $('waitPanel').removeAttribute('hidden');
+    startThanks('R0000-0', [{ name: 'エアコンクリーニング 2台', amount: 17800 }, { name: '3点セット（防カビ抗菌コート・室外機・ドレンホース） 1台', amount: 7500 }], { date1: '', time1: '9時〜12時', housing: '戸建て', pet: 'なし' });
+  } else {
+    track('到着');
+    start();
+  }
 })();
 </script>
 </body>

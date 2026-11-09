@@ -8,6 +8,8 @@
   var KEY = 'thanks_chara';
   var AI_MAX = 20; // 1受付番号あたり（裏側でも数える）
   var S = null;
+  // 絵はこのファイルと同じ場所（welcome/）から読む。welcome-test/ から読まれても同じ絵になる
+  var HERE = ((document.currentScript && document.currentScript.src) || '').replace(/[^/]*$/, '');
   var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
@@ -40,7 +42,7 @@
 
   // ---------- 吹き出し ----------
   function avatar(c) {
-    var src = c ? D.chars[c].img : 'chara/base.svg';
+    var src = HERE + (c ? D.chars[c].img : 'chara/base.svg');
     return '<div class="avatar chara" aria-hidden="true"><img src="' + src + '" alt=""></div>';
   }
   function row(side, html) {
@@ -88,7 +90,7 @@
   function picker() {
     var html = '<div class="tc-pick">' + Object.keys(D.chars).map(function (k) {
       var c = D.chars[k];
-      return '<button type="button" class="tc-card" data-c="' + k + '"><img src="' + c.img + '" alt=""><b>' + esc(c.name) + '</b><span>' + esc(c.pick) + '</span></button>';
+      return '<button type="button" class="tc-card" data-c="' + k + '"><img src="' + HERE + c.img + '" alt=""><b>' + esc(c.name) + '</b><span>' + esc(c.pick) + '</span></button>';
     }).join('') + '</div>';
     controls(html);
     on('.tc-card', function (b) { choose(b.dataset.c, false); });
