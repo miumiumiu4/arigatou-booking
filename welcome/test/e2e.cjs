@@ -98,7 +98,7 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   // ② 自由入力（電話番号は伏せてから扱う）。「ペット」は人に回す形 → 連絡先
   await tc.locator('.tc-ask input').fill('090-1234-5678 ペットがいます');
   await tc.getByRole('button', { name: '送る' }).click();
-  await waitText(/ペット2匹おるって書いてくれてたな/);
+  await waitText(/ペットがおっても大丈夫やで[\s\S]*ペット2匹おるって書いてくれてたな/);
   await tc.getByRole('button', { name: 'いいえ' }).click();
   await tc.getByText('人とお話しする').waitFor();
   assert.match(await tc.innerText(), /「ペットがいても大丈夫ですか？」のことでお答えします/);
