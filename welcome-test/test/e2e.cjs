@@ -57,7 +57,14 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   } else {
     assert.match(done, /T\d{4}-TEST1/); assert.equal(testRecv.length, 0, '画面だけのときはどこにも送らない');
   }
-  assert.match(done, /紹介しませんか/);
+  // 送信後は案内係チャット（部品と絵は ../welcome/ から読む）。紹介リンクは会話の最後
+  const tc = page.locator('#thanksPanel');
+  await tc.getByRole('button', { name: /ブルやん/ }).waitFor();
+  assert.equal(await tc.locator('.tc-card').count(), 4);
+  await page.waitForFunction(() => [...document.querySelectorAll('#thanksPanel img')].every(i => i.complete && i.naturalWidth > 0));
+  await tc.getByRole('button', { name: /ブル星人/ }).click();
+  await tc.getByRole('button', { name: 'おしまい' }).click();
+  await tc.getByText('ご家族やお知り合いに紹介しませんか').waitFor();
   assert.match(done, /送った中身を見る/);
   assert.match(done, /テスト版なので確認メールは届きません/);
   const sent = await page.evaluate(() => window.__lastTestBooking);
@@ -66,7 +73,8 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   await page.waitForTimeout(600); await snap('t3_done');
 
   assert.equal(prod.length, 0, '本番の受け口へ送ってはいけない');
-  assert.ok(logged.length >= 3 && logged.every(e => e.test === 'hp-chat-test' && e.page === 'welcome-test'), '計測はテスト用の名前で分ける');
+  assert.ok(logged.length >= 3 && logged.every(e => (e.test === 'hp-chat-test' || e.test === 'thanks-chat-test') && e.page === 'welcome-test'), '計測はテスト用の名前で分ける');
+  assert.ok(logged.some(e => e.test === 'thanks-chat-test' && e.event === 'キャラ選択'));
   assert.ok(!JSON.stringify(logged).includes('test@example.com'));
   assert.deepEqual(errs, []);
   await browser.close();

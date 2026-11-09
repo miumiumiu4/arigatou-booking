@@ -43,7 +43,7 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   const d = new Date(Date.now() + 9 * 3600e3 + 5 * 864e5).toISOString().slice(0, 10);
   await page.fill('#f_name', 'テスト'); await page.fill('#f_kana', 'てすと');
   await page.fill('#f_phone', '0000000000'); await page.fill('#f_email', 'test@example.com');
-  await page.selectOption('#f_area', '東京'); await page.fill('#f_address', 'テスト');
+  await page.selectOption('#f_area', '東京'); await page.fill('#f_address', 'テスト住所');
   await page.check('input[name=housing][value="戸建て"]');
   for (const n of ['date1', 'date2', 'date3']) await page.fill('#' + n, d);
   // ペット未選択なら止まる
@@ -68,8 +68,75 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   await page.getByRole('button', { name: 'この内容で予約する' }).click();
   await page.getByText('ご予約を受け付けました。').waitFor();
   assert.match(await page.locator('#doneMsg').innerText(), /R1109-999/);
-  assert.match(await page.locator('#doneMsg').innerText(), /紹介しませんか/);
+  // 紹介リンクは会話の最後へ移った
+  assert.doesNotMatch(await page.locator('#doneMsg').innerText(), /紹介しませんか/);
   await page.waitForTimeout(800); await snap('3_done');
+
+  // ---- 送信後の案内係チャット ----
+  const tc = page.locator('#thanksPanel');
+  const lastIn = () => tc.locator('.tc-log .row.in .bubble').last();
+  const waitText = async re => { await page.waitForFunction(r => new RegExp(r).test(document.querySelector('#thanksPanel .tc-log').innerText), re.source, { timeout: 8000 }); };
+  await tc.getByRole('button', { name: /ブルやん/ }).waitFor();
+  assert.equal(await tc.locator('.tc-card').count(), 4);
+  for (const n of ['ブルやん', 'ブルこ', 'ブルさま', 'ブル星人']) assert.ok(await tc.getByRole('button', { name: new RegExp(n) }).isVisible());
+  assert.match(await tc.innerText(), /AI の案内係ロボが答えています/);
+  await snap('4_pick');
+  await tc.getByRole('button', { name: /ブルやん/ }).click();
+  await tc.getByRole('button', { name: '駐車場' }).waitFor();
+  assert.match(await tc.innerText(), /ブルやんです/);
+  assert.equal(await tc.locator('.tc-quick .btn').count(), 6);
+  // ① ボタン：台帳の文がそのまま入る
+  await tc.getByRole('button', { name: '駐車場' }).click();
+  await tc.getByRole('button', { name: 'はい' }).waitFor();
+  const B03 = (await page.evaluate(() => THANKS_DATA.items.find(i => i.id === 'B03').a.buruyan));
+  for (const l of B03) assert.ok((await tc.innerText()).includes(l), l);
+  await snap('5_answer');
+  await tc.getByRole('button', { name: 'はい' }).click();
+  await tc.getByRole('button', { name: 'キャンセル' }).waitFor();
+  // ② 自由入力（電話番号は伏せてから扱う）。「ペット」は人に回す形 → 連絡先
+  await tc.locator('.tc-ask input').fill('090-1234-5678 ペットがいます');
+  await tc.getByRole('button', { name: '送る' }).click();
+  await tc.getByText('人とお話しする').waitFor();
+  assert.match(await tc.innerText(), /「ペットがいても大丈夫ですか？」のことでお答えします/);
+  assert.match(await tc.innerText(), /○○ ペットがいます/);
+  assert.doesNotMatch(await tc.innerText(), /090-1234/);
+  assert.match(await tc.locator('.tc-contact').innerText(), /R1109-999/);
+  assert.equal(await tc.locator('.tc-contact a[href="tel:08041772272"]').count(), 1);
+  assert.equal(await tc.locator('.tc-contact a[href="https://lin.ee/rD0Xlot"]').count(), 1);
+  await snap('6_contact');
+  // 料金の質問は、この画面の内訳を読み上げる
+  await tc.getByRole('button', { name: 'ほかの質問' }).click();
+  await tc.getByRole('button', { name: 'ほかの質問も見る' }).click();
+  await tc.getByRole('button', { name: '私の料金はいくらですか？' }).click();
+  await waitText(/概算 51,100円/);
+  await tc.getByRole('button', { name: 'いいえ' }).waitFor();
+  // 解決しない → 人へ
+  await tc.getByRole('button', { name: 'いいえ' }).click();
+  await tc.getByText('人とお話しする').waitFor();
+  // 未確定の問（3点セット）は答えを出さずに人へ
+  await tc.getByRole('button', { name: 'ほかの質問' }).click();
+  await tc.getByRole('button', { name: 'ほかの質問も見る' }).click();
+  await tc.getByRole('button', { name: '3点セットは何が入っていますか？' }).click();
+  await tc.getByText('人とお話しする').waitFor();
+  assert.doesNotMatch(await tc.innerText(), /防カビ抗菌コート・室外機クリーニング・ドレンホース洗浄の3つ|別々だと/);
+  // 台帳にない質問が2回続いたら人へ（裏側の URL が空のあいだ）
+  await tc.getByRole('button', { name: 'ほかの質問' }).click();
+  await tc.locator('.tc-ask input').waitFor();
+  await tc.locator('.tc-ask input').fill('おすすめの晩ごはんは');
+  await tc.getByRole('button', { name: '送る' }).click();
+  await waitText(/ピンと来えへんかった/);
+  await tc.locator('.tc-ask input').waitFor();
+  await tc.locator('.tc-ask input').fill('好きな色は');
+  await tc.getByRole('button', { name: '送る' }).click();
+  await waitText(/守備範囲ちゃうわ/);
+  await tc.getByText('人とお話しする').waitFor();
+  // おしまい：紹介リンクと星
+  await tc.getByRole('button', { name: 'おしまい' }).click();
+  await tc.getByText('ご家族やお知り合いに紹介しませんか').waitFor();
+  assert.match(await tc.locator('.share input').inputValue(), /\?ref=R1109-999$/);
+  await tc.getByRole('button', { name: '星4つ' }).click();
+  await tc.getByText('ありがとうございました。').waitFor();
+  await snap('7_bye');
 
   assert.equal(booked.length, 1);
   const b = booked[0];
@@ -78,15 +145,39 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   for (const re of [/【ふりがな】てすと/, /【ペット】あり 2匹/, /【天カセ】1台/, /【メーカー・型番】ダイキン AN22/, /【その他のお掃除】お風呂換気扇分解/, /【スタッフ指名（＋3,000円）】田中/, /【クーポンコード】CP1/, /^【希望日】第1 /])
     assert.match(b.note, re);
   assert.match(b.src, /^welcome\?/);
-  const ev = logged.map(e => e.event);
+  const hp = logged.filter(e => e.test === 'hp-chat'), th = logged.filter(e => e.test === 'thanks-chat');
+  const ev = hp.map(e => e.event);
   assert.deepEqual(ev, ['到着', 'はい', 'フォーム遷移', '申込完了']);
-  assert.ok(logged.every(e => e.test === 'hp-chat' && e.page === 'welcome'));
-  assert.ok(!JSON.stringify(logged).includes('test@example.com'));
+  assert.equal(hp.length + th.length, logged.length);
+  assert.ok(logged.every(e => e.page === 'welcome'));
+  const tev = th.map(e => e.event + (e.note ? ':' + e.note : ''));
+  assert.deepEqual(tev.slice(0, 5), ['キャラ表示', 'キャラ選択:buruyan', '質問:ボタン:B03', '解決:はい:B03', '質問:入力:B04:○○ ペットがいます']);
+  for (const want of ['質問:ボタン:C01', '解決:いいえ:C01', '人へ:いいえ:C01', '質問:ボタン:C07', '人へ:未確定:C07', '質問:入力:なし:おすすめの晩ごはんは', '人へ:2回わからない', 'おしまい:buruyan', '星:4:buruyan'])
+    assert.ok(tev.includes(want), want + ' が記録に無い: ' + tev.join(' / '));
+  // 個人情報が記録・チャットに出ない
+  const all = JSON.stringify(logged);
+  for (const pii of ['test@example.com', 'テスト住所', '0000000000', '090-1234', 'てすと']) assert.ok(!all.includes(pii), pii);
 
   // 紹介リンクで来た方には「またお会いできて」
   await page.goto(url + '?ref=R1109-999');
   await page.getByRole('button', { name: 'はい' }).waitFor();
   assert.match(await page.locator('#chat').innerText(), /またお会いできて嬉しいです/);
+
+  // ?thanks=test：送らずに送信後の画面。前に選んだ案内係を覚えていて、帯のボタンで選び直せる
+  logged.length = 0;
+  await page.goto(url + '?thanks=test');
+  await page.locator('#thanksPanel').getByRole('button', { name: '駐車場' }).waitFor();
+  assert.match(await page.locator('#thanksPanel').innerText(), /ブルやんです/);
+  assert.equal(booked.length, 1);
+  await page.getByRole('button', { name: '案内係を変える' }).click();
+  await page.locator('#thanksPanel').getByRole('button', { name: /ブル星人/ }).click();
+  await page.locator('#thanksPanel').getByRole('button', { name: '支払い' }).waitFor();
+  assert.match(await page.locator('#thanksPanel').innerText(), /ブル星人であります/);
+  await page.locator('#thanksPanel').getByRole('button', { name: '支払い' }).click();
+  await page.locator('#thanksPanel').getByRole('button', { name: 'はい' }).waitFor();
+  await snap('8_seijin');
+  assert.ok(logged.length && logged.every(e => e.test === 'thanks-chat-test'));
+  assert.ok(logged.some(e => e.event === 'キャラ選択' && e.note === 'buruseijin'));
   assert.deepEqual(errs, []);
   await browser.close();
   console.log('e2e ok:', ev.join(' → '));
