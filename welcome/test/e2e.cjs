@@ -102,6 +102,7 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   assert.doesNotMatch(await tc.innerText(), /090-1234/);
   assert.match(await tc.locator('.tc-contact').innerText(), /R1109-999/);
   assert.equal(await tc.locator('.tc-contact a[href="tel:08041772272"]').count(), 1);
+  assert.equal(await tc.locator('.tc-contact a[href="https://lin.ee/rD0Xlot"]').count(), 1);
   await snap('6_contact');
   // 料金の質問は、この画面の内訳を読み上げる
   await tc.getByRole('button', { name: 'ほかの質問' }).click();
