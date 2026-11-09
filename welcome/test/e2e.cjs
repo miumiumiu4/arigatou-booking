@@ -13,11 +13,12 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   const browser = await chromium.launch();
   const ctx = await browser.newContext({ ...devices['iPhone 13'] });
   const page = await ctx.newPage();
-  const booked = [], logged = [], errs = [];
+  const booked = [], logged = [], errs = [], asked = [];
   page.on('pageerror', e => errs.push(e.message));
   await page.route(/script\.google\.com/, r => {
     const body = JSON.parse(r.request().postData() || '{}');
     if (body.event) { logged.push(body); return r.fulfill({ status: 200, body: '{}' }); }
+    if (body.action === 'ask') { asked.push(body); return r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true, kind: 'none' }) }); } // 裏側（faqbot）は台帳外と答えさせる
     booked.push(body);
     return r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true, id: 'R1109-999' }) });
   });
@@ -144,7 +145,7 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   await tc.getByRole('button', { name: '送る' }).click();
   await waitText(/畳2畳ほどの作業スペース/);
   await tc.getByRole('button', { name: 'はい' }).click();
-  // 台帳にない質問が2回続いたら人へ（裏側の URL が空のあいだ）
+  // 台帳にない質問が2回続いたら人へ（裏側も「台帳外」と返したとき）
   await tc.getByRole('button', { name: 'ほかの質問' }).click();
   await tc.locator('.tc-ask input').waitFor();
   await tc.locator('.tc-ask input').fill('おすすめの晩ごはんは');
@@ -163,6 +164,9 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   await tc.getByText('ありがとうございました。').waitFor();
   await snap('7_bye');
 
+  // 裏側へは台帳外の自由入力だけ。お名前・住所・電話・メール・予約の中身は送らない
+  assert.deepEqual(asked.map(x => x.text), /FAQBOT_URL: "https/.test(require('fs').readFileSync(require('path').join(__dirname, '..', 'index.html'), 'utf8')) ? ['おすすめの晩ごはんは', '好きな色は'] : []);
+  assert.ok(!JSON.stringify(asked).match(/テスト|田中|株式会社|ダイキン|@/));
   assert.equal(booked.length, 1);
   const b = booked[0];
   assert.equal(b.units, 2); assert.equal(b.tenkase_units, 1); assert.equal(b.total, 51100);
