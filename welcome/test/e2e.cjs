@@ -160,6 +160,7 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   await tc.getByRole('button', { name: 'おしまい' }).click();
   await tc.getByText('ご家族やお知り合いに紹介しませんか').waitFor();
   assert.match(await tc.locator('.share input').inputValue(), /\?ref=R1109-999$/);
+  await tc.locator('.share .link button').click();
   await tc.getByRole('button', { name: '星4つ' }).click();
   await tc.getByText('ありがとうございました。').waitFor();
   await snap('7_bye');
@@ -182,7 +183,7 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   assert.ok(logged.every(e => e.page === 'welcome'));
   const tev = th.map(e => e.event + (e.note ? ':' + e.note : ''));
   assert.deepEqual(tev.slice(0, 5), ['キャラ表示', 'キャラ選択:buruyan', '質問:ボタン:B03', '解決:はい:B03', '質問:入力:B04:○○ ペットがいます']);
-  for (const want of ['質問:ボタン:C01', '解決:いいえ:C01', '人へ:いいえ:C01', '質問:ボタン:C07', '追加したい:3点セット', '質問:ボタン:F02', '人へ:未確定:Z99', '質問:入力:なし:おすすめの晩ごはんは', '人へ:2回わからない', 'おしまい:buruyan', '星:4:buruyan'])
+  for (const want of ['質問:ボタン:C01', '解決:いいえ:C01', '人へ:いいえ:C01', '質問:ボタン:C07', '追加したい:3点セット', '質問:ボタン:F02', '人へ:未確定:Z99', '質問:入力:なし:おすすめの晩ごはんは', '人へ:2回わからない', 'おしまい:R1109-999:buruyan', '紹介コピー:R1109-999', '星:R1109-999:4:buruyan'])
     assert.ok(tev.includes(want), want + ' が記録に無い: ' + tev.join(' / '));
   // 個人情報が記録・チャットに出ない
   const all = JSON.stringify(logged);

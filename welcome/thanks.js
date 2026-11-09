@@ -524,7 +524,7 @@
     S.gen++;
     controls('');
     row('out', 'おしまい');
-    S.opts.track('おしまい', S.chara);
+    S.opts.track('おしまい', S.id + ':' + S.chara); // だれが押したかは受付番号で分かる（11/10 三浦さん）
     say(ch().bye, function () {
       var c = controls('<div class="tc-share"></div><div class="tc-stars"><b>この案内係はどうでしたか？</b><div>'
         + [1, 2, 3, 4, 5].map(function (n) { return '<button type="button" data-star="' + n + '" aria-label="星' + n + 'つ">★</button>'; }).join('')
@@ -532,7 +532,7 @@
       if (S.opts.showShare) S.opts.showShare(c.querySelector('.tc-share'));
       on('[data-star]', function (b) {
         var n = +b.dataset.star;
-        S.opts.track('星', n + ':' + S.chara);
+        S.opts.track('星', S.id + ':' + n + ':' + S.chara); // 案内係を直す目安
         var box = c.querySelector('.tc-stars');
         box.innerHTML = '<b>' + '★★★★★'.slice(0, n) + '<span>' + '★★★★★'.slice(n) + '</span></b><p>ありがとうございました。</p>';
       });
