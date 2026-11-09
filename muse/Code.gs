@@ -415,7 +415,7 @@ function testMorning_(pid) {
 // テストデータを全部消す：メールアドレスに +musetest を含む行と、T で始まる参加者番号をすべてのシートから消す
 function deleteTestData() {
   let n = 0;
-  [SHEETS.survey, SHEETS.pre, SHEETS.apply, MASTER].forEach(name => {
+  [SHEETS.survey, SHEETS.pre, SHEETS.apply, SHEETS.katsuyo, MASTER].forEach(name => {
     const sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(name); if (!sh) return;
     const v = sh.getDataRange().getValues(), head = v[0].map(String);
     const ec = name === MASTER ? 2 : head.indexOf("メールアドレス"), pc = name === MASTER ? 0 : head.indexOf("参加者ID");
