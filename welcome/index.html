@@ -192,6 +192,9 @@
   .tc-link[data-more] { display: block; width: 100%; margin-top: 8px; }
   .tc-foot { align-items: center; }
   .tc-log .bubble { white-space: pre-line; }
+  .tc-hint { color: #fff; font-size: 13px; margin: 6px 2px 0; }
+  .tc-copy { display: block; margin: 6px auto 0; }
+  .tc-ctl .btn.line { background: #06c755; color: #fff; margin-top: 8px; }
   .tc-note { text-align: center; font-size: 12px; color: #fff; margin: 10px 0 0; opacity: .9; }
   .tc-contact { background: #fff; border-radius: 16px; padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
   .tc-contact p { font-size: 14px; margin: 6px 0 10px; }
@@ -693,7 +696,7 @@
     var mine = {
       wall: st.units, auto: st.auto, tenkase: st.tenkase, outdoorUnits: (st.set3 || 0) + (st.outdoor || 0) + (st.omatome || 0),
       payment: data.payment || '', parking: data.parking || '', pet: data.pet || '', petCount: data.pet === 'あり' ? (Number(data.pet_count) || 0) : 0,
-      date1: d1, time1: data.time1 || ''
+      date1: d1, time1: data.time1 || '', receiptName: data.receipt_name || ''
     };
     // 「予約の中身」で読み上げる一覧（お客様ご本人の画面にだけ出す。送らない）
     var PAYL = { onsite: '作業当日に現金', paypay: '作業当日に PayPay', paypal: 'PayPal の請求書' };

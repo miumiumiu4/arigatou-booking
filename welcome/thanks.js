@@ -187,6 +187,16 @@
       }), 'その場合は、コインパーキングの実費を別にいただきます。'];
       return null;
     },
+    C05: function (m) { // 領収書：予約で書いた宛名を返す。書き忘れた人には、このあと記入欄を出す
+      var r = m.receiptName ? V({
+        buruyan: '領収書の宛名は「' + m.receiptName + '」で受けとるで。', buruko: '領収書の宛名は「' + m.receiptName + '」で承っています。',
+        burusama: '領収書の宛名は「' + m.receiptName + '」で受けてるわよ。', buruseijin: '領収書の宛名は「' + m.receiptName + '」と記録しています。'
+      }) : V({
+        buruyan: '宛名を書き忘れてても大丈夫や。下の欄に書いてな。', buruko: '宛名を書き忘れても大丈夫ですよ。下の欄に書いてくださいね。',
+        burusama: '宛名を書き忘れたなら、下の欄に書けばいいのよ。', buruseijin: '宛名の記入漏れは、下の欄で補えます。'
+      });
+      return [r, '領収書の発行のしかたは、担当者からご案内します。'];
+    },
     B04: function (m) {
       if (m.pet !== 'あり') return null;
       var n = m.petCount ? m.petCount + '匹' : '';
@@ -235,7 +245,47 @@
     S.miss = 0;
     say(answerLines(it, it.a[S.chara]), function () { after(it); });
   }
+  // 領収書の宛名の記入欄。宛名は裏側にも計測にも送らず、受付番号つきの文にして LINE で送ってもらう
+  // （予約サイトの GAS は凍結中で、あとから宛名を書き足す受け口がまだ無い。受け口ができたらここから直接送る）
+  function copyText(t, done) {
+    done = done || function () {};
+    try { navigator.clipboard.writeText(t).then(function () { done(true); }, function () { done(false); }); } catch (e) { done(false); }
+  }
+  function receiptForm() {
+    var o = S.opts, has = !!(o.mine && o.mine.receiptName);
+    controls('<form class="tc-ask tc-rcpt"><input maxlength="40" placeholder="例：株式会社〇〇　／　〇〇 様" aria-label="領収書の宛名"><button class="btn primary">決める</button></form>'
+      + '<p class="tc-hint">' + (has ? '宛名を変える時だけ書いてください。' : '領収書の宛名を書き忘れた方は、こちらに書いてください。') + '</p>'
+      + '<div class="tc-foot"><button type="button" class="tc-link" data-menu="1">ほかの質問</button><button type="button" class="tc-link" data-bye="1">おしまい</button></div>');
+    on('[data-menu]', function () { S.gen++; controls(''); say([ch().more], menu); });
+    on('[data-bye]', bye);
+    S.ctl.querySelector('form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var name = S.ctl.querySelector('form input').value.trim().slice(0, 40);
+      if (!name) return;
+      var msg = '受付番号 ' + S.id + ' の領収書の宛名：' + name;
+      S.opts.track('領収書', '宛名を入力');
+      row('out', esc('宛名：' + name));
+      controls('');
+      copyText(msg); // コピーできない端末は、吹き出しの文から写してもらう
+      say([V({
+        buruyan: '「' + name + '」やな。この文をコピーしといたで。', buruko: '「' + name + '」ですね。この文をコピーしておきました。',
+        burusama: '「' + name + '」ね。この文、コピーしておいたわ。', buruseijin: '「' + name + '」、受信しました。下の文を複製済みであります。'
+      }), msg, V({
+        buruyan: '下の「LINE で送る」を押して、貼り付けて送ってな。それで受付完了や。', buruko: '下の「LINE で送る」を押して、貼り付けて送ってくださいね。',
+        burusama: '下の「LINE で送る」から、貼り付けて送ってちょうだい。', buruseijin: '下の「LINE で送る」から、貼り付けて送信してください。以上であります。'
+      })], function () {
+        controls((o.lineUrl ? '<a class="btn line wide" href="' + esc(o.lineUrl) + '" target="_blank" rel="noopener">LINE で送る</a>' : '')
+          + '<button type="button" class="tc-link tc-copy" data-copy="1">もう一度コピーする</button>'
+          + '<div class="tc-foot"><button type="button" class="tc-link" data-menu="1">ほかの質問</button><button type="button" class="tc-link" data-bye="1">おしまい</button></div>');
+        on('[data-copy]', function (b) { copyText(msg, function (ok) { b.textContent = ok ? 'コピーしました' : msg; }); });
+        S.ctl.querySelectorAll('a.line').forEach(function (a) { a.addEventListener('click', function () { o.track('連絡', 'LINE:領収書'); }); });
+        on('[data-menu]', function () { S.gen++; controls(''); say([ch().more], menu); });
+        on('[data-bye]', bye);
+      });
+    });
+  }
   function after(it) {
+    if (it.id === 'C05') { S.last = it.id; return receiptForm(); }
     if (it.human && !S.mine) return contact(); // 人に回す形の問で、この予約から言えることも無いときだけ連絡先を出す
     S.last = it.id;
     say([ch().check], function () {
