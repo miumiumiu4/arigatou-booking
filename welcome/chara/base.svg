@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 220" role="img" aria-label="ありがとうエアコンのキャラクター（ブルドッグ顔のエアコン）">
+  <!-- 耳（ぺたんと垂れた耳） -->
+  <path d="M44 50 C30 34 10 40 8 62 C8 76 20 82 30 74 C36 66 42 60 50 58 Z" fill="#d9b48f" stroke="#3a2e28" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M196 50 C210 34 230 40 232 62 C232 76 220 82 210 74 C204 66 198 60 190 58 Z" fill="#d9b48f" stroke="#3a2e28" stroke-width="5" stroke-linejoin="round"/>
+  <!-- 本体（壁掛けエアコン） -->
+  <rect x="22" y="40" width="196" height="132" rx="34" fill="#fbfaf7" stroke="#3a2e28" stroke-width="5"/>
+  <!-- おでこのしわ -->
+  <path d="M92 60 q28 -10 56 0" fill="none" stroke="#c9bfb5" stroke-width="4" stroke-linecap="round"/>
+  <path d="M100 72 q20 -7 40 0" fill="none" stroke="#c9bfb5" stroke-width="4" stroke-linecap="round"/>
+  <!-- 目のまわりのぶち（片目だけ） -->
+  <path d="M146 76 C170 66 196 80 192 104 C186 120 160 118 148 106 C140 96 138 84 146 76 Z" fill="#e9cdb0"/>
+  <!-- 目（ちょっと眠たそう・左右ちがい） -->
+  <circle cx="80" cy="96" r="15" fill="#fff" stroke="#3a2e28" stroke-width="4"/>
+  <circle cx="83" cy="99" r="8" fill="#3a2e28"/>
+  <circle cx="86" cy="96" r="2.6" fill="#fff"/>
+  <path d="M63 92 q17 -12 34 0" fill="#fbfaf7" stroke="#3a2e28" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="162" cy="94" r="17" fill="#fff" stroke="#3a2e28" stroke-width="4"/>
+  <circle cx="158" cy="98" r="9" fill="#3a2e28"/>
+  <circle cx="161" cy="94" r="3" fill="#fff"/>
+  <path d="M144 89 q18 -11 36 0" fill="#e9cdb0" stroke="#3a2e28" stroke-width="4" stroke-linecap="round"/>
+  <!-- 鼻（ぺちゃっと） -->
+  <path d="M106 104 q15 -8 30 0 q2 12 -15 16 q-17 -4 -15 -16 Z" fill="#3a2e28"/>
+  <ellipse cx="114" cy="106" rx="4" ry="2.4" fill="#8c7b70"/>
+  <!-- ほっぺ（たるん） -->
+  <path d="M121 124 C110 120 70 112 52 130 C44 146 70 156 96 150 C110 146 118 138 121 130 Z" fill="#fbfaf7" stroke="#3a2e28" stroke-width="4" stroke-linecap="round"/>
+  <path d="M121 124 C132 120 172 112 190 130 C198 146 172 156 146 150 C132 146 124 138 121 130 Z" fill="#fbfaf7" stroke="#3a2e28" stroke-width="4" stroke-linecap="round"/>
+  <path d="M121 118 v8" stroke="#3a2e28" stroke-width="4" stroke-linecap="round"/>
+  <ellipse cx="62" cy="136" rx="12" ry="7" fill="#f6a9a0" opacity=".75"/>
+  <ellipse cx="180" cy="136" rx="12" ry="7" fill="#f6a9a0" opacity=".75"/>
+  <!-- 受け口（ルーバー＝下あご）と小さな牙 -->
+  <path d="M40 150 q80 22 160 0 v10 q-80 26 -160 0 Z" fill="#efe9e2" stroke="#3a2e28" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M92 156 l6 -16 l6 16 Z" fill="#fff" stroke="#3a2e28" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M138 156 l6 -16 l6 16 Z" fill="#fff" stroke="#3a2e28" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M60 162 q60 14 120 0" fill="none" stroke="#c9bfb5" stroke-width="3" stroke-linecap="round"/>
+  <!-- 運転ランプ -->
+  <circle cx="198" cy="58" r="4.5" fill="#06c755"/>
+  <!-- そよ風 -->
+  <path d="M70 188 q10 8 0 16" fill="none" stroke="#8fb8e8" stroke-width="4" stroke-linecap="round"/>
+  <path d="M120 190 q10 8 0 16" fill="none" stroke="#8fb8e8" stroke-width="4" stroke-linecap="round"/>
+  <path d="M170 188 q10 8 0 16" fill="none" stroke="#8fb8e8" stroke-width="4" stroke-linecap="round"/>
+</svg>
