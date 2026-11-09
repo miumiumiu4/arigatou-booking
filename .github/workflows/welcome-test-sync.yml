@@ -1,0 +1,16 @@
+name: welcome-test が本番と合っているか
+on:
+  pull_request:
+    paths: ['welcome/**', 'welcome-test/**']
+  push:
+    branches: [main]
+    paths: ['welcome/**', 'welcome-test/**']
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: node welcome-test/build.mjs --check
+      - run: node welcome-test/test/receiver.test.mjs
