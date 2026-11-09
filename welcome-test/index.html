@@ -1,0 +1,660 @@
+<!-- このファイルは welcome-test/build.mjs が welcome/index.html から作る。直接直さない。 -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>【テスト】エアコンクリーニングのご予約｜ありがとうエアコンお掃除専門店</title>
+<meta name="description" content="ありがとうエアコンお掃除専門店のご予約ページ。台数とオプションを選ぶと概算が出ます。送信後すぐに確認メールが届きます。">
+<style>
+  :root {
+    --chat-bg: #8fa9d1;
+    --bubble-in: #ffffff;
+    --bubble-out: #8de055;
+    --text: #1f2328;
+    --muted: #5b6470;
+    --accent: #06c755;
+    --accent-dark: #05a647;
+    --panel: #ffffff;
+    --line: #e3e6ea;
+    --warn-bg: #fff4d6;
+    --warn-text: #6b4e00;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", sans-serif;
+    color: var(--text);
+    background: var(--chat-bg);
+    font-size: 17px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+  header {
+    position: sticky; top: 0; z-index: 2;
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px;
+    background: #2b3a55; color: #fff; padding: 10px 16px;
+  }
+  header .name { font-weight: 700; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1 1 auto; }
+  header .reset { white-space: nowrap; flex: 0 0 auto; }
+  /* フォームを開いている間、帯に概算をずっと出す */
+  .hdr-est { order: 3; flex: 1 0 100%; display: flex; align-items: baseline; justify-content: center; gap: 8px; background: #fff; color: #e8590c; border-radius: 14px; padding: 6px 12px; font-weight: 900; font-size: 34px; line-height: 1.2; white-space: nowrap; }
+  .hdr-est small { font-size: 15px; color: #33241c; font-weight: 700; }
+  .hdr-est .tax { font-size: 12px; color: #5b6470; font-weight: 600; }
+  .reset {
+    border: 1px solid rgba(255,255,255,.6); background: transparent; color: #fff;
+    border-radius: 999px; padding: 6px 14px; font-size: 14px; cursor: pointer;
+  }
+  .reset:active { background: rgba(255,255,255,.15); }
+  main { max-width: 560px; margin: 0 auto; padding: 16px 16px 32px; }
+
+  /* 吹き出し */
+  .chat { display: flex; flex-direction: column; gap: 12px; }
+  .row { display: flex; align-items: flex-end; gap: 8px; animation: pop .35s ease-out both; }
+  .row.out { justify-content: flex-end; }
+  .avatar {
+    flex: 0 0 40px; width: 40px; height: 40px; border-radius: 50%;
+    background: #fff; display: grid; place-items: center;
+    font-size: 13px; font-weight: 700; color: var(--accent-dark);
+    box-shadow: 0 1px 2px rgba(0,0,0,.15);
+  }
+  .bubble {
+    position: relative; max-width: 78%;
+    padding: 10px 14px; border-radius: 18px;
+    background: var(--bubble-in); box-shadow: 0 1px 1px rgba(0,0,0,.08);
+    word-break: break-word;
+  }
+  .row.in .bubble { border-top-left-radius: 4px; }
+  .row.out .bubble { background: var(--bubble-out); border-top-right-radius: 4px; }
+  .typing { display: inline-flex; gap: 4px; padding: 4px 2px; }
+  .typing i { width: 7px; height: 7px; border-radius: 50%; background: #9aa3ad; animation: blink 1s infinite; }
+  .typing i:nth-child(2) { animation-delay: .15s; }
+  .typing i:nth-child(3) { animation-delay: .3s; }
+  @keyframes pop { from { opacity: 0; transform: translateY(8px) scale(.96); } to { opacity: 1; transform: none; } }
+  @keyframes blink { 0%, 80%, 100% { opacity: .3; } 40% { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) {
+    .row { animation: none; }
+    .typing i { animation: none; opacity: .6; }
+  }
+
+  /* はい／いいえ */
+  .choices { display: flex; gap: 12px; justify-content: center; margin: 20px 0 4px; }
+  .btn {
+    appearance: none; border: 0; cursor: pointer;
+    min-height: 48px; padding: 10px 22px; border-radius: 999px;
+    font-size: 17px; font-weight: 700;
+  }
+  .btn.primary { background: var(--accent); color: #fff; }
+  .btn.primary:active { background: var(--accent-dark); }
+  .btn.ghost { background: #fff; color: var(--text); }
+  .btn.wide { width: 100%; }
+  .choices .btn.wide { max-width: 360px; }
+  .choices .btn { flex: 1 1 0; max-width: 200px; }
+
+  /* メニュー・フォーム・お待ちください */
+  .panel {
+    background: var(--panel); border-radius: 16px; padding: 16px;
+    margin-top: 20px; box-shadow: 0 1px 3px rgba(0,0,0,.12);
+    animation: pop .35s ease-out both; transform-origin: 50% 0;
+  }
+  .panel h2 { font-size: 18px; margin: 0 0 12px; }
+  .menu { list-style: none; margin: 0; padding: 0; }
+  .menu li {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 12px 0; border-top: 1px solid var(--line);
+  }
+  .menu li:first-child { border-top: 0; }
+  .menu .label { font-weight: 600; }
+  .menu .sub { font-size: 13px; color: var(--muted); }
+  .menu .btn { min-height: 40px; padding: 6px 14px; font-size: 14px; flex: 0 0 auto; }
+  label { display: block; font-weight: 600; margin: 12px 0 4px; }
+  input, select, textarea {
+    width: 100%; font-size: 17px; padding: 10px 12px;
+    border: 1px solid #c5ccd4; border-radius: 10px; background: #fff; color: var(--text);
+  }
+  .hint { font-size: 13px; color: var(--muted); margin: 8px 0 0; }
+  .wait { text-align: center; padding: 40px 16px; }
+  .wait p { font-size: 22px; font-weight: 700; margin: 16px 0 0; }
+  .donemsg { font-size: 15px; text-align: left; margin-top: 12px; }
+  .share { margin-top: 14px; border: 1px solid var(--line); border-radius: 12px; padding: 14px; text-align: left; }
+  .share b { display: block; font-size: 15px; }
+  .share .link { display: flex; gap: 8px; margin-top: 8px; }
+  .share .link input { font-size: 14px; }
+  .share .link button, .share .line { white-space: nowrap; border: 0; border-radius: 10px; padding: 10px 14px; font-weight: 700; cursor: pointer; }
+  .share .link button { background: #e8590c; color: #fff; }
+  .share .line { display: inline-block; margin-top: 8px; background: #06c755; color: #fff; text-decoration: none; }
+  .share p { font-size: 13px; color: var(--muted); margin: 8px 0 0; font-weight: 400; }
+  footer { text-align: center; font-size: 13px; color: #fff; padding: 8px 16px 32px; }
+  footer a { color: #fff; }
+  .spinner {
+    width: 44px; height: 44px; margin: 0 auto; border-radius: 50%;
+    border: 4px solid #d8dee5; border-top-color: var(--accent);
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* キャラクター */
+  .avatar.chara { background: #fff; padding: 0; overflow: hidden; }
+  .avatar.chara img { width: 40px; height: 40px; display: block; }
+  .wait img { width: 140px; height: auto; display: block; margin: 0 auto 8px; animation: bob 1.6s ease-in-out infinite; }
+  @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+  @media (prefers-reduced-motion: reduce) { .wait img { animation: none; } }
+
+  /* 予約フォーム（予約ページと同じ中身） */
+  .bk h3 { font-size: 16px; margin: 4px 0 8px; padding-bottom: 6px; border-bottom: 2px solid #fdeee2; }
+  .bk .row-item { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px dashed var(--line); }
+  .bk .row-item .t b { display: block; font-size: 15px; }
+  .bk .row-item .t span { font-size: 13px; color: var(--muted); }
+  .bk .ctr { display: flex; align-items: center; gap: 8px; }
+  .bk .ctr button { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: #fff; font-size: 18px; font-weight: 700; color: #e8590c; cursor: pointer; }
+  .bk .ctr button:disabled { opacity: .3; cursor: default; }
+  .bk .ctr output { min-width: 28px; text-align: center; font-weight: 800; font-size: 17px; }
+  .bk .est { background: #fdeee2; border-radius: 12px; padding: 12px 16px; margin: 14px 0 4px; display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 6px; }
+  .bk .est .v { font-size: 26px; font-weight: 900; color: #e8590c; }
+  .bk .est .v small { font-size: 12px; font-weight: 600; color: var(--text); }
+  .bk label small { font-weight: 400; color: var(--muted); }
+  .bk .req { background: #e03131; color: #fff; border-radius: 4px; padding: 1px 6px; font-size: 11px; font-weight: 700; }
+  .bk textarea { width: 100%; min-height: 90px; font-size: 16px; padding: 10px 12px; border: 1px solid #c5ccd4; border-radius: 10px; font-family: inherit; }
+  .bk .radios { display: flex; flex-wrap: wrap; gap: 8px 16px; }
+  .bk .radios label, .bk .chks label { display: flex; align-items: center; gap: 6px; margin: 0; font-weight: 600; font-size: 14px; }
+  .bk .radios input, .bk .chks input { width: 18px; height: 18px; padding: 0; accent-color: #e8590c; }
+  .bk .chks { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; }
+  .bk .chks label { padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; }
+  .bk .dateblk { background: #fff7f5; border-radius: 10px; padding: 2px 12px 12px; margin-top: 12px; }
+  .bk .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 520px) { .bk .g2, .bk .chks { grid-template-columns: 1fr; } }
+  .bk .note { font-size: 13px; color: var(--muted); margin: 8px 0 0; }
+  .bk .ng { background: #fbe9e2; color: #b4532a; border-radius: 10px; padding: 10px 12px; margin-top: 12px; }
+  .bk .refnote { background: #fdeee2; border-radius: 10px; padding: 8px 12px; font-size: 14px; margin-top: 8px; }
+  [hidden] { display: none !important; }
+
+  .testband { background: #ffd400; color: #1f2328; font-weight: 700; font-size: 14px; line-height: 1.5; padding: 8px 16px; text-align: center; }
+  .testband small { display: block; font-weight: 400; font-size: 12px; }
+  .testsent { margin-top: 12px; text-align: left; font-size: 12px; }
+  .testsent pre { white-space: pre-wrap; word-break: break-all; background: #f6f8fa; padding: 8px; border-radius: 8px; max-height: 50vh; overflow: auto; }
+</style>
+</head>
+<body>
+  <div class="testband" role="note">テスト用のページです<small>送っても、どこにも保存されません（画面で確かめるだけ）。本番の予約台帳には入りません。確認メールも届きません。</small></div>
+  <header>
+    <span class="name">【テスト】ありがとうエアコン</span>
+    <span class="hdr-est" id="hdrEst" hidden aria-live="polite"><small>概算</small><span>¥<b id="hdrTotal">8,900</b></span><span class="tax">税込</span></span>
+    <button type="button" class="reset" id="reset">選び直し</button>
+  </header>
+
+  <main>
+    <div class="chat" id="chat" aria-live="polite"></div>
+
+    <div class="choices" id="choices" hidden>
+      <button type="button" class="btn primary" id="yes">はい</button>
+      <button type="button" class="btn ghost" id="no">いいえ</button>
+    </div>
+
+    <div class="choices" id="toForm" hidden>
+      <button type="button" class="btn primary wide" id="goForm">ご予約フォームへ進む</button>
+    </div>
+
+    <section class="panel" id="menuPanel" hidden>
+      <h2>メニュー</h2>
+      <ul class="menu" id="menuList"></ul>
+    </section>
+
+    <section class="panel bk" id="formPanel" hidden>
+      <h2>ご予約フォーム</h2>
+      <p class="note" style="margin:0 0 12px">台数とオプションを選ぶと概算が出ます。（テスト版は確認メールが届きません）作業日は担当者よりご連絡のうえ確定します。</p>
+      <form id="form" novalidate>
+        <h3>1. 台数とオプションを選ぶ</h3>
+        <div class="row-item"><div class="t"><b>エアコン台数（壁掛け）</b><span>8,900円/台</span></div>
+          <div class="ctr"><button type="button" data-k="units" data-d="-1" aria-label="エアコン台数（壁掛け）を減らす">−</button><output id="o_units">1</output><button type="button" data-k="units" data-d="1" aria-label="エアコン台数（壁掛け）を増やす">＋</button></div></div>
+        <div class="row-item"><div class="t"><b>うち、お掃除機能付き</b><span>＋6,000円/台</span></div>
+          <div class="ctr"><button type="button" data-k="auto" data-d="-1" aria-label="うち、お掃除機能付きを減らす">−</button><output id="o_auto">0</output><button type="button" data-k="auto" data-d="1" aria-label="うち、お掃除機能付きを増やす">＋</button></div></div>
+        <div class="row-item"><div class="t"><b>天井埋め込み（天カセ・業務用）</b><span>1台目 23,300円・2台目から 22,300円/台｜対応できない地域があります。担当者よりご連絡します</span></div>
+          <div class="ctr"><button type="button" data-k="tenkase" data-d="-1" aria-label="天井埋め込み（天カセ・業務用）を減らす">−</button><output id="o_tenkase">0</output><button type="button" data-k="tenkase" data-d="1" aria-label="天井埋め込み（天カセ・業務用）を増やす">＋</button></div></div>
+        <p style="font-weight:700;margin:14px 0 2px">オプション（台数分お選びください）</p>
+        <div class="row-item"><div class="t"><b>3点セット</b><span>防カビ抗菌コート＋室外機＋ドレンホース｜7,500円/台（別々に頼むより2,000円お得）</span></div>
+          <div class="ctr"><button type="button" data-k="set3" data-d="-1" aria-label="3点セットを減らす">−</button><output id="o_set3">0</output><button type="button" data-k="set3" data-d="1" aria-label="3点セットを増やす">＋</button></div></div>
+        <div class="row-item"><div class="t"><b>防カビ・抗菌コート</b><span>3,000円/台</span></div>
+          <div class="ctr"><button type="button" data-k="coat" data-d="-1" aria-label="防カビ・抗菌コートを減らす">−</button><output id="o_coat">0</output><button type="button" data-k="coat" data-d="1" aria-label="防カビ・抗菌コートを増やす">＋</button></div></div>
+        <div class="row-item"><div class="t"><b>室外機クリーニング</b><span>4,000円/台</span></div>
+          <div class="ctr"><button type="button" data-k="outdoor" data-d="-1" aria-label="室外機クリーニングを減らす">−</button><output id="o_outdoor">0</output><button type="button" data-k="outdoor" data-d="1" aria-label="室外機クリーニングを増やす">＋</button></div></div>
+        <div class="row-item"><div class="t"><b>ドレンホース洗浄</b><span>2,500円/台</span></div>
+          <div class="ctr"><button type="button" data-k="drain" data-d="-1" aria-label="ドレンホース洗浄を減らす">−</button><output id="o_drain">0</output><button type="button" data-k="drain" data-d="1" aria-label="ドレンホース洗浄を増やす">＋</button></div></div>
+        <div class="row-item" style="border-bottom:0"><div class="t"><b>おまとめセット</b><span>室外機＋防カビ・抗菌コート｜5,000円/台</span></div>
+          <div class="ctr"><button type="button" data-k="omatome" data-d="-1" aria-label="おまとめセットを減らす">−</button><output id="o_omatome">0</output><button type="button" data-k="omatome" data-d="1" aria-label="おまとめセットを増やす">＋</button></div></div>
+        <div class="est"><b>概算金額</b><div class="v">¥<span id="e_total">8,900</span><small> 円（税込・駐車場代別）</small></div></div>
+
+        <h3 style="margin-top:20px">2. ご予約情報を入力する</h3>
+        <div class="g2">
+          <div><label for="f_name">お名前 <small>必須</small></label><input type="text" id="f_name" name="name" autocomplete="off"></div>
+          <div><label for="f_phone">電話番号 <small>必須</small></label><input type="tel" id="f_phone" name="phone" autocomplete="off"></div>
+        </div>
+        <label for="f_kana">ふりがな <small>必須</small></label><input type="text" id="f_kana" name="kana" autocomplete="off">
+        <label for="f_email">メールアドレス <small>必須（確認メールの送付先）</small></label>
+        <input type="email" id="f_email" name="email" autocomplete="off">
+        <div class="g2">
+          <div><label for="f_area">エリア（都府県） <small>必須</small></label>
+            <select id="f_area" name="area">
+              <option value="">選択してください</option>
+              <optgroup label="関東"><option>東京</option><option>神奈川</option><option>埼玉</option><option>千葉</option></optgroup>
+              <optgroup label="中部"><option>愛知</option><option>岐阜</option></optgroup>
+              <optgroup label="関西"><option>大阪</option><option>兵庫</option><option>和歌山</option></optgroup>
+              <optgroup label="九州"><option>福岡</option><option>佐賀</option><option>熊本</option></optgroup>
+              <optgroup label="東北"><option>宮城</option></optgroup>
+              <optgroup label="その他"><option>その他（備考にご記入ください）</option></optgroup>
+            </select></div>
+          <div><label for="f_zip">郵便番号</label><input type="text" id="f_zip" name="zip" inputmode="numeric" autocomplete="off"></div>
+        </div>
+        <label for="f_address">ご住所 <small>必須</small></label><input type="text" id="f_address" name="address" autocomplete="off">
+        <label>お住まいのタイプ <small>必須</small></label>
+        <div class="radios" id="housing"><label><input type="radio" name="housing" value="戸建て">戸建て</label><label><input type="radio" name="housing" value="マンション・アパート">マンション・アパート</label><label><input type="radio" name="housing" value="その他（店舗・事務所など）">その他（店舗・事務所など）</label></div>
+        <div class="dateblk">
+          <label for="date1">作業日第一希望 <small class="req">必須</small></label>
+          <input type="date" id="date1" name="date1">
+          <label>作業日第一希望時間 <small class="req">必須</small></label>
+          <div class="radios"><label><input type="radio" name="time1" value="9時〜12時" checked>9時〜12時</label><label><input type="radio" name="time1" value="12時〜15時">12時〜15時</label><label><input type="radio" name="time1" value="15時〜18時">15時〜18時</label><label><input type="radio" name="time1" value="上記以外で相談したい">上記以外で相談したい</label></div>
+        </div>
+        <div class="dateblk">
+          <label for="date2">作業日第二希望 <small class="req">必須</small></label>
+          <input type="date" id="date2" name="date2">
+          <label>作業日第二希望時間 <small class="req">必須</small></label>
+          <div class="radios"><label><input type="radio" name="time2" value="9時〜12時" checked>9時〜12時</label><label><input type="radio" name="time2" value="12時〜15時">12時〜15時</label><label><input type="radio" name="time2" value="15時〜18時">15時〜18時</label><label><input type="radio" name="time2" value="上記以外で相談したい">上記以外で相談したい</label></div>
+        </div>
+        <div class="dateblk">
+          <label for="date3">作業日第三希望 <small class="req">必須</small></label>
+          <input type="date" id="date3" name="date3">
+          <label>作業日第三希望時間 <small class="req">必須</small></label>
+          <div class="radios"><label><input type="radio" name="time3" value="9時〜12時" checked>9時〜12時</label><label><input type="radio" name="time3" value="12時〜15時">12時〜15時</label><label><input type="radio" name="time3" value="15時〜18時">15時〜18時</label><label><input type="radio" name="time3" value="上記以外で相談したい">上記以外で相談したい</label></div>
+        </div>
+        <p class="note">※ご希望日での対応が難しい場合は、1〜2日以内に日程再調整のご連絡をいたします。</p>
+        <label for="f_payment">お支払い方法</label>
+        <select id="f_payment" name="payment">
+          <option value="onsite">作業当日にお支払い（現金）</option>
+          <option value="paypay">作業当日にお支払い（PayPay）</option>
+          <option value="paypal">PayPal請求書（メールで届きます。カード払い可）</option>
+        </select>
+        <label for="f_parking">駐車場 <small>駐車場代は別途実費</small></label>
+        <select id="f_parking" name="parking"><option>敷地内に駐車可</option><option>近隣コインパーキング利用</option><option>相談したい</option></select>
+        <label>ペットの有無 <small>必須</small></label>
+        <div class="radios" id="pet"><label><input type="radio" name="pet" value="なし">なし</label><label><input type="radio" name="pet" value="あり">あり</label></div>
+        <div id="petCountRow" hidden><label for="f_petCount">ペットの数</label><input type="number" id="f_petCount" name="pet_count" min="1" max="20" inputmode="numeric"></div>
+        <label for="f_model">メーカー名と型式番号 <small>任意・わかる範囲で</small></label>
+        <input type="text" id="f_model" name="model" autocomplete="off" placeholder="例：ダイキン AN22XXX">
+        <label>その他のお掃除 <small>任意</small></label>
+        <div class="chks">
+          <label><input type="checkbox" name="extra" value="お風呂換気扇分解（7,000円）" data-price="7000">お風呂換気扇分解（7,000円）</label>
+          <label><input type="checkbox" name="extra" value="レンジフード（15,000円）" data-price="15000">レンジフード（15,000円）</label>
+          <label><input type="checkbox" name="extra" value="キッチンの換気扇（8,000円）" data-price="8000">キッチンの換気扇（8,000円）</label>
+        </div>
+        <p class="note">※選ぶと上の概算金額に入ります。</p>
+        <label><input type="checkbox" id="f_nominate" name="nominate" style="width:18px;height:18px;padding:0;margin-right:6px;vertical-align:middle;accent-color:#e8590c">スタッフの指名を希望する（＋3,000円）</label>
+        <div id="nominateRow" hidden><label for="f_nominateName">ご希望のスタッフ名</label><input type="text" id="f_nominateName" name="nominate_name" autocomplete="off"></div>
+        <label>エアコン以外のお掃除もご相談いただけます <small>任意・料金は担当者からご案内します</small></label>
+        <div class="chks">
+          <label><input type="checkbox" name="consult" value="bath">お風呂・浴室</label>
+          <label><input type="checkbox" name="consult" value="kitchen">キッチン・水回り</label>
+          <label><input type="checkbox" name="consult" value="washer">洗濯機</label>
+          <label><input type="checkbox" name="consult" value="other">その他（備考にご記入ください）</label>
+        </div>
+        <label for="f_note">ご要望・備考</label>
+        <textarea id="f_note" name="note" placeholder="設置場所、メーカー、気になる症状、10年以上の機種かどうか、その他のお掃除のご相談内容 など"></textarea>
+        <label for="f_coupon">クーポンコード <small>任意</small></label>
+        <input id="f_coupon" name="coupon" autocomplete="off">
+        <label for="ref_code">紹介コード <small>任意・ご家族やお知り合いから紹介された方</small></label>
+        <input id="ref_code" name="ref_code" placeholder="例：R0929-311" autocomplete="off">
+        <div class="refnote" id="refnote" hidden>ご紹介ありがとうございます。紹介コードが入っています。</div>
+        <div class="ng" id="formMsg" hidden></div>
+        <div style="margin-top:16px"><button type="submit" class="btn primary wide">この内容で予約する</button></div>
+        <p class="note">送信後、確認メールをお送りします。作業日はご予約から5営業日以内に担当者よりご連絡し確定します。ご希望日での対応が難しい場合は、1〜2日以内に日程再調整のご連絡をいたします。</p>
+      </form>
+    </section>
+
+    <section class="panel wait" id="waitPanel" hidden>
+      <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNDAgMjIwIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9IuOBguOCiuOBjOOBqOOBhuOCqOOCouOCs+ODs+OBruOCreODo+ODqeOCr+OCv+ODvO+8iOODluODq+ODieODg+OCsOmhlOOBruOCqOOCouOCs+ODs++8iSI+CiAgPCEtLSDogLPvvIjjgbrjgZ/jgpPjgajlnoLjgozjgZ/ogLPvvIkgLS0+CiAgPHBhdGggZD0iTTQ0IDUwIEMzMCAzNCAxMCA0MCA4IDYyIEM4IDc2IDIwIDgyIDMwIDc0IEMzNiA2NiA0MiA2MCA1MCA1OCBaIiBmaWxsPSIjZDliNDhmIiBzdHJva2U9IiMzYTJlMjgiIHN0cm9rZS13aWR0aD0iNSIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgogIDxwYXRoIGQ9Ik0xOTYgNTAgQzIxMCAzNCAyMzAgNDAgMjMyIDYyIEMyMzIgNzYgMjIwIDgyIDIxMCA3NCBDMjA0IDY2IDE5OCA2MCAxOTAgNTggWiIgZmlsbD0iI2Q5YjQ4ZiIgc3Ryb2tlPSIjM2EyZTI4IiBzdHJva2Utd2lkdGg9IjUiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KICA8IS0tIOacrOS9k++8iOWjgeaOm+OBkeOCqOOCouOCs+ODs++8iSAtLT4KICA8cmVjdCB4PSIyMiIgeT0iNDAiIHdpZHRoPSIxOTYiIGhlaWdodD0iMTMyIiByeD0iMzQiIGZpbGw9IiNmYmZhZjciIHN0cm9rZT0iIzNhMmUyOCIgc3Ryb2tlLXdpZHRoPSI1Ii8+CiAgPCEtLSDjgYrjgafjgZPjga7jgZfjgo8gLS0+CiAgPHBhdGggZD0iTTkyIDYwIHEyOCAtMTAgNTYgMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYzliZmI1IiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxwYXRoIGQ9Ik0xMDAgNzIgcTIwIC03IDQwIDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2M5YmZiNSIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8IS0tIOebruOBruOBvuOCj+OCiuOBruOBtuOBoe+8iOeJh+ebruOBoOOBke+8iSAtLT4KICA8cGF0aCBkPSJNMTQ2IDc2IEMxNzAgNjYgMTk2IDgwIDE5MiAxMDQgQzE4NiAxMjAgMTYwIDExOCAxNDggMTA2IEMxNDAgOTYgMTM4IDg0IDE0NiA3NiBaIiBmaWxsPSIjZTljZGIwIi8+CiAgPCEtLSDnm67vvIjjgaHjgofjgaPjgajnnKDjgZ/jgZ3jgYbjg7vlt6blj7PjgaHjgYzjgYTvvIkgLS0+CiAgPGNpcmNsZSBjeD0iODAiIGN5PSI5NiIgcj0iMTUiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzNhMmUyOCIgc3Ryb2tlLXdpZHRoPSI0Ii8+CiAgPGNpcmNsZSBjeD0iODMiIGN5PSI5OSIgcj0iOCIgZmlsbD0iIzNhMmUyOCIvPgogIDxjaXJjbGUgY3g9Ijg2IiBjeT0iOTYiIHI9IjIuNiIgZmlsbD0iI2ZmZiIvPgogIDxwYXRoIGQ9Ik02MyA5MiBxMTcgLTEyIDM0IDAiIGZpbGw9IiNmYmZhZjciIHN0cm9rZT0iIzNhMmUyOCIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8Y2lyY2xlIGN4PSIxNjIiIGN5PSI5NCIgcj0iMTciIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzNhMmUyOCIgc3Ryb2tlLXdpZHRoPSI0Ii8+CiAgPGNpcmNsZSBjeD0iMTU4IiBjeT0iOTgiIHI9IjkiIGZpbGw9IiMzYTJlMjgiLz4KICA8Y2lyY2xlIGN4PSIxNjEiIGN5PSI5NCIgcj0iMyIgZmlsbD0iI2ZmZiIvPgogIDxwYXRoIGQ9Ik0xNDQgODkgcTE4IC0xMSAzNiAwIiBmaWxsPSIjZTljZGIwIiBzdHJva2U9IiMzYTJlMjgiIHN0cm9rZS13aWR0aD0iNCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPCEtLSDpvLvvvIjjgbrjgaHjgoPjgaPjgajvvIkgLS0+CiAgPHBhdGggZD0iTTEwNiAxMDQgcTE1IC04IDMwIDAgcTIgMTIgLTE1IDE2IHEtMTcgLTQgLTE1IC0xNiBaIiBmaWxsPSIjM2EyZTI4Ii8+CiAgPGVsbGlwc2UgY3g9IjExNCIgY3k9IjEwNiIgcng9IjQiIHJ5PSIyLjQiIGZpbGw9IiM4YzdiNzAiLz4KICA8IS0tIOOBu+OBo+OBuu+8iOOBn+OCi+OCk++8iSAtLT4KICA8cGF0aCBkPSJNMTIxIDEyNCBDMTEwIDEyMCA3MCAxMTIgNTIgMTMwIEM0NCAxNDYgNzAgMTU2IDk2IDE1MCBDMTEwIDE0NiAxMTggMTM4IDEyMSAxMzAgWiIgZmlsbD0iI2ZiZmFmNyIgc3Ryb2tlPSIjM2EyZTI4IiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxwYXRoIGQ9Ik0xMjEgMTI0IEMxMzIgMTIwIDE3MiAxMTIgMTkwIDEzMCBDMTk4IDE0NiAxNzIgMTU2IDE0NiAxNTAgQzEzMiAxNDYgMTI0IDEzOCAxMjEgMTMwIFoiIGZpbGw9IiNmYmZhZjciIHN0cm9rZT0iIzNhMmUyOCIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8cGF0aCBkPSJNMTIxIDExOCB2OCIgc3Ryb2tlPSIjM2EyZTI4IiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxlbGxpcHNlIGN4PSI2MiIgY3k9IjEzNiIgcng9IjEyIiByeT0iNyIgZmlsbD0iI2Y2YTlhMCIgb3BhY2l0eT0iLjc1Ii8+CiAgPGVsbGlwc2UgY3g9IjE4MCIgY3k9IjEzNiIgcng9IjEyIiByeT0iNyIgZmlsbD0iI2Y2YTlhMCIgb3BhY2l0eT0iLjc1Ii8+CiAgPCEtLSDlj5fjgZHlj6PvvIjjg6vjg7zjg5Djg7zvvJ3kuIvjgYLjgZTvvInjgajlsI/jgZXjgarniZkgLS0+CiAgPHBhdGggZD0iTTQwIDE1MCBxODAgMjIgMTYwIDAgdjEwIHEtODAgMjYgLTE2MCAwIFoiIGZpbGw9IiNlZmU5ZTIiIHN0cm9rZT0iIzNhMmUyOCIgc3Ryb2tlLXdpZHRoPSI1IiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CiAgPHBhdGggZD0iTTkyIDE1NiBsNiAtMTYgbDYgMTYgWiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjM2EyZTI4IiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KICA8cGF0aCBkPSJNMTM4IDE1NiBsNiAtMTYgbDYgMTYgWiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjM2EyZTI4IiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KICA8cGF0aCBkPSJNNjAgMTYyIHE2MCAxNCAxMjAgMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYzliZmI1IiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDwhLS0g6YGL6Lui44Op44Oz44OXIC0tPgogIDxjaXJjbGUgY3g9IjE5OCIgY3k9IjU4IiByPSI0LjUiIGZpbGw9IiMwNmM3NTUiLz4KICA8IS0tIOOBneOCiOmiqCAtLT4KICA8cGF0aCBkPSJNNzAgMTg4IHExMCA4IDAgMTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzhmYjhlOCIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8cGF0aCBkPSJNMTIwIDE5MCBxMTAgOCAwIDE2IiBmaWxsPSJub25lIiBzdHJva2U9IiM4ZmI4ZTgiIHN0cm9rZS13aWR0aD0iNCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPHBhdGggZD0iTTE3MCAxODggcTEwIDggMCAxNiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOGZiOGU4IiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K" alt="">
+      <p id="doneTitle">ご予約を受け付けました。</p>
+      <div id="doneMsg" class="donemsg"></div>
+    </section>
+  </main>
+  <footer>ありがとうエアコンお掃除専門店 ☎ <a href="tel:08041772272">080-4177-2272</a><br>© エイムポイント合同会社</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  // ---------- 設定（サーバーから。ファイルを直接開いたときは URL から） ----------
+  var CONFIG = {
+    // 予約の受付（いまの予約ページ arigatou-booking/index.html と同じ送り先）
+    GAS_URL: "",
+    // 計測（【テスト】汎用イベント計測ログ の受け口。1イベント＝1行）
+    EVLOG_URL: "https://script.google.com/macros/s/AKfycbyJF8nIuQ5vjsrftOO5L82dJ-RkIOf3nhbEb-iW7WjMNmL0KnBee3pHk3aIBdSKQqm1/exec"
+  };
+  window.EVLOG_ENDPOINT = CONFIG.EVLOG_URL;
+  var cfg = {};
+  {
+    var q = new URLSearchParams(location.search);
+    var keys = ['src', 'from', 'ref', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+    var parts = [];
+    keys.forEach(function (k) { if (q.get(k)) parts.push(k + '=' + q.get(k)); });
+    cfg = { test: q.get('test') || 'hp-chat-test', page: 'welcome-test', source: parts.join('&'), ref: q.get('ref') || '' };
+  }
+
+  var MSG = {
+    // 紹介リンク（?ref=）や ?from=referral で来た方にはご紹介向け、それ以外は初めての方向け
+    first: (cfg.ref || /referral|repeat/.test(cfg.source)) ? 'またお会いできて嬉しいです。ありがとうございます。ご注文でよろしいですか？' : 'ご覧いただきありがとうございます。エアコンクリーニングのご予約でよろしいですか？',
+    yes: 'お手数をお掛けしますが、ご予約フォームへのご入力をお願いできますでしょうか？',
+    no: 'ごゆっくりメニューをご覧ください。'
+  };
+  var CHARA = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNDAgMjIwIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9IuOBguOCiuOBjOOBqOOBhuOCqOOCouOCs+ODs+OBruOCreODo+ODqeOCr+OCv+ODvO+8iOODluODq+ODieODg+OCsOmhlOOBruOCqOOCouOCs+ODs++8iSI+CiAgPCEtLSDogLPvvIjjgbrjgZ/jgpPjgajlnoLjgozjgZ/ogLPvvIkgLS0+CiAgPHBhdGggZD0iTTQ0IDUwIEMzMCAzNCAxMCA0MCA4IDYyIEM4IDc2IDIwIDgyIDMwIDc0IEMzNiA2NiA0MiA2MCA1MCA1OCBaIiBmaWxsPSIjZDliNDhmIiBzdHJva2U9IiMzYTJlMjgiIHN0cm9rZS13aWR0aD0iNSIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgogIDxwYXRoIGQ9Ik0xOTYgNTAgQzIxMCAzNCAyMzAgNDAgMjMyIDYyIEMyMzIgNzYgMjIwIDgyIDIxMCA3NCBDMjA0IDY2IDE5OCA2MCAxOTAgNTggWiIgZmlsbD0iI2Q5YjQ4ZiIgc3Ryb2tlPSIjM2EyZTI4IiBzdHJva2Utd2lkdGg9IjUiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KICA8IS0tIOacrOS9k++8iOWjgeaOm+OBkeOCqOOCouOCs+ODs++8iSAtLT4KICA8cmVjdCB4PSIyMiIgeT0iNDAiIHdpZHRoPSIxOTYiIGhlaWdodD0iMTMyIiByeD0iMzQiIGZpbGw9IiNmYmZhZjciIHN0cm9rZT0iIzNhMmUyOCIgc3Ryb2tlLXdpZHRoPSI1Ii8+CiAgPCEtLSDjgYrjgafjgZPjga7jgZfjgo8gLS0+CiAgPHBhdGggZD0iTTkyIDYwIHEyOCAtMTAgNTYgMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYzliZmI1IiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxwYXRoIGQ9Ik0xMDAgNzIgcTIwIC03IDQwIDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2M5YmZiNSIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8IS0tIOebruOBruOBvuOCj+OCiuOBruOBtuOBoe+8iOeJh+ebruOBoOOBke+8iSAtLT4KICA8cGF0aCBkPSJNMTQ2IDc2IEMxNzAgNjYgMTk2IDgwIDE5MiAxMDQgQzE4NiAxMjAgMTYwIDExOCAxNDggMTA2IEMxNDAgOTYgMTM4IDg0IDE0NiA3NiBaIiBmaWxsPSIjZTljZGIwIi8+CiAgPCEtLSDnm67vvIjjgaHjgofjgaPjgajnnKDjgZ/jgZ3jgYbjg7vlt6blj7PjgaHjgYzjgYTvvIkgLS0+CiAgPGNpcmNsZSBjeD0iODAiIGN5PSI5NiIgcj0iMTUiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzNhMmUyOCIgc3Ryb2tlLXdpZHRoPSI0Ii8+CiAgPGNpcmNsZSBjeD0iODMiIGN5PSI5OSIgcj0iOCIgZmlsbD0iIzNhMmUyOCIvPgogIDxjaXJjbGUgY3g9Ijg2IiBjeT0iOTYiIHI9IjIuNiIgZmlsbD0iI2ZmZiIvPgogIDxwYXRoIGQ9Ik02MyA5MiBxMTcgLTEyIDM0IDAiIGZpbGw9IiNmYmZhZjciIHN0cm9rZT0iIzNhMmUyOCIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8Y2lyY2xlIGN4PSIxNjIiIGN5PSI5NCIgcj0iMTciIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzNhMmUyOCIgc3Ryb2tlLXdpZHRoPSI0Ii8+CiAgPGNpcmNsZSBjeD0iMTU4IiBjeT0iOTgiIHI9IjkiIGZpbGw9IiMzYTJlMjgiLz4KICA8Y2lyY2xlIGN4PSIxNjEiIGN5PSI5NCIgcj0iMyIgZmlsbD0iI2ZmZiIvPgogIDxwYXRoIGQ9Ik0xNDQgODkgcTE4IC0xMSAzNiAwIiBmaWxsPSIjZTljZGIwIiBzdHJva2U9IiMzYTJlMjgiIHN0cm9rZS13aWR0aD0iNCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPCEtLSDpvLvvvIjjgbrjgaHjgoPjgaPjgajvvIkgLS0+CiAgPHBhdGggZD0iTTEwNiAxMDQgcTE1IC04IDMwIDAgcTIgMTIgLTE1IDE2IHEtMTcgLTQgLTE1IC0xNiBaIiBmaWxsPSIjM2EyZTI4Ii8+CiAgPGVsbGlwc2UgY3g9IjExNCIgY3k9IjEwNiIgcng9IjQiIHJ5PSIyLjQiIGZpbGw9IiM4YzdiNzAiLz4KICA8IS0tIOOBu+OBo+OBuu+8iOOBn+OCi+OCk++8iSAtLT4KICA8cGF0aCBkPSJNMTIxIDEyNCBDMTEwIDEyMCA3MCAxMTIgNTIgMTMwIEM0NCAxNDYgNzAgMTU2IDk2IDE1MCBDMTEwIDE0NiAxMTggMTM4IDEyMSAxMzAgWiIgZmlsbD0iI2ZiZmFmNyIgc3Ryb2tlPSIjM2EyZTI4IiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxwYXRoIGQ9Ik0xMjEgMTI0IEMxMzIgMTIwIDE3MiAxMTIgMTkwIDEzMCBDMTk4IDE0NiAxNzIgMTU2IDE0NiAxNTAgQzEzMiAxNDYgMTI0IDEzOCAxMjEgMTMwIFoiIGZpbGw9IiNmYmZhZjciIHN0cm9rZT0iIzNhMmUyOCIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8cGF0aCBkPSJNMTIxIDExOCB2OCIgc3Ryb2tlPSIjM2EyZTI4IiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxlbGxpcHNlIGN4PSI2MiIgY3k9IjEzNiIgcng9IjEyIiByeT0iNyIgZmlsbD0iI2Y2YTlhMCIgb3BhY2l0eT0iLjc1Ii8+CiAgPGVsbGlwc2UgY3g9IjE4MCIgY3k9IjEzNiIgcng9IjEyIiByeT0iNyIgZmlsbD0iI2Y2YTlhMCIgb3BhY2l0eT0iLjc1Ii8+CiAgPCEtLSDlj5fjgZHlj6PvvIjjg6vjg7zjg5Djg7zvvJ3kuIvjgYLjgZTvvInjgajlsI/jgZXjgarniZkgLS0+CiAgPHBhdGggZD0iTTQwIDE1MCBxODAgMjIgMTYwIDAgdjEwIHEtODAgMjYgLTE2MCAwIFoiIGZpbGw9IiNlZmU5ZTIiIHN0cm9rZT0iIzNhMmUyOCIgc3Ryb2tlLXdpZHRoPSI1IiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CiAgPHBhdGggZD0iTTkyIDE1NiBsNiAtMTYgbDYgMTYgWiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjM2EyZTI4IiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KICA8cGF0aCBkPSJNMTM4IDE1NiBsNiAtMTYgbDYgMTYgWiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjM2EyZTI4IiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KICA8cGF0aCBkPSJNNjAgMTYyIHE2MCAxNCAxMjAgMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYzliZmI1IiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDwhLS0g6YGL6Lui44Op44Oz44OXIC0tPgogIDxjaXJjbGUgY3g9IjE5OCIgY3k9IjU4IiByPSI0LjUiIGZpbGw9IiMwNmM3NTUiLz4KICA8IS0tIOOBneOCiOmiqCAtLT4KICA8cGF0aCBkPSJNNzAgMTg4IHExMCA4IDAgMTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzhmYjhlOCIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8cGF0aCBkPSJNMTIwIDE5MCBxMTAgOCAwIDE2IiBmaWxsPSJub25lIiBzdHJva2U9IiM4ZmI4ZTgiIHN0cm9rZS13aWR0aD0iNCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPHBhdGggZD0iTTE3MCAxODggcTEwIDggMCAxNiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOGZiOGU4IiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K';
+  var MENU = [
+    { code: 'aircon_wall', label: 'エアコンクリーニング', sub: '壁掛け' },
+    { code: 'aircon_auto', label: 'エアコンクリーニング', sub: 'お掃除機能付き' }
+    // 洗濯機・浴室・キッチンは 11/8 オーナーの判断で今はメニューから外す（フォームの「ほかのお掃除の相談」は予約ページと同じく残す）
+  ];
+
+  // ---------- 訪問者ID（この端末で同じ人を追うためのランダムな番号。個人情報ではない） ----------
+  function randomId() {
+    if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+    var a = new Uint8Array(16);
+    (window.crypto || {}).getRandomValues ? crypto.getRandomValues(a) : a.forEach(function (_, i) { a[i] = Math.random() * 256; });
+    return Array.prototype.map.call(a, function (b) { return ('0' + b.toString(16)).slice(-2); }).join('');
+  }
+  var visitor = '';
+  try { visitor = localStorage.getItem('evlog_vid') || ''; } catch (e) {}
+  if (!visitor) {
+    visitor = 'v-' + randomId();
+    try { localStorage.setItem('evlog_vid', visitor); } catch (e) {}
+  }
+
+  // ---------- 記録 ----------
+  window.__events = [];
+  function track(event, note) {
+    var ev = { test: cfg.test, page: cfg.page, event: event, visitor: visitor, source: cfg.source || '', note: note || '' };
+    window.__events.push(ev);
+    try {
+      if (window.google && google.script && google.script.run) {
+        google.script.run.withFailureHandler(function (err) { console.warn('記録に失敗', err); }).logEvent(ev);
+      } else if (window.EVLOG_ENDPOINT) {
+        fetch(window.EVLOG_ENDPOINT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(ev), keepalive: true });
+      } else {
+        console.log('[計測]', ev);
+      }
+    } catch (e) { console.warn('記録に失敗', e); }
+  }
+
+
+  // ---------- テスト版だけ：送り先 ----------
+  // TEST_GAS_URL が空なら、どこにも送らずに受付番号 T…-TEST を返す（画面だけで確かめる）
+  var testSeq = 0;
+  function testSend(data) {
+    window.__lastTestBooking = data;
+    if (CONFIG.GAS_URL) return fetch(CONFIG.GAS_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(data) });
+    var d = new Date(), id = 'T' + ('0' + (d.getMonth() + 1)).slice(-2) + ('0' + d.getDate()).slice(-2) + '-TEST' + (++testSeq);
+    return new Promise(function (ok) { setTimeout(function () { ok({ text: function () { return Promise.resolve(JSON.stringify({ ok: true, id: id })); } }); }, 400); });
+  }
+  function testShowSent() {
+    var box = document.createElement('details');
+    box.className = 'testsent';
+    box.innerHTML = '<summary>【テスト】送った中身を見る</summary><pre></pre>';
+    box.querySelector('pre').textContent = JSON.stringify(window.__lastTestBooking, null, 2);
+    $('doneMsg').appendChild(box);
+  }
+
+  // ---------- 画面 ----------
+  var $ = function (id) { return document.getElementById(id); };
+  var chat = $('chat');
+  var timers = [];
+  function later(fn, ms) { timers.push(setTimeout(fn, ms)); }
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function addRow(side, html) {
+    var row = document.createElement('div');
+    row.className = 'row ' + side;
+    row.innerHTML = (side === 'in' ? '<div class="avatar chara" aria-hidden="true"><img src="' + CHARA + '" alt=""></div>' : '') + '<div class="bubble">' + html + '</div>';
+    chat.appendChild(row);
+    row.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' });
+    return row;
+  }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  // 「入力中…」を見せてから言葉を出す（LINE の雰囲気）
+  function say(text, then) {
+    var row = addRow('in', '<span class="typing" aria-label="入力中"><i></i><i></i><i></i></span>');
+    later(function () {
+      row.querySelector('.bubble').textContent = text;
+      if (then) then();
+    }, reduce ? 0 : 900);
+  }
+  function hideAll() { ['choices', 'toForm', 'menuPanel', 'formPanel', 'waitPanel', 'hdrEst'].forEach(function (id) { $(id).hidden = true; }); }
+
+  function start() {
+    timers.forEach(clearTimeout); timers = [];
+    chat.innerHTML = '';
+    hideAll();
+    resetForm();
+    later(function () { say(MSG.first, function () { $('choices').hidden = false; }); }, reduce ? 0 : 300);
+  }
+
+  function showForm(note, menuCode) {
+    hideAll();
+    if (menuCode) presetFromMenu(menuCode);
+    $('formPanel').hidden = false;
+    $('hdrEst').hidden = false;
+    // 上の帯（名前と概算）に隠れないよう、帯の高さぶん下げて見出しから見せる
+    var hdr = document.querySelector('header');
+    // 出てくるときの動き（拡大）の途中の位置で計算しないよう、動きの影響を受けない位置から求める
+    var y = 0, el = $('formPanel');
+    while (el) { y += el.offsetTop; el = el.offsetParent; }
+    window.scrollTo({ top: Math.max(0, y - (hdr ? hdr.offsetHeight : 0) - 8), behavior: reduce ? 'auto' : 'smooth' });
+    track('フォーム遷移', note);
+  }
+
+  // メニューとフォームの選択肢を作る
+  MENU.forEach(function (m) {
+    var name = m.label + (m.sub ? '（' + m.sub + '）' : '');
+    var li = document.createElement('li');
+    li.innerHTML = '<div><div class="label">' + esc(m.label) + '</div>' + (m.sub ? '<div class="sub">' + esc(m.sub) + '</div>' : '') + '</div>';
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'btn primary'; b.textContent = 'これを予約';
+    b.addEventListener('click', function () { showForm('メニューから:' + m.code, m.code); });
+    li.appendChild(b);
+    $('menuList').appendChild(li);
+  });
+
+  $('yes').addEventListener('click', function () {
+    $('choices').hidden = true;
+    track('はい');
+    addRow('out', 'はい');
+    say(MSG.yes, function () { $('toForm').hidden = false; });
+  });
+  $('no').addEventListener('click', function () {
+    $('choices').hidden = true;
+    track('いいえ');
+    addRow('out', 'いいえ');
+    say(MSG.no, function () { $('menuPanel').hidden = false; });
+  });
+  $('goForm').addEventListener('click', function () { showForm('はいから'); });
+  // ---------- 予約フォーム（予約ページと同じ計算・同じ必須チェック。送信はしない） ----------
+  var NORMAL = { unit: 8900, auto: 6000, set3: 7500, coat: 3000, outdoor: 4000, drain: 2500, tenkase: 23300, omatome: 5000 };
+  // 天カセは壁掛けと別に数える。おまとめは壁掛け＋天カセの台数まで
+  var ZERO = { units: 1, auto: 0, set3: 0, coat: 0, outdoor: 0, drain: 0, tenkase: 0, omatome: 0 };
+  var st = Object.assign({}, ZERO);
+  var yen = function (n) { return n.toLocaleString('ja-JP'); };
+  function total() {
+    var t = st.units * NORMAL.unit;
+    Object.keys(NORMAL).forEach(function (k) { if (k !== 'unit') t += (st[k] || 0) * NORMAL[k]; });
+    t -= tenkaseDiscount();
+    return t + extrasTotal();
+  }
+  // 天カセは2台目から1台につき1,000円引き（11/9 オーナー）
+  function tenkaseDiscount() { return Math.max(0, st.tenkase - 1) * 1000; }
+  function extrasTotal() {
+    var t = 0;
+    document.querySelectorAll('input[name=extra]:checked').forEach(function (c) { t += +c.dataset.price || 0; });
+    if ($('f_nominate').checked) t += 3000;
+    return t;
+  }
+  function maxOf(k) {
+    if (k === 'units' || k === 'tenkase') return 20;
+    if (k === 'omatome') return st.units + st.tenkase;
+    return st.units;
+  }
+  function renderEst() {
+    Object.keys(st).forEach(function (k) { $('o_' + k).textContent = st[k]; });
+    $('e_total').textContent = yen(total());
+    $('hdrTotal').textContent = yen(total());
+    document.querySelectorAll('.bk .ctr button').forEach(function (b) {
+      var k = b.dataset.k, d = +b.dataset.d;
+      if (d < 0) b.disabled = st[k] <= 0;
+      else b.disabled = st[k] >= maxOf(k);
+    });
+  }
+  document.querySelectorAll('.bk .ctr button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var k = b.dataset.k, d = +b.dataset.d;
+      st[k] = Math.max(0, st[k] + d);
+      Object.keys(st).forEach(function (x) { if (st[x] > maxOf(x)) st[x] = maxOf(x); });
+      renderEst();
+    });
+  });
+  document.querySelectorAll('input[name=extra]').forEach(function (c) { c.addEventListener('change', renderEst); });
+  function resetForm() {
+    $('form').reset();
+    st = Object.assign({}, ZERO);
+    $('formMsg').hidden = true;
+    $('petCountRow').hidden = true; $('nominateRow').hidden = true;
+    var sb = $('form').querySelector('button[type=submit]'); sb.disabled = false; sb.textContent = 'この内容で予約する';
+    applyRef();
+    renderEst();
+  }
+  // メニューから来たときは、そのメニューに合わせて最初の状態を入れておく
+  function presetFromMenu(code) {
+    if (code === 'aircon_auto') st.auto = 1;
+    var consult = { washer_vertical: 'washer', washer_drum: 'washer', bath: 'bath', kitchen: 'kitchen' }[code];
+    if (consult) document.querySelector('input[name=consult][value=' + consult + ']').checked = true;
+    renderEst();
+  }
+  document.querySelectorAll('input[name=pet]').forEach(function (r) { r.addEventListener('change', function () { $('petCountRow').hidden = !(r.checked && r.value === 'あり'); }); });
+  $('f_nominate').addEventListener('change', function () { $('nominateRow').hidden = !$('f_nominate').checked; renderEst(); });
+  // 作業希望日は明後日以降（日本時間）
+  (function () {
+    var now = new Date(Date.now() + 9 * 3600 * 1000);
+    now.setUTCDate(now.getUTCDate() + 2);
+    var min = now.toISOString().slice(0, 10);
+    ['date1', 'date2', 'date3'].forEach(function (n) { $(n).min = min; });
+  })();
+  // 紹介リンク（?ref=紹介コード）で来た方は、紹介コードを自動で入れる
+  var refFromUrl = String(cfg.ref || '').trim().slice(0, 30);
+  function applyRef() {
+    if (refFromUrl) { $('ref_code').value = refFromUrl; $('refnote').hidden = false; }
+  }
+  function formError() {
+    var LABELS = { f_name: 'お名前', f_kana: 'ふりがな', f_phone: '電話番号', f_email: 'メールアドレス', f_area: 'エリア', f_address: 'ご住所', date1: '作業日第一希望', date2: '作業日第二希望', date3: '作業日第三希望' };
+    for (var id in LABELS) {
+      var el = $(id), v = (el.value || '').trim();
+      if (!v) return { el: el, text: LABELS[id] + 'を入力してください。' };
+      if (id === 'f_email' && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)) return { el: el, text: 'メールアドレスの形式をご確認ください。' };
+      if (el.type === 'date' && el.min && v < el.min) return { el: el, text: LABELS[id] + 'は ' + el.min.replace(/-/g, '/') + ' 以降の日付を選んでください。' };
+    }
+    if (!document.querySelector('input[name=housing]:checked')) return { el: $('housing'), text: 'お住まいのタイプを選んでください。' };
+    if (st.units + st.tenkase < 1) return { el: $('o_units'), text: 'エアコンの台数を選んでください。' };
+    if (!document.querySelector('input[name=pet]:checked')) return { el: $('pet'), text: 'ペットの有無を選んでください。' };
+    return null;
+  }
+
+  $('form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var bad = formError();
+    if (bad) {
+      $('formMsg').textContent = bad.text; $('formMsg').hidden = false;
+      bad.el.scrollIntoView({ block: 'center', behavior: reduce ? 'auto' : 'smooth' });
+      return;
+    }
+    // いまの予約ページと同じ形で、予約の受付へ送る
+    var btn = $('form').querySelector('button[type=submit]');
+    var fd = new FormData($('form'));
+    var data = {};
+    fd.forEach(function (v, k) { if (k !== 'consult' && k !== 'extra') data[k] = v; });
+    var consults = fd.getAll('consult').map(function (v) { return { bath: 'お風呂・浴室クリーニング', kitchen: 'キッチン・水回りクリーニング', washer: '洗濯機クリーニング', other: 'その他のお掃除' }[v] || v; });
+    var extras = fd.getAll('extra');
+    var note = data.note || '';
+    var add = [];
+    add.push('【ふりがな】' + (data.kana || ''));
+    add.push('【ペット】' + (data.pet || '') + (data.pet === 'あり' && data.pet_count ? ' ' + data.pet_count + '匹' : ''));
+    if (data.model) add.push('【メーカー・型番】' + data.model);
+    if (st.tenkase) add.push('【天カセ】' + st.tenkase + '台（対応地域の確認が要ります）');
+    if (extras.length) add.push('【その他のお掃除】' + extras.join('、'));
+    if ($('f_nominate').checked) add.push('【スタッフ指名（＋3,000円）】' + (data.nominate_name || '名前未記入'));
+    if (data.coupon) add.push('【クーポンコード】' + data.coupon);
+    if (consults.length) add.push('【その他のご相談】' + consults.join('、'));
+    note = add.join('\n') + (note ? '\n' + note : '');
+    ['1', '2', '3'].forEach(function (n) { if (data['date' + n]) data['date' + n] = data['date' + n] + ' ' + (data['time' + n] || ''); });
+    data.time = '各希望日に記載';
+    var ref = (data.ref_code || '').trim();
+    if (ref) { data.ref = ref; data.ref_code = ref; note = '【紹介コード】' + ref + '\n' + note; }
+    note = '【希望日】第1 ' + data.date1 + ' ／ 第2 ' + data.date2 + ' ／ 第3 ' + data.date3 + '\n' + note;
+    var lines = [{ name: 'エアコンクリーニング ' + st.units + '台', amount: st.units * NORMAL.unit, items: [{ name: 'エアコンクリーニング', qty: st.units, unit: NORMAL.unit }] }];
+    var NAMES = { auto: 'お掃除機能付き加算', set3: '3点セット（防カビ抗菌コート・室外機・ドレンホース）', coat: '防カビ・抗菌コート', outdoor: '室外機クリーニング', drain: 'ドレンホース洗浄', tenkase: '天井埋め込み（天カセ）', omatome: 'おまとめセット（室外機＋防カビ・抗菌コート）' };
+    if (!st.units) lines = [];
+    Object.keys(NAMES).forEach(function (k) { if (st[k]) lines.push({ name: NAMES[k] + ' ' + st[k] + '台', amount: st[k] * NORMAL[k], items: [{ name: NAMES[k], qty: st[k], unit: NORMAL[k] }] }); });
+    document.querySelectorAll('input[name=extra]:checked').forEach(function (c) { var nm = c.value.replace(/（.*）$/, ''); lines.push({ name: nm, amount: +c.dataset.price, items: [{ name: nm, qty: 1, unit: +c.dataset.price }] }); });
+    if (tenkaseDiscount()) lines.push({ name: '天カセ2台目からの割引', amount: -tenkaseDiscount(), items: [{ name: '天カセ2台目からの割引', qty: st.tenkase - 1, unit: -1000 }] });
+    if ($('f_nominate').checked) lines.push({ name: 'スタッフ指名', amount: 3000, items: [{ name: 'スタッフ指名', qty: 1, unit: 3000 }] });
+    Object.assign(data, {
+      note: note,
+      units: st.units, tenkase_units: st.tenkase, omatome_units: st.omatome, auto_units: st.auto, set3: st.set3 ? 1 : 0, set3_units: st.set3,
+      coat_units: st.coat, outdoor_units: st.outdoor, drain_units: st.drain,
+      breakdown: '【通常予約】' + lines.map(function (l) { return l.name + '=' + yen(l.amount) + '円'; }).join(' / '),
+      items: [].concat.apply([], lines.map(function (l) { return l.items; })),
+      total: total(), normal_total: total(), submitted_at: new Date().toISOString(), page: location.href,
+      src: 'welcome-test' + (cfg.source ? '?' + cfg.source : '')
+    });
+    btn.disabled = true; btn.textContent = '送信中…'; $('formMsg').hidden = true;
+    testSend(data)
+      .then(function (r) { return r.text(); })
+      .then(function (txt) {
+        // iPhone 等で返事が読めないときは受付済みとして扱う（いまの予約ページと同じ）
+        var j; try { j = JSON.parse(txt); } catch (_) { j = { ok: true, id: '（確認メールをご覧ください）' }; }
+        if (!j.ok) throw new Error(j.error || '送信失敗');
+        track('申込完了', '台数:' + st.units + (st.tenkase ? ' 天カセ:' + st.tenkase : '') + ' 概算:' + total() + (ref ? ' 紹介コードあり' : ''));
+        hideAll();
+        $('doneMsg').innerHTML = '受付番号 <b>' + esc(j.id) + '</b><br>（テスト版なので確認メールは届きません）作業日は担当者よりご連絡のうえ確定します。';
+        if (/^[RT]\d{4}-(TEST)?\d+$/.test(String(j.id))) showShare(String(j.id));
+        testShowSent();
+        $('waitPanel').hidden = false;
+        window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+      })
+      .catch(function (err) {
+        $('formMsg').textContent = '送信できませんでした。☎080-4177-2272 までご連絡ください。（' + err.message + '）';
+        $('formMsg').hidden = false;
+        btn.disabled = false; btn.textContent = 'この内容で予約する';
+      });
+  });
+  // 予約した方に、ご自身の紹介リンクを表示（紹介コード＝受付番号。いまの予約ページと同じ）
+  function showShare(id) {
+    var url = location.origin + location.pathname + '?ref=' + encodeURIComponent(id);
+    var text = '【紹介リンク・PR】エアコンクリーニングはここに頼みました。予約はこちらから → ' + url;
+    var box = document.createElement('div');
+    box.className = 'share';
+    box.innerHTML = '<b>ご家族やお知り合いに紹介しませんか</b>'
+      + '<p>このリンクから予約した方の作業とお支払いが終わると、あなたに紹介料として通常価格の20%をお支払いします。</p>'
+      + '<div class="link"><input readonly value="' + esc(url) + '" aria-label="あなたの紹介リンク"><button type="button">コピー</button></div>'
+      + '<a class="line" href="https://line.me/R/share?text=' + encodeURIComponent(text) + '" target="_blank" rel="noopener">LINEで送る</a>'
+      + '<p>あなたの紹介コード：<b style="display:inline">' + esc(id) + '</b></p>'
+      + '<p>SNSに載せるときは、紹介料が出ることがわかるよう「PR」と書いてください。</p>';
+    box.querySelector('button').addEventListener('click', function (e) {
+      try { navigator.clipboard.writeText(url).then(function () { e.target.textContent = 'コピーしました'; }); }
+      catch (_) { box.querySelector('input').select(); e.target.textContent = '選択しました'; }
+    });
+    $('doneMsg').appendChild(box);
+  }
+  $('reset').addEventListener('click', function () {
+    track('選び直し');
+    window.scrollTo({ top: 0 });
+    start();
+  });
+
+  track('到着');
+  start();
+})();
+</script>
+</body>
+</html>
