@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="version" content="2026-10-28a">
+<title>実践編 第2回 事前アンケート</title>
+<style>
+:root{--bg:#fff8f2;--card:#fff;--ink:#33241c;--muted:#8a7a6e;--line:#f0e2d6;--or:#e8590c;--soft:#fdeee2;--ok:#1f8a70;--ng:#b4532a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;line-height:1.8;font-size:17px}
+.wrap{max-width:640px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:1.45rem;line-height:1.4;margin:.3em 0}
+.lead{color:var(--muted);margin:.2em 0 1em}
+.q{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:14px 0}
+.q>b{display:block;margin-bottom:8px}
+.req{font-size:.72rem;background:var(--or);color:#fff;border-radius:99px;padding:1px 8px;margin-left:6px;vertical-align:middle}
+.opt{font-size:.72rem;color:var(--muted);margin-left:6px}
+.scale{display:flex;gap:6px;flex-wrap:wrap}
+.scale label,.chips label{flex:1 1 0;min-width:52px;text-align:center;border:1.5px solid var(--line);border-radius:10px;padding:8px 4px;cursor:pointer;background:var(--bg);font-size:.95rem}
+.scale.wide label{min-width:38px;padding:8px 2px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips label{flex:0 1 auto;padding:8px 12px}
+.chips.col{flex-direction:column}.chips.col label{text-align:left}
+.hint{font-size:.8rem;color:var(--muted);margin:-4px 0 8px}
+.sk{border-top:1px dashed var(--line);padding:8px 0}.sk:first-child{border-top:0}.sk p{margin:0 0 6px;font-size:.95rem}.sk .chips{flex-wrap:nowrap}.sk .chips label{flex:1 1 0;min-width:0;padding:8px 4px;font-size:.82rem;text-align:center;line-height:1.4}
+.lv{display:inline-block;background:var(--or);color:#fff;border-radius:12px;padding:6px 18px;font-size:1.3rem;font-weight:700;margin:8px 0}
+input[type=radio],input[type=checkbox]{position:absolute;opacity:0;pointer-events:none}
+label:has(input:checked){border-color:var(--or);background:var(--soft);font-weight:700;color:var(--or)}
+.ends{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);margin-top:4px}
+input[type=text],input[type=email],input[type=date],textarea{font:inherit;width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+textarea{min-height:90px}
+button{font:inherit;font-weight:700;width:100%;padding:14px;border:0;border-radius:12px;background:var(--or);color:#fff;font-size:1.1rem;cursor:pointer;margin-top:8px}
+button:disabled{opacity:.6}
+.msg{margin-top:12px;font-weight:700;min-height:1.4em}
+.msg.ok{color:var(--ok)}.msg.ng{color:var(--ng)}
+.thanks{display:none;text-align:center;padding:40px 10px}
+.thanks h2{font-size:1.5rem}
+footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:30px}
+</style></head>
+<body><div class="wrap">
+<div id="formArea">
+<h1>🍳 MUSE実践編 第2回 事前アンケート</h1>
+<p class="lead">第2回の前に、3分だけ教えてください。答えてくれた内容から、あなた専用の「活用プロンプト」を作り、当日の最初にお渡しします。<br>※ 当日のページに載るのは「呼び名・お仕事・使いたい場面・楽になること」だけです。お店の名前・人の名前・電話番号は書かないでください。</p>
+<form id="f" novalidate>
+<input type="hidden" name="date" id="date"><input type="hidden" name="kai" id="kai">
+
+<div class="q"><b>お名前<span class="req">必須</span></b>
+<input type="text" name="name" maxlength="40" placeholder="例：三浦 太郎">
+<div class="ends"><span>当日のページには載りません</span></div></div>
+
+<div class="q"><b>メールアドレス<span class="req">必須</span></b>
+<input type="email" name="email" maxlength="100" placeholder="例：taro@example.com" autocomplete="email" inputmode="email">
+<div class="ends"><span>終了アンケートと同じアドレスにしてください。当日のページには載りません</span></div></div>
+
+<div class="q"><b>ページで使う呼び名（本名以外）<span class="req">必須</span></b>
+<input type="text" name="nick" maxlength="20" placeholder="例：エアコン屋のさと">
+<div class="ends"><span>当日はこの呼び名で、自分のプロンプトを探します</span></div></div>
+
+<div class="q"><b>どんなお仕事をしていますか（ひとこと）<span class="req">必須</span></b>
+<input type="text" name="job" maxlength="60" placeholder="例：エアコンクリーニング（個人のお客様が中心）"></div>
+
+<div class="q"><b>当日使う端末は？<span class="req">必須</span></b>
+<div class="chips" data-name="device" data-opts="パソコン（Mac）|パソコン（Windows）|スマホだけ"></div></div>
+
+<div class="q"><b>第1回で作ったものは？<span class="req">必須</span></b>
+<div class="hint">複数OK</div>
+<div class="chips col" data-name="made1" data-multi="1" data-opts="数字ダッシュボード|請求書の自動化|予約・返信の型|毎朝の段取り|第1回は出ていない"></div></div>
+
+<div class="q"><b>この1週間で、それを仕事で使った回数は？<span class="req">必須</span></b>
+<div class="chips" data-name="used_n" data-opts="0回|1回|2〜3回|4回以上|第1回は出ていない"></div></div>
+
+<div class="q"><b>使った場面は？（使えなかった人は、その理由）<span class="opt">任意</span></b>
+<textarea name="used_scene" maxlength="500" placeholder="例：月曜の朝に売上を見た／どこに保存したか分からなくなった"></textarea></div>
+
+<div class="q"><b>第2回で作りたいシステムを1つ選んでください<span class="req">必須</span></b>
+<div class="chips col" data-name="want_sys" data-opts="あ 型メーカー（任せたい仕事を話すと「頼み方1枚」ができる）|い 発信の1週間まとめ書き（投稿7本の下書き）|う 時間の棚卸し（任せられる仕事トップ3が見つかる）|え 数字の次の一手（数字から来週やること3つ）"></div></div>
+
+<div class="q"><b>それを、仕事のどの場面で使いたいですか？<span class="req">必須</span></b>
+<textarea name="use_scene" maxlength="300" placeholder="例：毎週月曜の朝、Instagram の投稿を考えるとき"></textarea></div>
+
+<div class="q"><b>使えるようになったら、何がどう楽になりますか？<span class="req">必須</span></b>
+<textarea name="easier" maxlength="300" placeholder="例：投稿を考える1時間が10分になる"></textarea></div>
+
+<div class="q"><b>当日、作ったものをみんなに見せてもいいですか？<span class="req">必須</span></b>
+<div class="chips" data-name="show_ok" data-opts="はい|呼び名だけならはい|いいえ"></div></div>
+
+<button id="btn">送信する</button>
+<div class="msg" id="msg"></div>
+</form>
+</div>
+<div class="thanks" id="thanks"><h2>🎉 ありがとうございました！</h2><p>回答を受け取りました。当日の最初に、あなた専用の活用プロンプトをお渡しします。<br>呼び名「<b id="nickShow"></b>」で探してください。</p></div>
+<footer>MUSE実践編</footer>
+</div>
+<script src="attr.js"></script>
+<script>
+const $ = s => document.querySelector(s);
+document.querySelectorAll("[data-name]").forEach(box => {
+  const name = box.dataset.name, multi = box.dataset.multi;
+  box.innerHTML = box.dataset.opts.split("|").map(o => `<label><input type="${multi ? "checkbox" : "radio"}" name="${name}" value="${o}"> ${o}</label>`).join("");
+});
+const p = new URLSearchParams(location.search);
+$("#date").value = p.get("date") || "2026-11-19";
+$("#kai").value = p.get("kai") || "実践編第2回"; // 回の名前は固定（第1回で集計が割れたため）
+async function gasUrl() {
+  try { const r = await fetch("config.json?t=" + Date.now(), { cache: "no-store" }); const u = (await r.json()).GAS_URL; return u && u.indexOf("script.google.com") >= 0 ? u : ""; } catch (_) { return ""; }
+}
+// 人名・電話・メールらしきものが自由記述に入っていたら、送る前に知らせる（ページに載るため）
+const RISKY = /\d{2,4}-\d{2,4}-\d{3,4}|[^\s@]+@[^\s@]+\.[^\s@]+/;
+$("#f").addEventListener("submit", async e => {
+  e.preventDefault();
+  const fd = new FormData(e.target), msg = $("#msg"), v = k => String(fd.get(k) || "").trim();
+  const need = { name: "お名前", email: "メールアドレス", nick: "呼び名", job: "お仕事", device: "端末", used_n: "使った回数", want_sys: "作りたいシステム", use_scene: "使いたい場面", easier: "楽になること", show_ok: "見せてよいか" };
+  const miss = Object.keys(need).filter(k => !v(k)).map(k => need[k]);
+  if (!fd.getAll("made1").length) miss.splice(5, 0, "第1回で作ったもの");
+  if (miss.length) { msg.className = "msg ng"; msg.textContent = "まだ選ばれていない項目があります：" + miss.join("、"); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v("email"))) { msg.className = "msg ng"; msg.textContent = "メールアドレスの形が正しくないようです"; return; }
+  const pub = ["nick", "job", "use_scene", "easier"].filter(k => RISKY.test(v(k)));
+  if (pub.length && !$("#f").dataset.warned) { $("#f").dataset.warned = 1; msg.className = "msg ng"; msg.textContent = "ページに載る欄に、電話番号やメールアドレスらしきものがあります。消してよければ直して、そのままでよければもう一度「送信する」を押してください"; return; }
+  const data = { type: "katsuyo", date: v("date"), kai: v("kai"), name: v("name"), email: v("email"), nick: v("nick"), job: v("job"), device: v("device"),
+    made1: fd.getAll("made1").join("、"), used_n: v("used_n"), used_scene: v("used_scene"), want_sys: v("want_sys"), use_scene: v("use_scene"), easier: v("easier"), show_ok: v("show_ok"),
+    submitted_at: new Date().toISOString(), id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), ua: navigator.userAgent.slice(0, 120) };
+  if (window.museAttr) Object.assign(data, museAttr());
+  const btn = $("#btn"); btn.disabled = true; btn.textContent = "送信中…";
+  try {
+    const url = await gasUrl(); if (!url) throw new Error("受付の準備中です");
+    const r = await fetch(url, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(data) });
+    const j = JSON.parse(await r.text()); if (!j.ok) throw new Error(j.error || "送信失敗");
+    $("#nickShow").textContent = data.nick; $("#formArea").style.display = "none"; $("#thanks").style.display = "block"; scrollTo(0, 0);
+  } catch (e2) { btn.disabled = false; btn.textContent = "送信する"; msg.className = "msg ng"; msg.textContent = "送れませんでした。少し待ってもう一度押してください（" + (e2.message || e2) + "）"; }
+});
+</script>
+</body></html>

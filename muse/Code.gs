@@ -6,7 +6,9 @@
 // 合言葉（READ_KEY）と個人リンクの鍵は「スクリプト プロパティ」に入る。このファイル（公開リポジトリ）には書かない。
 
 const SITE = "https://miumiumiu4.github.io/arigatou-booking/muse/";
-const SHEETS = { survey: "回答", pre: "参加前", apply: "申込" };
+const SHEETS = { survey: "回答", pre: "参加前", apply: "申込", katsuyo: "事前活用" };
+// 2026-11-10 オーナー決定（arigatou #43 1B）：実践編第2回の事前アンケート（活用設計専用）。
+// 11/2 に廃止した参加前アンケート（診断）とは別物：参加者IDの発行・診断メール・物差しはしない。シート「事前活用」に入れるだけ
 const SHEET = SHEETS.survey;
 const MASTER = "参加者マスタ";
 const MASTER_HEAD = ["参加者ID", "お名前", "メールアドレス", "参加経路", "初回回答日時", "参加した回", "最終回答日時"];
@@ -34,12 +36,15 @@ const COLS = [
 ["src","参加経路"],["industry","業種"],["referrer","紹介者"],
 ["utm_source","流入元(utm_source)"],["utm_medium","媒体(utm_medium)"],["utm_campaign","キャンペーン(utm_campaign)"],["utm_content","広告(utm_content)"],["utm_term","キーワード(utm_term)"],
 ["ref","参照元"],["click_id","広告クリックID"],["landing","最初に開いたページ"],["first_seen","最初に来た日時"],["dur","回答にかかった秒数"],
+["nick","呼び名"],["job","仕事(ひとこと)"],["device","端末(自己申告)"],["made1","第1回で作ったもの"],["used_n","1週間の使用回数"],["used_scene","使った場面/理由"],
+["want_sys","作りたいシステム"],["use_scene","使いたい場面"],["easier","楽になること"],["show_ok","見せてよいか"],
 ["id","回答ID"],["ua","端末"],["report_sent","診断メール送信日時"],["prompt_sent","プロンプト送信日時"],["kata","問いかけの型"],["prompt_text","送ったプロンプト"]
 ];
 // シートを新しく作るときの見出し（足りない列は回答が来たときに右端へ自動で足される）
 const HEAD = {
   "回答": COLS.filter(c => ["gh","gg","want","next_ai","src","industry","referrer"].indexOf(c[0]) < 0).map(c => c[1]),
   "参加前": ["at","date","kai","pid","name","email","stage_text","stage_n","stage","sk1","sk2","sk3","sk4","sk5","sk6","skill_score","gh","gg","want","trouble_cat","trouble","next_ai","src","utm_source","utm_medium","utm_campaign","utm_content","utm_term","ref","click_id","landing","first_seen","dur","id","ua","report_sent","prompt_sent","kata","prompt_text"].map(k => labelOfKey_(k)),
+  "事前活用": ["at","date","kai","name","email","nick","job","device","made1","used_n","used_scene","want_sys","use_scene","easier","show_ok","id","ua"].map(k => labelOfKey_(k)),
   "申込": ["at","pid","name","email","industry","next_ai","gh","gg","referrer","src","utm_source","utm_medium","utm_campaign","utm_content","utm_term","id","report_sent"].map(k => labelOfKey_(k))
 };
 // 翌朝メールに入れる次回予告（書き換えは再デプロイ不要＝スクリプト保存だけで反映）
@@ -132,7 +137,8 @@ function doPost(e) {
     if (type === "apply") { d.src = "広告"; if (!d.utm_source) d.utm_source = "utage"; if (!d.id) d.id = "apply-" + normEmail_(d.email); }
     if (type === "pre" && !d.src) d.src = "直接";
     const label = type === "apply" ? "申込" : (d.kai || "") + (type === "pre" ? "参加前" : "終了");
-    d.pid = participant_(d, label);
+    const katsuyo = type === "katsuyo"; // 事前活用：参加者IDもメールも出さない
+    if (!katsuyo) d.pid = participant_(d, label);
     const name = SHEETS[type], sh = sheet_(name);
     let head = headers_(sh);
     Object.keys(d).filter(k => ["type", "pkey"].indexOf(k) < 0).forEach(k => {
@@ -145,6 +151,7 @@ function doPost(e) {
     sh.appendRow(head.map(l => { const v = d[keyOfLabel_(l)]; return v === undefined ? "" : v; }));
     const row = sh.getLastRow();
     lock.releaseLock();
+    if (katsuyo) return json_({ ok: true });
     // 回答直後のメール（超知能活用力診断の結果。申込はIDと参加前アンケートの案内）
     try {
       if (MailApp.getRemainingDailyQuota() <= MAIL_RESERVE) setCell_(name, row, "report_sent", "上限で未送信");
