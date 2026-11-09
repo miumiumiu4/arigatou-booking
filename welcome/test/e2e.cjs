@@ -117,12 +117,21 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   // 解決しない → 人へ
   await tc.getByRole('button', { name: 'いいえ' }).click();
   await tc.getByText('人とお話しする').waitFor();
-  // 未確定の問（3点セット）は答えを出さずに人へ
+  // 3点セット：答えのあとに「追加したい」ボタン。台数を書くと受付番号つきの文になる（予約は書き換えない）
   await tc.getByRole('button', { name: 'ほかの質問' }).click();
   await tc.getByRole('button', { name: 'ほかの質問も見る' }).click();
   await tc.getByRole('button', { name: '3点セットは何が入っていますか？' }).click();
+  await tc.getByRole('button', { name: '3点セットを追加したい' }).click();
+  await tc.locator('.tc-info input').fill('２');
+  await tc.getByRole('button', { name: '決める' }).click();
+  await waitText(/受付番号 R1109-999 の3点セットの追加：2台/);
+  assert.match(await tc.innerText(), /防カビ抗菌コート・室外機クリーニング・ドレンホース洗浄の3つ/);
+  // 未確定の問（トイレ無料）は答えを出さずに人へ
+  await tc.getByRole('button', { name: 'ほかの質問' }).click();
+  await tc.getByRole('button', { name: 'ほかの質問も見る' }).click();
+  await tc.getByRole('button', { name: 'トイレ掃除が無料と聞きましたが本当ですか？' }).click();
   await tc.getByText('人とお話しする').waitFor();
-  assert.doesNotMatch(await tc.innerText(), /防カビ抗菌コート・室外機クリーニング・ドレンホース洗浄の3つ|別々だと/);
+  assert.doesNotMatch(await tc.innerText(), /トイレ掃除とお風呂の排水溝の掃除が無料/);
   // 事務マニュアルから足した答え（片づけ）は、人へ回さずに答える
   await tc.getByRole('button', { name: 'ほかの質問' }).click();
   await tc.locator('.tc-ask input').waitFor();
@@ -164,7 +173,7 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   assert.ok(logged.every(e => e.page === 'welcome'));
   const tev = th.map(e => e.event + (e.note ? ':' + e.note : ''));
   assert.deepEqual(tev.slice(0, 5), ['キャラ表示', 'キャラ選択:buruyan', '質問:ボタン:B03', '解決:はい:B03', '質問:入力:B04:○○ ペットがいます']);
-  for (const want of ['質問:ボタン:C01', '解決:いいえ:C01', '人へ:いいえ:C01', '質問:ボタン:C07', '人へ:未確定:C07', '質問:入力:なし:おすすめの晩ごはんは', '人へ:2回わからない', 'おしまい:buruyan', '星:4:buruyan'])
+  for (const want of ['質問:ボタン:C01', '解決:いいえ:C01', '人へ:いいえ:C01', '質問:ボタン:C07', '追加したい:3点セット', '質問:ボタン:F02', '人へ:未確定:F02', '質問:入力:なし:おすすめの晩ごはんは', '人へ:2回わからない', 'おしまい:buruyan', '星:4:buruyan'])
     assert.ok(tev.includes(want), want + ' が記録に無い: ' + tev.join(' / '));
   // 個人情報が記録・チャットに出ない
   const all = JSON.stringify(logged);

@@ -187,6 +187,30 @@
       }), 'その場合は、コインパーキングの実費を別にいただきます。'];
       return null;
     },
+    C08: function (m) { // クーポン・紹介コード：入れたコードを返し、受付番号を取っておくよう伝える（11/10 三浦さん）
+      var codes = [m.coupon && 'クーポンコード「' + m.coupon + '」', m.refCode && '紹介コード「' + m.refCode + '」'].filter(Boolean).join('と');
+      return [codes ? V({
+        buruyan: 'さっきの予約に、' + codes + 'が入ってたで。お店で確認して反映するからな。', buruko: 'さきほどのご予約に、' + codes + 'が入っていました。お店で確認して反映しますね。',
+        burusama: 'さっきの予約に、' + codes + 'が入ってたわ。お店で確認して反映するわね。', buruseijin: '先ほどの予約に、' + codes + 'を確認しました。お店で照合して反映します。'
+      }) : '予約フォームに入れていただいたクーポンコード・紹介コードは、お店で確認して反映します。', V({
+        buruyan: 'それとな、受付番号がそのまま紹介コードになって、20%引きになるキャンペーンをやる時があるねん。受付番号 ' + S.id + ' は忘れずに取っといてな。捨てたら損するで！',
+        buruko: 'それと、受付番号がそのまま紹介コードになって、20%引きになるキャンペーンをする時があるんです。受付番号 ' + S.id + ' は、忘れずに取っておいてくださいね！',
+        burusama: 'それとね、受付番号がそのまま紹介コードになって、20%引きになるキャンペーンをやる時があるの。受付番号 ' + S.id + ' は取っておきなさい。損するわよ。',
+        buruseijin: '追加情報。受付番号が紹介コードとなり、20%引きになるキャンペーンが実施される時があります。受付番号 ' + S.id + ' の保管を強く推奨します。'
+      })];
+    },
+    C07: function (m) { // 3点セット：予約に入っていればそれを返す
+      if (!m.set3) return null;
+      var left = Math.max(0, (m.wall || 0) - m.set3);
+      return [V({
+        buruyan: '今回の予約に、3点セットがもう' + m.set3 + '台分入ってるで。ええ選択や。', buruko: '今回のご予約に、3点セットが' + m.set3 + '台分入っています。いい選択です！',
+        burusama: '今回の予約には、3点セットがもう' + m.set3 + '台分入ってるわよ。見る目あるわね。', buruseijin: '記録によると、3点セットは' + m.set3 + '台分、選択済みであります。'
+      }), '3点セットは、防カビ抗菌コート・室外機クリーニング・ドレンホース洗浄の3つで1台7,500円です（別々だと9,500円）。'
+      ].concat(left ? [V({
+        buruyan: 'ほかの' + left + '台にも付けたかったら、下のボタンからどうぞ。', buruko: 'ほかの' + left + '台にも付けたい時は、下のボタンからどうぞ。',
+        burusama: 'ほかの' + left + '台にも付けたいなら、下のボタンからね。', buruseijin: '残り' + left + '台への追加は、下のボタンから申請できます。'
+      })] : []);
+    },
     B06: function (m) { // 型番：書いてあればそれを返す。無ければ、このあと記入欄を出す
       return [m.model ? V({
         buruyan: '型番は「' + m.model + '」って書いてくれてたな。ありがとうな。', buruko: '型番は「' + m.model + '」と書いていただいてますね。助かります！',
@@ -264,6 +288,8 @@
   var INFO = {
     receipt: { label: '領収書の宛名', key: 'receiptName', ph: '例：株式会社〇〇　／　〇〇 様', max: 40,
       hintHas: '宛名を変える時だけ書いてください。', hintNone: '領収書の宛名を書き忘れた方は、こちらに書いてください。' },
+    set3: { label: '3点セットの追加', key: 'set3More', ph: '何台分？（例：2）', max: 2, num: true, unit: '台',
+      hintHas: '', hintNone: '追加したい台数を書いてください。追加できるかは、その日の担当者の前後の作業量によるので、担当者から確認のご連絡をします。' },
     model: { label: 'メーカー・型番', key: 'model', ph: '例：ダイキン AN22XXX', max: 60,
       hintHas: '違っていた時や、ほかの台の分があれば書いてください。', hintNone: 'もし分かれば、こちらに書いてください。本体の横や下のシールに書いてあります。' }
   };
@@ -273,14 +299,15 @@
   }
   function infoForm(kind) {
     var o = S.opts, k = INFO[kind], has = !!(o.mine && o.mine[k.key]);
-    controls('<form class="tc-ask tc-info"><input maxlength="' + k.max + '" placeholder="' + esc(k.ph) + '" aria-label="' + esc(k.label) + '"><button class="btn primary">決める</button></form>'
-      + '<p class="tc-hint">' + esc(has ? k.hintHas : k.hintNone) + '</p>'
+    controls('<form class="tc-ask tc-info"><input' + (k.num ? ' inputmode="numeric"' : '') + ' maxlength="' + k.max + '" placeholder="' + esc(k.ph) + '" aria-label="' + esc(k.label) + '"><button class="btn primary">決める</button></form>'
+      + '<p class="tc-hint">' + esc(has && k.hintHas ? k.hintHas : k.hintNone) + '</p>'
       + '<div class="tc-foot"><button type="button" class="tc-link" data-menu="1">ほかの質問</button><button type="button" class="tc-link" data-bye="1">おしまい</button></div>');
     on('[data-menu]', function () { S.gen++; controls(''); say([ch().more], menu); });
     on('[data-bye]', bye);
     S.ctl.querySelector('form').addEventListener('submit', function (e) {
       e.preventDefault();
-      var val = S.ctl.querySelector('form input').value.trim().slice(0, k.max);
+      var val = S.ctl.querySelector('form input').value.normalize('NFKC').trim().slice(0, k.max);
+      if (k.num) { val = String(parseInt(val, 10) || ''); if (!val || +val < 1) return; val += k.unit; }
       if (!val) return;
       var subject = '受付番号 ' + S.id + ' の' + k.label;
       var msg = subject + '：' + val;
@@ -318,6 +345,20 @@
   function after(it) {
     if (it.id === 'C05') { S.last = it.id; return infoForm('receipt'); }
     if (it.id === 'B06') { S.last = it.id; return infoForm('model'); }
+    if (it.id === 'C07') { // 興味を持ってくれた人には「追加したい」ボタン（11/10 三浦さん）
+      var m = S.opts.mine || {};
+      if ((m.wall || 0) > (m.set3 || 0)) {
+        S.last = it.id;
+        controls('<button type="button" class="btn primary wide" data-add="1">3点セットを追加したい</button>'
+          + '<div class="tc-foot"><button type="button" class="tc-link" data-menu="1">ほかの質問</button><button type="button" class="tc-link" data-bye="1">おしまい</button></div>');
+        on('[data-add]', function () { S.opts.track('追加したい', '3点セット'); row('out', '3点セットを追加したい'); controls(''); say([V({
+          buruyan: 'ええやん！何台分にする？', buruko: 'うれしいです！何台分にしますか？', burusama: 'いい判断よ。何台分にする？', buruseijin: '追加申請を受信。台数を入力してください。'
+        })], function () { infoForm('set3'); }); });
+        on('[data-menu]', function () { S.gen++; controls(''); say([ch().more], menu); });
+        on('[data-bye]', bye);
+        return;
+      }
+    }
     if (it.human && !S.mine) return contact(); // 人に回す形の問で、この予約から言えることも無いときだけ連絡先を出す
     S.last = it.id;
     say([ch().check], function () {

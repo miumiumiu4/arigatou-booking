@@ -192,7 +192,7 @@
   /* 「ほかの質問」は押しやすい大きさに（11/10 三浦さん） */
   .tc-link[data-menu], .tc-link[data-more] { flex: 1; background: #fff; color: var(--text); text-decoration: none; font-weight: 700; font-size: 16px; padding: 14px 16px; border-radius: 999px; box-shadow: 0 1px 3px rgba(0,0,0,.15); }
   .tc-link[data-more] { display: block; width: 100%; margin-top: 8px; }
-  .tc-foot { align-items: center; }
+  .tc-foot { align-items: center; margin-top: 12px; }
   .tc-log .bubble { white-space: pre-line; }
   .tc-hint { color: #fff; font-size: 13px; margin: 6px 2px 0; }
   .tc-copy { display: block; margin: 6px auto 0; }
@@ -724,7 +724,7 @@
     var mine = {
       wall: st.units, auto: st.auto, tenkase: st.tenkase, outdoorUnits: (st.set3 || 0) + (st.outdoor || 0) + (st.omatome || 0),
       payment: data.payment || '', parking: data.parking || '', pet: data.pet || '', petCount: data.pet === 'あり' ? (Number(data.pet_count) || 0) : 0,
-      date1: d1, time1: data.time1 || '', receiptName: data.receipt_name || '', model: data.model || ''
+      date1: d1, time1: data.time1 || '', receiptName: data.receipt_name || '', model: data.model || '', set3: st.set3, coupon: data.coupon || '', refCode: (data.ref_code || '').trim()
     };
     // 「予約の中身」で読み上げる一覧（お客様ご本人の画面にだけ出す。送らない）
     var PAYL = { onsite: '作業当日に現金', paypay: '作業当日に PayPay', paypal: 'PayPal の請求書' };
