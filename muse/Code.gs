@@ -56,6 +56,8 @@ const MAIL_FROM_NAME = "超知能MUSE無料セミナー";
 // false の間は、メールに参加前アンケート・個人ページ（超知能活用力診断）へのリンクを出さない（ページとコードは残す）
 const PRE_FLOW = false;
 const BRAND = "超知能活用力診断";
+// 2026-11-10 オーナー決定（4A）：終了アンケートの診断メールに、自分の伸びのページ（my.html）へのリンクを戻す。参加前アンケートの案内は戻さない
+const MY_LINK = true;
 const MAIL_RESERVE = 5; // 1日のメール上限（MailApp）のうち、手動の連絡用に残しておく通数
 
 function labelOfKey_(k) { const c = COLS.find(c => c[0] === k); return c ? c[1] : k; }
@@ -253,13 +255,14 @@ function sendReport_(type, d) {
     html += '<p>お楽しみ様です！' + (type === "pre" ? "参加前アンケート" : "セミナーの終了アンケート") + 'にお答えいただき、ありがとうございます。<br>あなたの' + BRAND + 'の結果をお届けします。</p>'
       + (first ? '<p style="font-size:1.2em"><b>あなたの参加者番号は ' + pid + ' です。</b><br>今後のアンケートも、このメールアドレスで答えてください。記録がつながります。</p>' : '<p>参加者番号：<b>' + pid + '</b></p>')
       + (type === "pre" ? needSetup_(d) : "")
+      + (hist.length > 1 && n > (+hist[hist.length - 2].stage_n || 0) ? '<p style="font-size:1.5em;color:#1f8a70;margin:.4em 0"><b>前回から +' + (n - (+hist[hist.length - 2].stage_n || 0)) + ' ステップ 🎉</b></p>' : '')
       + H("いまの位置：ステップ " + n + " / 10")
       + '<p>' + dg.lines.map(esc_).join("<br>") + '</p>'
       + H("物差し6項目") + '<table style="border-collapse:collapse;font-size:14px">'
       + SKILLS.map(([k, t]) => { const prev = hist.length > 1 ? hist[hist.length - 2] : null, a = +now[k] || 0, b = prev ? +prev[k] || 0 : null; return '<tr><td style="padding:2px 10px 2px 0">' + t + '</td><td style="padding:2px 6px">' + "●".repeat(a) + "○".repeat(2 - a) + '</td><td style="color:#888">' + SK_LABEL[a] + (b !== null && a > b ? ' <b style="color:#1f8a70">↑</b>' : '') + '</td></tr>'; }).join("")
       + '</table>'
       + (hist.length > 1 ? H("これまでの歩み") + '<table style="border-collapse:collapse;font-size:14px">' + hist.map(h => '<tr><td style="padding:2px 10px 2px 0;white-space:nowrap">' + esc_(recLabel_(h)) + '</td><td>ステップ ' + (+h.stage_n) + '・物差し ' + (+h.skill_score || 0) + '/12</td></tr>').join("") + '</table>' : '')
-      + (PRE_FLOW ? H(BRAND + "（あなた専用ページ）") + '<p>回ごとの伸びをグラフで見られます（あなた専用のリンクです。ほかの人には教えないでください）。</p>' + btn(myUrl_(pid), BRAND + "を開く") : "");
+      + ((PRE_FLOW || MY_LINK) ? H(BRAND + "（あなた専用ページ）") + '<p>回ごとの伸びをグラフで見られます（あなた専用のリンクです。ほかの人には教えないでください）。</p>' + btn(myUrl_(pid), BRAND + "を開く") : "");
     if (type === "pre") {
       const prep = prepDay_(d.date);
       if (prep && ymd_(new Date()) < prep) html += '<p>' + jpDate_(prep) + 'の朝6時に、あなたの困り事に合わせた「当日がスムーズになる準備プロンプト」をお送りします。</p>';
@@ -402,7 +405,7 @@ function myData_(pid, k) {
     ok: true, id: pid, name: m[1], records: hist.map(pick), comment: dg.lines, stages: STAGES, skills: SKILLS,
     prompt: lp ? { at: Utilities.formatDate(lp.prompt_sent, "Asia/Tokyo", "M月d日"), kata: lp.kata, text: lp.prompt_text, strengthen: STRENGTHEN } : null,
     schedule: SCHEDULE.map(s => ({ kai: s[0], date: s[1], label: jpDate_(s[1]) + " 20:00〜" })),
-    next: ns ? { kai: ns.kai, date: ns.date, label: jpDate_(ns.date) + " 20:00〜（Zoom）", pre: preUrl_(ns.kai, ns.date, pid) } : null
+    next: ns ? { kai: ns.kai, date: ns.date, label: jpDate_(ns.date) + " 20:00〜（Zoom）", pre: PRE_FLOW ? preUrl_(ns.kai, ns.date, pid) : "" } : null
   };
 }
 

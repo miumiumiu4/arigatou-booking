@@ -48,6 +48,7 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:30px}
   <div class="card">
     <div><span class="pid" id="pid"></span> <b id="name"></b></div>
     <div class="hero" style="margin-top:8px"><span class="muted">いまの位置</span><span class="big" id="stageNow"></span><span class="of">/ 10 ステップ</span></div>
+    <div id="delta" style="display:none;font-size:1.4rem;font-weight:700;color:var(--ok);margin:4px 0"></div>
     <div class="muted" id="stageText"></div>
   </div>
   <div class="card"><h2>ステップの推移</h2>
@@ -84,6 +85,8 @@ function render(j) {
   $("#name").textContent = j.name ? j.name + " 様" : "";
   const R = j.records, last = R[R.length - 1];
   $("#stageNow").textContent = last ? last.stage_n : "–";
+  { const pv = R.length > 1 ? R[R.length - 2] : null, d = pv && last ? last.stage_n - pv.stage_n : 0;
+    if (pv && d >= 0) { const el = $("#delta"); el.style.display = "block"; el.textContent = d > 0 ? "前回から +" + d + " ステップ 🎉" : "前回と同じ位置。じっくり固める時期です"; } }
   $("#stageText").textContent = last ? (last.stage_n ? "できたこと：" + j.stages[last.stage_n] : "ここがスタート地点です") : "まだ記録がありません";
   $("#comment").innerHTML = j.comment.map(t => "<p>" + esc(t) + "</p>").join("");
   chart(R);
@@ -100,6 +103,7 @@ function render(j) {
   if (j.next) {
     $("#nextCard").style.display = "block";
     $("#nextText").textContent = j.next.kai + "：" + j.next.label;
+    if (!j.next.pre) $("#nextPre").style.display = "none";
     $("#nextPre").href = j.next.pre;
     $("#nextPre").textContent = j.next.kai + "の参加前アンケートに答える";
   }
