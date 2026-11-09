@@ -297,6 +297,8 @@
           <option value="paypay">作業当日にお支払い（PayPay）</option>
           <option value="paypal">PayPal請求書（メールで届きます。カード払い可）</option>
         </select>
+        <label for="f_receiptName">領収書の宛名 <small>任意・領収書が必要な方</small></label>
+        <input id="f_receiptName" name="receipt_name" autocomplete="off" placeholder="例：株式会社〇〇　／　〇〇 様">
         <label for="f_parking">駐車場 <small>駐車場代は別途実費</small></label>
         <select id="f_parking" name="parking"><option>敷地内に駐車可</option><option>近隣コインパーキング利用</option><option>相談したい</option></select>
         <label>ペットの有無 <small>必須</small></label>
@@ -601,6 +603,10 @@
     if (extras.length) add.push('【その他のお掃除】' + extras.join('、'));
     if ($('f_nominate').checked) add.push('【スタッフ指名（＋3,000円）】' + (data.nominate_name || '名前未記入'));
     if (data.coupon) add.push('【クーポンコード】' + data.coupon);
+    // 領収書の宛名は備考の1行で残す（予約サイトの GAS は凍結中で列を足せない。領収書の仕組み arigatou #65 がこの1行を読む）
+    var rcpt = (data.receipt_name || '').trim().slice(0, 40);
+    delete data.receipt_name;
+    if (rcpt) add.push('【領収書の宛名】' + rcpt);
     if (consults.length) add.push('【その他のご相談】' + consults.join('、'));
     note = add.join('\n') + (note ? '\n' + note : '');
     ['1', '2', '3'].forEach(function (n) { if (data['date' + n]) data['date' + n] = data['date' + n] + ' ' + (data['time' + n] || ''); });

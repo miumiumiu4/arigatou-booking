@@ -63,6 +63,7 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   await page.check('#f_nominate'); await page.fill('#f_nominateName', '田中');
   assert.equal(await page.locator('#hdrTotal').innerText(), '51,100');
   await page.fill('#f_coupon', 'CP1');
+  await page.fill('#f_receiptName', '株式会社テスト');
   await snap('2_form');
   assert.equal(booked.length, 0);
   await page.getByRole('button', { name: 'この内容で予約する' }).click();
@@ -119,6 +120,13 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   await tc.getByRole('button', { name: '3点セットは何が入っていますか？' }).click();
   await tc.getByText('人とお話しする').waitFor();
   assert.doesNotMatch(await tc.innerText(), /防カビ抗菌コート・室外機クリーニング・ドレンホース洗浄の3つ|別々だと/);
+  // 事務マニュアルから足した答え（片づけ）は、人へ回さずに答える
+  await tc.getByRole('button', { name: 'ほかの質問' }).click();
+  await tc.locator('.tc-ask input').waitFor();
+  await tc.locator('.tc-ask input').fill('エアコンの下は片づけた方がいい？');
+  await tc.getByRole('button', { name: '送る' }).click();
+  await waitText(/畳2畳ほどの作業スペース/);
+  await tc.getByRole('button', { name: 'はい' }).click();
   // 台帳にない質問が2回続いたら人へ（裏側の URL が空のあいだ）
   await tc.getByRole('button', { name: 'ほかの質問' }).click();
   await tc.locator('.tc-ask input').waitFor();
@@ -142,9 +150,10 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   const b = booked[0];
   assert.equal(b.units, 2); assert.equal(b.tenkase_units, 1); assert.equal(b.total, 51100);
   assert.match(b.breakdown, /天井埋め込み（天カセ） 1台=23,300円/); assert.match(b.breakdown, /お風呂換気扇分解=7,000円/); assert.equal(b.name, 'テスト');
-  for (const re of [/【ふりがな】てすと/, /【ペット】あり 2匹/, /【天カセ】1台/, /【メーカー・型番】ダイキン AN22/, /【その他のお掃除】お風呂換気扇分解/, /【スタッフ指名（＋3,000円）】田中/, /【クーポンコード】CP1/, /^【希望日】第1 /])
+  for (const re of [/【ふりがな】てすと/, /【ペット】あり 2匹/, /【天カセ】1台/, /【メーカー・型番】ダイキン AN22/, /【その他のお掃除】お風呂換気扇分解/, /【スタッフ指名（＋3,000円）】田中/, /【クーポンコード】CP1/, /【領収書の宛名】株式会社テスト/, /^【希望日】第1 /])
     assert.match(b.note, re);
   assert.match(b.src, /^welcome\?/);
+  assert.equal(b.receipt_name, undefined); // 宛名は備考の1行だけで送る
   const hp = logged.filter(e => e.test === 'hp-chat'), th = logged.filter(e => e.test === 'thanks-chat');
   const ev = hp.map(e => e.event);
   assert.deepEqual(ev, ['到着', 'はい', 'フォーム遷移', '申込完了']);
