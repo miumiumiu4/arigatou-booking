@@ -70,6 +70,7 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   await page.getByRole('button', { name: 'この内容で予約する' }).click();
   await page.getByText('ご予約を受け付けました。').waitFor();
   assert.match(await page.locator('#doneMsg').innerText(), /R1109-999/);
+  assert.match(await page.locator('#doneMsg').innerText(), /\?faq=R1109-999/); // あとから開けるリンク
   // 紹介リンクは会話の最後へ移った
   assert.doesNotMatch(await page.locator('#doneMsg').innerText(), /紹介しませんか/);
   await page.waitForTimeout(800); await snap('3_done');
@@ -194,6 +195,27 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   await page.getByRole('button', { name: 'はい' }).waitFor();
   assert.match(await page.locator('#chat').innerText(), /またお会いできて嬉しいです/);
 
+  // あとから質問コーナー（?faq=受付番号）：予約した端末なら中身つき。お名前・番地・宛名は残さない
+  {
+    const saved = await page.evaluate(() => localStorage.getItem('thanks_saved') || '');
+    assert.match(saved, /R1109-999/);
+    assert.ok(!/テスト住所|株式会社テスト|0000000000|test@example/.test(saved), saved);
+    await page.goto(url + '?faq=R1109-999');
+    await page.locator('#thanksPanel').getByRole('button', { name: /ブルこ/ }).click();
+    await page.locator('#thanksPanel').getByRole('button', { name: '予約の中身' }).click();
+    await page.locator('#thanksPanel').getByRole('button', { name: 'はい' }).waitFor();
+    const t = await page.locator('#thanksPanel').innerText();
+    assert.match(t, /作業の場所：東京（戸建て）/);
+    assert.ok(!/テスト住所|お名前/.test(t));
+    assert.match(await page.locator('#doneMsg').innerText(), /R1109-999 の質問コーナー/);
+    await page.goto(url + '?faq=R1109-1');
+    await page.locator('#thanksPanel .tc-card').first().waitFor();
+    assert.match(await page.locator('#doneMsg').innerText(), /予約した時のスマホ・パソコンで開くと/);
+    await page.locator('#thanksPanel').getByRole('button', { name: /ブルやん/ }).click();
+    await page.locator('#thanksPanel').getByRole('button', { name: '駐車場' }).waitFor();
+    assert.equal(await page.locator('#thanksPanel').getByRole('button', { name: '予約の中身' }).count(), 0);
+    assert.equal(booked.length, 1);
+  }
   // ?thanks=test：送らずに送信後の画面。毎回キャラ選びから始まり、前に選んだ子に「前回」の印。帯のボタンで選び直せる
   logged.length = 0;
   await page.goto(url + '?thanks=test');
