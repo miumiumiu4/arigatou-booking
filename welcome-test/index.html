@@ -117,6 +117,8 @@
   .wait { text-align: center; padding: 40px 16px; }
   .wait p { font-size: 22px; font-weight: 700; margin: 16px 0 0; }
   .donemsg { font-size: 15px; text-align: left; margin-top: 12px; }
+  .donemsg .revisit { font-size: 13px; margin-top: 8px; }
+  .donemsg .revisit a { word-break: break-all; }
   .share { margin-top: 14px; border: 1px solid var(--line); border-radius: 12px; padding: 14px; text-align: left; }
   .share b { display: block; font-size: 15px; }
   .share .link { display: flex; gap: 8px; margin-top: 8px; }
@@ -751,6 +753,39 @@
       data.receipt_name && '領収書の宛名：' + data.receipt_name,
       data.name && 'お名前：' + data.name + ' 様' + (data.phone ? '（電話 ' + data.phone + '）' : '')
     ].filter(Boolean);
+    saveThanks(id, sum, ctx, mine, data.area || '');
+    revisitLink(id);
+    runThanks(id, sum, ctx, mine);
+  }
+  // ---------- あとから質問コーナーを開く（?faq=受付番号。11/10 三浦さん） ----------
+  // 予約の中身は、この端末（ブラウザ）の中にだけ残す。お名前・電話・住所の番地・領収書の宛名は残さない。どこにも送らない。
+  var SAVED = 'thanks_saved', KEEP_DAYS = 120;
+  function loadSaved() {
+    try { var o = JSON.parse(localStorage.getItem(SAVED) || '{}'); return o && typeof o === 'object' ? o : {}; } catch (e) { return {}; }
+  }
+  function saveThanks(id, sum, ctx, mine, area) {
+    if (!/^R\d{4}-\d+$/.test(id) || /^R0000-/.test(id)) return; // 試しは残さない
+    var m = {}, k;
+    for (k in mine) m[k] = mine[k];
+    if (m.receiptName) m.receiptName = '（予約の時に書いた宛名）';
+    m.detail = (mine.detail || []).filter(function (l) { return !/^(お名前|領収書の宛名)：/.test(l); }).map(function (l) {
+      return /^作業の場所：/.test(l) ? '作業の場所：' + [area, ctx.housing && '（' + ctx.housing + '）'].filter(Boolean).join('') : l;
+    });
+    var all = loadSaved(), now = Date.now();
+    for (k in all) if (!all[k] || now - all[k].at > KEEP_DAYS * 864e5) delete all[k];
+    all[id] = { at: now, sum: sum, ctx: ctx, mine: m };
+    var ids = Object.keys(all).sort(function (a, b) { return all[b].at - all[a].at; });
+    ids.slice(5).forEach(function (x) { delete all[x]; }); // この端末に残すのは新しい5件まで
+    try { localStorage.setItem(SAVED, JSON.stringify(all)); } catch (e) { /* 残せなくても、その場のチャットは動く */ }
+  }
+  function revisitUrl(id) { return location.origin + location.pathname + '?faq=' + encodeURIComponent(id); }
+  function revisitLink(id) {
+    var p = document.createElement('p');
+    p.className = 'revisit';
+    p.innerHTML = 'あとから質問したい時は、こちらからいつでも開けます：<br><a href="' + esc(revisitUrl(id)) + '">' + esc(revisitUrl(id)) + '</a>';
+    $('doneMsg').appendChild(p);
+  }
+  function runThanks(id, sum, ctx, mine) {
     var test = /^(R0000-|T)/.test(id) ? 'thanks-chat-test' : 'thanks-chat'; // 試し（?thanks=test）とテスト版（welcome-test/）は分けて数える
     $('reset').textContent = '案内係を変える';
     window.ThanksChat.start({
@@ -768,7 +803,16 @@
   });
 
   // ?thanks=test：スタッフの試し読み用。予約は送らず、試しの受付番号で送信後の画面だけを出す
-  if (new URLSearchParams(location.search).get('thanks') === 'test') {
+  var faqId = new URLSearchParams(location.search).get('faq') || '';
+  if (/^(R\d{4}-\d{1,5}|T\d{4}-[A-Z0-9]{1,8})$/.test(faqId)) {
+    // あとから開いた質問コーナー：予約した端末なら、その時の中身で答える。ほかの端末では受付番号だけで答える
+    hideAll();
+    var sv = loadSaved()[faqId];
+    $('doneMsg').innerHTML = '受付番号 <b>' + esc(faqId) + '</b> の質問コーナー<br>' + (sv ? '当日までのこと、いつでも聞いてください。' : '当日までのこと、いつでも聞いてください。予約の細かい中身は、予約した時のスマホ・パソコンで開くと答えられます。');
+    $('waitPanel').removeAttribute('hidden');
+    track('再訪', faqId + ':' + (sv ? '中身あり' : '中身なし'), /^(R0000-|T)/.test(faqId) ? 'thanks-chat-test' : 'thanks-chat');
+    runThanks(faqId, sv ? sv.sum : '', sv ? sv.ctx : {}, sv ? sv.mine : null);
+  } else if (new URLSearchParams(location.search).get('thanks') === 'test') {
     hideAll();
     st = Object.assign({}, ZERO, { units: 2, set3: 1, tenkase: 1 });
     $('f_nominate').checked = true;
