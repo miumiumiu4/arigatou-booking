@@ -80,7 +80,8 @@
       later(function () { if (gen !== S.gen) return; r.querySelector('.bubble').textContent = text; later(next, 250); }, Math.min(1400, 500 + text.length * 12));
     })();
   }
-  function controls(html) {
+  function controls(html, keep) {
+    if (!keep) S.ctl.style.minHeight = ''; // keep：選び直しで残した高さを、案内係の一覧が出ている間も保つ
     S.ctl.innerHTML = html || '';
     S.ctl.hidden = !html;
     return S.ctl;
@@ -92,7 +93,10 @@
     S.gen++;
     var prev = S.chara;
     S.chara = null;
+    // 選び直しの時は、下のボタン欄の高さをそのまま残す（空にするとページが縮んで画面が上へずれるため。11/10 三浦さん）
+    var hold = again && !S.ctl.hidden ? S.ctl.offsetHeight : 0;
     controls('');
+    if (hold) { S.ctl.hidden = false; S.ctl.style.minHeight = hold + 'px'; }
     S.opts.track('キャラ表示', again ? '変える:' + prev : '');
     say([again ? '案内係を選び直せます。どの子にしますか？' : '当日までのこと、聞いておきませんか？ 案内係を選んでください。'], picker);
   }
@@ -101,7 +105,7 @@
       var c = D.chars[k], last = store(KEY) === k;
       return '<button type="button" class="tc-card' + (last ? ' last' : '') + '" data-c="' + k + '">' + (last ? '<i>前回</i>' : '') + '<img src="' + HERE + c.img + '" alt=""><b>' + esc(c.name) + '</b><span>' + esc(c.pick) + '</span></button>';
     }).join('') + '</div>';
-    controls(html);
+    controls(html, true);
     on('.tc-card', function (b) { choose(b.dataset.c, false); });
   }
   function choose(c, remembered) {
@@ -520,7 +524,7 @@
     S.gen++;
     controls('');
     row('out', 'おしまい');
-    S.opts.track('おしまい', S.chara);
+    S.opts.track('おしまい', S.id + ':' + S.chara); // だれが押したかは受付番号で分かる（11/10 三浦さん）
     say(ch().bye, function () {
       var c = controls('<div class="tc-share"></div><div class="tc-stars"><b>この案内係はどうでしたか？</b><div>'
         + [1, 2, 3, 4, 5].map(function (n) { return '<button type="button" data-star="' + n + '" aria-label="星' + n + 'つ">★</button>'; }).join('')
@@ -528,7 +532,7 @@
       if (S.opts.showShare) S.opts.showShare(c.querySelector('.tc-share'));
       on('[data-star]', function (b) {
         var n = +b.dataset.star;
-        S.opts.track('星', n + ':' + S.chara);
+        S.opts.track('星', S.id + ':' + n + ':' + S.chara); // 案内係を直す目安
         var box = c.querySelector('.tc-stars');
         box.innerHTML = '<b>' + '★★★★★'.slice(0, n) + '<span>' + '★★★★★'.slice(n) + '</span></b><p>ありがとうございました。</p>';
       });
@@ -550,7 +554,7 @@
       intro(); // 毎回、最初に案内係を選んでもらう（前に選んだ子は「前回」の印だけ付ける。11/10 三浦さん）
     },
     active: function () { return !!S; },
-    pick: function () { if (S) { S.opts.mount.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' }); intro(true); } },
+    pick: function () { if (S) intro(true); }, // 画面は動かさない。新しい吹き出しが出る所だけ見せる
     _mask: mask, _match: localMatch
   };
 })();
