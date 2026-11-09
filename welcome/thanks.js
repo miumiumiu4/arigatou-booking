@@ -187,6 +187,15 @@
       }), 'その場合は、コインパーキングの実費を別にいただきます。'];
       return null;
     },
+    B06: function (m) { // 型番：書いてあればそれを返す。無ければ、このあと記入欄を出す
+      return [m.model ? V({
+        buruyan: '型番は「' + m.model + '」って書いてくれてたな。ありがとうな。', buruko: '型番は「' + m.model + '」と書いていただいてますね。助かります！',
+        burusama: '型番は「' + m.model + '」ね。ちゃんと書いてあって偉いわ。', buruseijin: '型番は「' + m.model + '」と記録しています。'
+      }) : V({
+        buruyan: '伝えてもらえると、当日の準備がぐっと楽になるねん。', buruko: '伝えていただけると、当日の準備がスムーズになります。',
+        burusama: '伝えてもらえると、当日の段取りが楽になるのよ。', buruseijin: '型番の事前受信は、作業の精度を高めます。'
+      }), 'お掃除機能付きかどうかで料金が変わるので、分かる範囲で教えてください。'];
+    },
     C05: function (m) { // 領収書：予約で書いた宛名を返す。書き忘れた人には、このあと記入欄を出す
       var r = m.receiptName ? V({
         buruyan: '領収書の宛名は「' + m.receiptName + '」で受けとるで。', buruko: '領収書の宛名は「' + m.receiptName + '」で承っています。',
@@ -248,49 +257,67 @@
     S.miss = 0;
     say(answerLines(it, it.a[S.chara]), function () { after(it); });
   }
-  // 領収書の宛名の記入欄。宛名は裏側にも計測にも送らず、受付番号つきの文にして確認メールへの返信で送ってもらう（登録のメアドから届き、受付番号で拾える。11/10 三浦さん）。見つからない時は LINE
-  // （予約サイトの GAS は凍結中で、あとから宛名を書き足す受け口がまだ無い。受け口ができたらここから直接送る）
+  // あとから書き足してもらう欄（領収書の宛名・メーカー型番）。中身は裏側にも計測にも送らない。
+  // 受付番号つきの文にして、メールで送ってもらう（登録のメアドから届き、受付番号ですぐ拾える。11/10 三浦さん）。
+  //   opts.mailTo があれば、件名と本文が入った状態でメールを開く。無ければ確認メールへの返信で。どちらも無理な時は LINE
+  // （予約サイトの GAS は凍結中で、あとから書き足す受け口がまだ無い。受け口ができたらここから直接送る）
+  var INFO = {
+    receipt: { label: '領収書の宛名', key: 'receiptName', ph: '例：株式会社〇〇　／　〇〇 様', max: 40,
+      hintHas: '宛名を変える時だけ書いてください。', hintNone: '領収書の宛名を書き忘れた方は、こちらに書いてください。' },
+    model: { label: 'メーカー・型番', key: 'model', ph: '例：ダイキン AN22XXX', max: 60,
+      hintHas: '違っていた時や、ほかの台の分があれば書いてください。', hintNone: 'もし分かれば、こちらに書いてください。本体の横や下のシールに書いてあります。' }
+  };
   function copyText(t, done) {
     done = done || function () {};
     try { navigator.clipboard.writeText(t).then(function () { done(true); }, function () { done(false); }); } catch (e) { done(false); }
   }
-  function receiptForm() {
-    var o = S.opts, has = !!(o.mine && o.mine.receiptName);
-    controls('<form class="tc-ask tc-rcpt"><input maxlength="40" placeholder="例：株式会社〇〇　／　〇〇 様" aria-label="領収書の宛名"><button class="btn primary">決める</button></form>'
-      + '<p class="tc-hint">' + (has ? '宛名を変える時だけ書いてください。' : '領収書の宛名を書き忘れた方は、こちらに書いてください。') + '</p>'
+  function infoForm(kind) {
+    var o = S.opts, k = INFO[kind], has = !!(o.mine && o.mine[k.key]);
+    controls('<form class="tc-ask tc-info"><input maxlength="' + k.max + '" placeholder="' + esc(k.ph) + '" aria-label="' + esc(k.label) + '"><button class="btn primary">決める</button></form>'
+      + '<p class="tc-hint">' + esc(has ? k.hintHas : k.hintNone) + '</p>'
       + '<div class="tc-foot"><button type="button" class="tc-link" data-menu="1">ほかの質問</button><button type="button" class="tc-link" data-bye="1">おしまい</button></div>');
     on('[data-menu]', function () { S.gen++; controls(''); say([ch().more], menu); });
     on('[data-bye]', bye);
     S.ctl.querySelector('form').addEventListener('submit', function (e) {
       e.preventDefault();
-      var name = S.ctl.querySelector('form input').value.trim().slice(0, 40);
-      if (!name) return;
-      var msg = '受付番号 ' + S.id + ' の領収書の宛名：' + name;
-      S.opts.track('領収書', '宛名を入力');
-      row('out', esc('宛名：' + name));
+      var val = S.ctl.querySelector('form input').value.trim().slice(0, k.max);
+      if (!val) return;
+      var subject = '受付番号 ' + S.id + ' の' + k.label;
+      var msg = subject + '：' + val;
+      var mail = o.mailTo ? 'mailto:' + o.mailTo + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(msg + '\n') : '';
+      S.opts.track('書き足し', k.label);
+      row('out', esc(k.label + '：' + val));
       controls('');
       copyText(msg); // コピーできない端末は、吹き出しの文から写してもらう
-      say([V({
-        buruyan: '「' + name + '」やな。この文をコピーしといたで。', buruko: '「' + name + '」ですね。この文をコピーしておきました。',
-        burusama: '「' + name + '」ね。この文、コピーしておいたわ。', buruseijin: '「' + name + '」、受信しました。下の文を複製済みであります。'
-      }), msg, V({
+      var how = mail ? V({
+        buruyan: '下の「メールで送る」を押したら、この文が入ったメールが開くで。そのまま送ってな。登録したメアドから届くから、受付番号ですぐ見つけられるねん。',
+        buruko: '下の「メールで送る」を押すと、この文が入ったメールが開きます。そのまま送ってくださいね。登録のメールアドレスから届くので、すぐに見つけられます。',
+        burusama: '下の「メールで送る」を押せば、この文が入ったメールが開くわ。そのまま送ってちょうだい。',
+        buruseijin: '下の「メールで送る」を押すと、この文が入ったメールが起動します。そのまま送信してください。'
+      }) : V({
         buruyan: 'さっき届いた確認メールに「返信」して、この文を貼り付けて送ってな。登録したメアドから届くから、受付番号ですぐ見つけられるねん。',
         buruko: 'さきほど届いた確認メールに「返信」して、この文を貼り付けて送ってくださいね。登録のメールアドレスから届くので、受付番号ですぐに見つけられます。',
         burusama: 'さっき届いた確認メールに「返信」して、この文を貼り付けて送ってちょうだい。登録したメアドから届くから、すぐ見つけられるのよ。',
         buruseijin: '先ほど受信した確認メールに「返信」し、この文を貼り付けて送信してください。登録アドレスからの通信は、受付番号で即座に照合できます。'
-      }), 'メールが見つからない時は、LINE でも受け付けます。'], function () {
-        controls((o.lineUrl ? '<a class="btn ghost wide" href="' + esc(o.lineUrl) + '" target="_blank" rel="noopener">メールが見つからない時は LINE で送る</a>' : '')
+      });
+      say([V({
+        buruyan: '「' + val + '」やな。この文をコピーしといたで。', buruko: '「' + val + '」ですね。この文をコピーしておきました。',
+        burusama: '「' + val + '」ね。この文、コピーしておいたわ。', buruseijin: '「' + val + '」、受信しました。下の文を複製済みであります。'
+      }), msg, how], function () {
+        controls((mail ? '<a class="btn primary wide" data-ch="メール" href="' + esc(mail) + '">メールで送る</a>' : '')
+          + (o.lineUrl ? '<a class="btn ghost wide" data-ch="LINE" href="' + esc(o.lineUrl) + '" target="_blank" rel="noopener">メールが使えない時は LINE で送る</a>' : '')
           + '<button type="button" class="tc-link tc-copy" data-copy="1">もう一度コピーする</button>'
           + '<div class="tc-foot"><button type="button" class="tc-link" data-menu="1">ほかの質問</button><button type="button" class="tc-link" data-bye="1">おしまい</button></div>');
         on('[data-copy]', function (b) { copyText(msg, function (ok) { b.textContent = ok ? 'コピーしました' : msg; }); });
-        S.ctl.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { o.track('連絡', 'LINE:領収書'); }); });
+        S.ctl.querySelectorAll('a[data-ch]').forEach(function (a) { a.addEventListener('click', function () { o.track('連絡', a.dataset.ch + ':' + k.label); }); });
         on('[data-menu]', function () { S.gen++; controls(''); say([ch().more], menu); });
         on('[data-bye]', bye);
       });
     });
   }
   function after(it) {
-    if (it.id === 'C05') { S.last = it.id; return receiptForm(); }
+    if (it.id === 'C05') { S.last = it.id; return infoForm('receipt'); }
+    if (it.id === 'B06') { S.last = it.id; return infoForm('model'); }
     if (it.human && !S.mine) return contact(); // 人に回す形の問で、この予約から言えることも無いときだけ連絡先を出す
     S.last = it.id;
     say([ch().check], function () {

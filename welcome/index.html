@@ -374,7 +374,8 @@
     FAQBOT_URL: "",
     // LINE 公式「ありがとうエアコンサポート」の友だち追加・トークのリンク。空なら文で案内する
     LINE_URL: "https://lin.ee/rD0Xlot",
-    PHONE: "080-4177-2272"
+    PHONE: "080-4177-2272",
+    MAIL_TO: ""  // 書き足し（宛名・型番）の送り先。空なら確認メールへの返信で送ってもらう
   };
   window.EVLOG_ENDPOINT = CONFIG.EVLOG_URL;
   var cfg = {};
@@ -696,7 +697,7 @@
     var mine = {
       wall: st.units, auto: st.auto, tenkase: st.tenkase, outdoorUnits: (st.set3 || 0) + (st.outdoor || 0) + (st.omatome || 0),
       payment: data.payment || '', parking: data.parking || '', pet: data.pet || '', petCount: data.pet === 'あり' ? (Number(data.pet_count) || 0) : 0,
-      date1: d1, time1: data.time1 || '', receiptName: data.receipt_name || ''
+      date1: d1, time1: data.time1 || '', receiptName: data.receipt_name || '', model: data.model || ''
     };
     // 「予約の中身」で読み上げる一覧（お客様ご本人の画面にだけ出す。送らない）
     var PAYL = { onsite: '作業当日に現金', paypay: '作業当日に PayPay', paypal: 'PayPal の請求書' };
@@ -723,7 +724,7 @@
     $('reset').textContent = '案内係を変える';
     window.ThanksChat.start({
       id: id, mount: $('thanksPanel'), summary: sum, ctx: ctx, mine: mine,
-      faqbotUrl: CONFIG.FAQBOT_URL, lineUrl: CONFIG.LINE_URL, phone: CONFIG.PHONE,
+      faqbotUrl: CONFIG.FAQBOT_URL, lineUrl: CONFIG.LINE_URL, phone: CONFIG.PHONE, mailTo: CONFIG.MAIL_TO,
       track: function (ev, note) { track(ev, note, test); },
       showShare: function (el) { showShare(id, el); }
     });
