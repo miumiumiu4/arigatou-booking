@@ -174,6 +174,9 @@
   .tc-card img { width: 96px; height: auto; }
   .tc-card b { font-size: 17px; }
   .tc-card span { font-size: 13px; color: var(--muted); }
+  .tc-card { position: relative; }
+  .tc-card.last { border-color: var(--accent); }
+  .tc-card i { position: absolute; top: 6px; right: 8px; font-style: normal; font-size: 11px; font-weight: 700; color: #fff; background: var(--accent); border-radius: 999px; padding: 2px 8px; }
   .tc-quick { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .tc-quick .btn { min-height: 44px; padding: 8px 10px; font-size: 15px; border-radius: 14px; }
   .tc-quick.all { grid-template-columns: 1fr; }
@@ -184,6 +187,11 @@
   .tc-hint { font-size: 12px; color: #fff; margin: 6px 2px 0; }
   .tc-link { appearance: none; border: 0; background: transparent; color: #fff; text-decoration: underline; font: inherit; font-size: 15px; padding: 10px 4px; cursor: pointer; }
   .tc-foot { display: flex; justify-content: space-between; gap: 8px; }
+  /* 「ほかの質問」は押しやすい大きさに（11/10 三浦さん） */
+  .tc-link[data-menu], .tc-link[data-more] { flex: 1; background: #fff; color: var(--text); text-decoration: none; font-weight: 700; font-size: 16px; padding: 14px 16px; border-radius: 999px; box-shadow: 0 1px 3px rgba(0,0,0,.15); }
+  .tc-link[data-more] { display: block; width: 100%; margin-top: 8px; }
+  .tc-foot { align-items: center; }
+  .tc-log .bubble { white-space: pre-line; }
   .tc-note { text-align: center; font-size: 12px; color: #fff; margin: 10px 0 0; opacity: .9; }
   .tc-contact { background: #fff; border-radius: 16px; padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
   .tc-contact p { font-size: 14px; margin: 6px 0 10px; }
@@ -605,7 +613,8 @@
     if (data.coupon) add.push('【クーポンコード】' + data.coupon);
     // 領収書の宛名は備考の1行で残す（予約サイトの GAS は凍結中で列を足せない。領収書の仕組み arigatou #65 がこの1行を読む）
     var rcpt = (data.receipt_name || '').trim().slice(0, 40);
-    delete data.receipt_name;
+    // 送る中身からは外し（備考の1行だけで送る）、この画面のチャットでは読めるように見えない形で残す
+    delete data.receipt_name; Object.defineProperty(data, 'receipt_name', { value: rcpt, enumerable: false });
     if (rcpt) add.push('【領収書の宛名】' + rcpt);
     if (consults.length) add.push('【その他のご相談】' + consults.join('、'));
     note = add.join('\n') + (note ? '\n' + note : '');
@@ -680,10 +689,37 @@
       units: st.units, auto: st.auto, tenkase: st.tenkase, set3: st.set3, coat: st.coat, outdoor: st.outdoor, drain: st.drain, omatome: st.omatome,
       total: total(), weekday: wd, slot: data.time1 || '', housing: data.housing || '', pet: data.pet || ''
     };
+    // チャットが「さっきの予約」に合わせて答えるための中身。このページの中だけで使い、裏側にも計測にも送らない
+    var mine = {
+      wall: st.units, auto: st.auto, tenkase: st.tenkase, outdoorUnits: (st.set3 || 0) + (st.outdoor || 0) + (st.omatome || 0),
+      payment: data.payment || '', parking: data.parking || '', pet: data.pet || '', petCount: data.pet === 'あり' ? (Number(data.pet_count) || 0) : 0,
+      date1: d1, time1: data.time1 || ''
+    };
+    // 「予約の中身」で読み上げる一覧（お客様ご本人の画面にだけ出す。送らない）
+    var PAYL = { onsite: '作業当日に現金', paypay: '作業当日に PayPay', paypal: 'PayPal の請求書' };
+    var wishes = ['1', '2', '3'].map(function (n) {
+      var d = String(data['date' + n] || '').slice(0, 10);
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) return '';
+      var t = new Date(d + 'T12:00:00+09:00');
+      return '第' + n + ' ' + (t.getUTCMonth() + 1) + '/' + t.getUTCDate() + '（' + '日月火水木金土'.charAt(t.getUTCDay()) + '）' + (data['time' + n] || '');
+    }).filter(Boolean);
+    var place = [data.area, data.address].filter(Boolean).join(' ') + (data.housing ? '（' + data.housing + '）' : '');
+    mine.detail = [
+      place && '作業の場所：' + place,
+      wishes.length && '希望日：' + wishes.join(' ／ '),
+      '作業の中身：' + lines.map(function (l) { return l.name; }).join('、'),
+      '概算：' + yen(total()) + '円（税込・駐車場代別）',
+      data.payment && 'お支払い：' + (PAYL[data.payment] || data.payment),
+      data.parking && '駐車場：' + data.parking,
+      data.pet && 'ペット：' + data.pet + (data.pet === 'あり' && data.pet_count ? ' ' + data.pet_count + '匹' : ''),
+      data.model && 'メーカー・型番：' + data.model,
+      data.receipt_name && '領収書の宛名：' + data.receipt_name,
+      data.name && 'お名前：' + data.name + ' 様' + (data.phone ? '（電話 ' + data.phone + '）' : '')
+    ].filter(Boolean);
     var test = /^(R0000-|T)/.test(id) ? 'thanks-chat-test' : 'thanks-chat'; // 試し（?thanks=test）とテスト版（welcome-test/）は分けて数える
     $('reset').textContent = '案内係を変える';
     window.ThanksChat.start({
-      id: id, mount: $('thanksPanel'), summary: sum, ctx: ctx,
+      id: id, mount: $('thanksPanel'), summary: sum, ctx: ctx, mine: mine,
       faqbotUrl: CONFIG.FAQBOT_URL, lineUrl: CONFIG.LINE_URL, phone: CONFIG.PHONE,
       track: function (ev, note) { track(ev, note, test); },
       showShare: function (el) { showShare(id, el); }
@@ -702,7 +738,7 @@
     st = Object.assign({}, ZERO, { units: 2, set3: 1 });
     $('doneMsg').innerHTML = '受付番号 <b>R0000-0</b>（試し）<br>（試しの画面です。予約は送っていません）';
     $('waitPanel').removeAttribute('hidden');
-    startThanks('R0000-0', [{ name: 'エアコンクリーニング 2台', amount: 17800 }, { name: '3点セット（防カビ抗菌コート・室外機・ドレンホース） 1台', amount: 7500 }], { date1: '', time1: '9時〜12時', housing: '戸建て', pet: 'なし' });
+    startThanks('R0000-0', [{ name: 'エアコンクリーニング 2台', amount: 17800 }, { name: '3点セット（防カビ抗菌コート・室外機・ドレンホース） 1台', amount: 7500 }], { date1: (function () { var t = new Date(Date.now() + 9 * 36e5 + 7 * 864e5); return t.toISOString().slice(0, 10); })(), time1: '9時〜12時', area: '大阪', address: '（試しの住所）', housing: '戸建て', pet: 'あり', pet_count: '1', payment: 'onsite', parking: '敷地内に駐車可' });
   } else {
     track('到着');
     start();
