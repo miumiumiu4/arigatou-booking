@@ -85,7 +85,7 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   await tc.getByRole('button', { name: /ブルやん/ }).click();
   await tc.getByRole('button', { name: '駐車場' }).waitFor();
   assert.match(await tc.innerText(), /ブルやんです/);
-  assert.equal(await tc.locator('.tc-quick .btn').count(), 7);
+  assert.equal(await tc.locator('.tc-quick .btn').count(), 8);
   // ① ボタン：さっきの予約に合わせて答える（敷地内に駐車可を選んだ）
   await tc.getByRole('button', { name: '駐車場' }).click();
   await tc.getByRole('button', { name: 'はい' }).waitFor();
