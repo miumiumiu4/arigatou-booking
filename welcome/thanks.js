@@ -162,7 +162,7 @@
       + (all ? '' : '<button type="button" class="tc-link" data-more="1">ほかの質問も見る</button>')
       + '<form class="tc-ask" autocomplete="off"><input name="t" maxlength="200" placeholder="ほかに聞きたいことを入力" aria-label="聞きたいこと"><button type="submit" class="btn primary">送る</button></form>'
       + '<p class="tc-hint">お名前・電話番号・ご住所は入れないでください。</p>'
-      + '<div class="tc-foot"><button type="button" class="tc-link" data-human="1">人へつなぐ</button><button type="button" class="tc-link" data-bye="1">おしまい</button></div>';
+      + '<div class="tc-foot"><button type="button" class="tc-link" data-human="1">人へつなぐ</button><button type="button" class="tc-link" data-bye="1">おしまい（特典あり）</button></div>';
     controls(html);
     on('[data-q]', function (b) { ask(b.dataset.q, 'ボタン', item(b.dataset.q).q); });
     on('[data-more]', function () { menu(true); });
@@ -371,7 +371,7 @@
     var o = S.opts, k = INFO[kind], has = !!(o.mine && o.mine[k.key]);
     controls('<form class="tc-ask tc-info"><input' + (k.num ? ' inputmode="numeric"' : '') + ' maxlength="' + k.max + '" placeholder="' + esc(k.ph) + '" aria-label="' + esc(k.label) + '"><button class="btn primary">決める</button></form>'
       + '<p class="tc-hint">' + esc(has && k.hintHas ? k.hintHas : k.hintNone) + '</p>'
-      + '<div class="tc-foot"><button type="button" class="tc-link" data-menu="1">ほかの質問</button><button type="button" class="tc-link" data-bye="1">おしまい</button></div>');
+      + '<div class="tc-foot"><button type="button" class="tc-link" data-menu="1">ほかの質問</button><button type="button" class="tc-link" data-bye="1">おしまい（特典あり）</button></div>');
     on('[data-menu]', function () { S.gen++; controls(''); say([ch().more], menu); });
     on('[data-bye]', bye);
     S.ctl.querySelector('form').addEventListener('submit', function (e) {
@@ -402,7 +402,7 @@
         controls((mail ? '<a class="btn primary wide" data-ch="メール" href="' + esc(mail) + '">メールで送る</a>' : '')
           + (o.lineUrl ? '<a class="btn ghost wide" data-ch="LINE" href="' + esc(o.lineUrl) + '" target="_blank" rel="noopener">メールが使えない時は LINE で送る</a>' : '')
           + '<button type="button" class="tc-link tc-copy" data-copy="1">もう一度コピーする</button>'
-          + '<div class="tc-foot"><button type="button" class="tc-link" data-menu="1">ほかの質問</button><button type="button" class="tc-link" data-bye="1">おしまい</button></div>');
+          + '<div class="tc-foot"><button type="button" class="tc-link" data-menu="1">ほかの質問</button><button type="button" class="tc-link" data-bye="1">おしまい（特典あり）</button></div>');
         on('[data-copy]', function (b) { copyText(msg, function (ok) { b.textContent = ok ? 'コピーしました' : msg; }); });
         S.ctl.querySelectorAll('a[data-ch]').forEach(function (a) { a.addEventListener('click', function () { o.track('連絡', a.dataset.ch + ':' + k.label); }); });
         on('[data-menu]', function () { S.gen++; controls(''); say([ch().more], menu); });
@@ -418,7 +418,7 @@
       if ((m.wall || 0) > (m.set3 || 0)) {
         S.last = it.id;
         controls('<button type="button" class="btn primary wide" data-add="1">3点セットを追加したい</button>'
-          + '<div class="tc-foot"><button type="button" class="tc-link" data-menu="1">ほかの質問</button><button type="button" class="tc-link" data-bye="1">おしまい</button></div>');
+          + '<div class="tc-foot"><button type="button" class="tc-link" data-menu="1">ほかの質問</button><button type="button" class="tc-link" data-bye="1">おしまい（特典あり）</button></div>');
         on('[data-add]', function () { S.opts.track('追加したい', '3点セット'); row('out', '3点セットを追加したい'); controls(''); say([V({
           buruyan: 'ええやん！何台分にする？', buruko: 'うれしいです！何台分にしますか？', burusama: 'いい判断よ。何台分にする？'
       }, 'ADD_ask')], function () { infoForm('set3'); }); });
@@ -505,7 +505,7 @@
       + (o.lineUrl ? '<a class="btn line wide" href="' + esc(o.lineUrl) + '" target="_blank" rel="noopener">LINE で聞く</a>'
         : '<p>LINE 公式「ありがとうエアコンサポート」のトークでも受け付けます。</p>')
       + '<button type="button" class="tc-link" data-copy="1">「' + esc(msg) + '」をコピー</button></div>'
-      + '<div class="tc-foot"><button type="button" class="tc-link" data-menu="1">ほかの質問</button><button type="button" class="tc-link" data-bye="1">おしまい</button></div>';
+      + '<div class="tc-foot"><button type="button" class="tc-link" data-menu="1">ほかの質問</button><button type="button" class="tc-link" data-bye="1">おしまい（特典あり）</button></div>';
     controls(html);
     on('[data-copy]', function (b) {
       try { navigator.clipboard.writeText(msg).then(function () { b.textContent = 'コピーしました'; }); } catch (e) { b.textContent = msg; }
