@@ -375,6 +375,8 @@
     // LINE 公式「ありがとうエアコンサポート」の友だち追加・トークのリンク。空なら文で案内する
     LINE_URL: "https://lin.ee/rD0Xlot",
     PHONE: "080-4177-2272",
+    // 紹介リンクの「コピー」を押した人へ、紹介者向けメールの登録案内を送る受け口（arigatou 本体 apps/refinvite）。受付番号だけを送る。空なら送らない
+    INVITE_URL: "",
     MAIL_TO: ""  // 書き足し（宛名・型番）の送り先。空なら確認メールへの返信で送ってもらう
   };
   window.EVLOG_ENDPOINT = CONFIG.EVLOG_URL;
@@ -680,6 +682,7 @@
     box.querySelector('.line').addEventListener('click', function () { track('紹介LINE', id, tt); });
     box.querySelector('button').addEventListener('click', function (e) {
       track('紹介コピー', id, tt); // だれが押したかは受付番号で分かる（11/10 三浦さん）
+      if (CONFIG.INVITE_URL && !/^(R0000-|T)/.test(id)) { try { fetch(CONFIG.INVITE_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'copy', id: id }), keepalive: true }); } catch (_) {} } // 登録案内メール（受付番号だけ）
       try { navigator.clipboard.writeText(url).then(function () { e.target.textContent = 'コピーしました'; }, function () { box.querySelector('input').select(); e.target.textContent = '選択しました'; }); }
       catch (_) { box.querySelector('input').select(); e.target.textContent = '選択しました'; }
     });
