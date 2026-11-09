@@ -185,9 +185,10 @@
           var lines = Array.isArray(j.bubbles) && j.bubbles.length && j.bubbles.length <= 3 ? j.bubbles : it.a[S.chara];
           return say(answerLines(it, lines), function () { after(it); });
         }
-        S.opts.track('質問', '入力:' + (j && j.kind === 'limit' ? '上限' : 'なし') + ':' + t.slice(0, 80));
+        var closed = j && j.ok && j.kind === 'handoff' && item(j.item_id);
+        S.opts.track('質問', '入力:' + (j && j.kind === 'limit' ? '上限' : closed ? 'AI:' + closed.id : 'なし') + ':' + t.slice(0, 80));
         if (j && j.kind === 'limit') return handoff('上限', true);
-        if (it && !it.open) return handoff('未確定:' + it.id, true);
+        if (closed) return handoff('未確定:' + closed.id, true);
         miss();
       })
       .catch(function () {
