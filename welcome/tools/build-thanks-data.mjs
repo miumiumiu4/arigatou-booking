@@ -15,7 +15,7 @@ const led = JSON.parse(fs.readFileSync(src, 'utf8'));
 const CHARS = {
   buruyan: {
     name: 'ブルやん', kind: '男性', pick: 'ノリよく答えます', img: 'chara/buruyan.svg',
-    hello: ['おー、俺でええの？ ありがとな、ブルやんです。', '関西のノリで当日までのこと聞いてや。数字だけはふざけへんから安心して。'],
+    hello: ['おー、俺でええの？ ありがとな、ブルやんです。', '親は秋田、生まれは大阪、育ちは横浜。長崎に3年おって、今は北海道や。せやけど口から出るんは、なんでか関西弁やねん。', '関西のノリで当日までのこと聞いてや。数字だけはふざけへんから安心して。'],
     check: 'これで気ぃ済んだ？ まだあったら遠慮なしで。',
     more: 'ほな、ほかにも聞きたいことあったら押してや。',
     miss: 'すまん、それはピンと来えへんかった。言い方を変えるか、下のボタンから選んでみて。',
@@ -24,7 +24,7 @@ const CHARS = {
   },
   buruko: {
     name: 'ブルこ', kind: '女性', pick: '元気に答えます', img: 'chara/buruko.svg',
-    hello: ['はーい、ブルこです！ 選んでくれてありがとうございます。', '当日までの「あれどうなるんだっけ」、全部聞いてください。張り切ります。'],
+    hello: ['はーい、ブルこです！ 選んでくれてありがとうございます。', 'わたし、エアコン屋さんの店先で育ったんです。夏はずっと吹き出し口の前にいて、エアコンの風が大好きになりました。', '当日までの「あれどうなるんだっけ」、全部聞いてください。張り切ります。'],
     check: 'スッキリしました？ まだあったら何個でもどうぞ。',
     more: 'はーい！ ほかにもあったらどうぞ。',
     miss: 'うーん、ぴったりの答えが見つかりませんでした。言い方を変えるか、下のボタンからどうぞ。',
@@ -33,27 +33,27 @@ const CHARS = {
   },
   burusama: {
     name: 'ブルさま', kind: 'どっちでもない', pick: 'ズバッと答えます', img: 'chara/burusama.svg',
-    hello: ['あら、わたしを選ぶのね。いい趣味。ブルさまよ。', '遠回しなのは嫌いだから、はっきり言うわ。はっきり言うけど、味方だからね。'],
+    hello: ['あら、わたしを選ぶのね。いい趣味。ブルさまよ。', '昔は銀座のブティックで看板犬をしてたの。だから、いいものとそうでないものは、ひと目で分かるのよ。', '遠回しなのは嫌いだから、はっきり言うわ。はっきり言うけど、味方だからね。'],
     check: 'これで少しは安心した？ まだあるなら付き合うわよ。',
     more: 'いいわよ、ほかにもあれば聞いて。',
     miss: 'ごめんなさいね、それはうまく拾えなかったわ。言い方を変えるか、下から選んでちょうだい。',
     handoff: ['それはね、わたしが答えちゃいけない種類の質問。分からないことを分かったふりするほど、恥ずかしいことはないもの。', '受付番号 {id} を添えて、人に聞いて。LINE でも電話でも、ちゃんと出るから。'],
     bye: ['じゃあ当日ね。ちゃんとやるわよ、うちの職人。', '知り合いに悩んでる人がいたら、このリンク渡しなさい。押しつけはしないけど、いい店は教えてあげるものよ。']
   },
-  buruseijin: {
-    name: 'ブル星人', kind: '宇宙人', pick: '正確に答えます', img: 'chara/buruseijin.svg',
-    hello: ['選択を確認。ブル星人であります。地球のエアコン清掃を調査するため着任しました。', '当日までの疑問を受け付けます。数字は母星の精度で正確に伝えます。'],
-    check: '疑問は解消されましたか。はい、いいえ、で応答を。',
-    more: '了解。ほかの質問も受け付けます。',
-    miss: '受信した質問を、当機の記録と照合できませんでした。言い方を変えるか、下のボタンを選択してください。',
-    handoff: ['その質問は当機のデータベースにありません。推測で答えるのは母星の掟で禁止されています。', '地球の担当者に通信します。受付番号 {id} を伝えてください。LINE または電話が有効です。'],
-    bye: ['調査に協力いただき感謝します。当日、地球の職人が最適な清掃を行います。', '周囲にエアコンの汚れで困っている地球人がいれば、このリンクを転送してください。当機の調査範囲が広がります。']
+  // 4人目（11/10 三浦さん）：イギリスから来た留学生。選んだ県の田舎の学校で育ったので、その県の言葉で話す。
+  // ask・soon・fail だけ標準語。あいさつ以降の台詞は welcome/dialect/src/<県>.json から
+  bruce: {
+    name: 'ブルース', kind: '留学生', pick: 'ふるさとの言葉で答えます', img: 'chara/bruce.svg',
+    ask: ['ハロー、ブルースです。イギリスから来た留学生のブルドッグです。', '日本の田舎の学校で育ったので、その土地の言葉で話します。あなたの生まれ故郷はどこですか？'],
+    soon: 'ほかの県は、順番に増やしています。',
+    fail: 'ごめんなさい、いまは言葉の準備ができませんでした。ほかの案内係を選んでください。',
+    hello: [], check: '', more: '', miss: '', handoff: [], bye: []
   }
 };
 // よくある質問のボタン6個（設計書 3節の順）
-const QUICK = [['B01', '当日の準備'], ['A02', '所要時間'], ['C04', '支払い'], ['B03', '駐車場'], ['D01', 'キャンセル'], ['D02', '日にち変更']];
+const QUICK = [['F02', 'トイレ掃除のプレゼント'], ['B01', '当日の準備'], ['A02', '所要時間'], ['C04', '支払い'], ['B03', '駐車場'], ['D01', 'キャンセル'], ['D02', '日にち変更'], ['A01', '到着時間']];
 
-const ids = Object.keys(CHARS);
+const ids = Object.keys(CHARS).filter(c => c !== 'bruce'); // ブルースは県の言葉の束から、ページの中で組み立てる
 const items = led.items.map(it => {
   const open = /^確定/.test(String(it.status || ''));
   const o = { id: it.id, cat: it.category, q: it.q, aliases: it.aliases || [], open };
@@ -70,8 +70,32 @@ const items = led.items.map(it => {
 });
 for (const [id] of QUICK) if (!items.find(i => i.id === id)) throw new Error('ボタンの ' + id + ' が台帳に無い');
 
-const data = { version: led.version, chars: CHARS, quick: QUICK, items };
+// 県の言葉の束：welcome/dialect/src/<id>.json → welcome/dialect/<id>.js（ブルースを選んで県を押した時だけ読む）
+const DL_SRC = path.join(path.dirname(out), 'dialect', 'src');
+const MINE_KEYS = ['A02_what', 'A02_span', 'C04_pay', 'C04_change', 'A01_day', 'B03_in', 'B03_coin', 'C08_codes', 'C08_id', 'E03_pet', 'C07_has', 'C07_left',
+  'B06_model', 'B06_none', 'C05_name', 'C05_none', 'B04_ok', 'B04_count', 'B04_next', 'INFO_mail', 'INFO_reply', 'INFO_got', 'ADD_ask', 'F04_has', 'F05_has'];
+const NG = /お疲れ様|おつかれさま|無理/;
+const dialects = [];
+for (const f of (fs.existsSync(DL_SRC) ? fs.readdirSync(DL_SRC) : []).filter(f => f.endsWith('.json')).sort()) {
+  const dl = JSON.parse(fs.readFileSync(path.join(DL_SRC, f), 'utf8'));
+  const id = f.replace(/\.json$/, '');
+  for (const k of ['hello', 'check', 'more', 'miss', 'handoff', 'bye']) if (!dl.chars || !dl.chars[k] || !dl.chars[k].length) throw new Error(`${f}: chars.${k} が無い`);
+  for (const k of MINE_KEYS) if (!dl.mine || !dl.mine[k]) throw new Error(`${f}: mine.${k} が無い`);
+  if (!Array.isArray(dl.my) || dl.my.length !== 2) throw new Error(`${f}: my は [はじめ, おわり] の2つ`);
+  const lack = items.filter(i => i.open && !(dl.items && dl.items[i.id])).map(i => i.id);
+  if (lack.length) console.warn(`注意 ${f}: ${lack.join(' ')} の台詞が無い（その問はブルこの言い方になる）`);
+  for (const [k, v] of Object.entries(dl.items || {})) if (!Array.isArray(v) || v.length < 2) throw new Error(`${f}: items.${k} は [はじめ…, おわり]（2つ以上）`);
+  if (NG.test(JSON.stringify(dl))) throw new Error(`${f}: 使わない言葉が入っている`);
+  const pack = { pref: dl.pref, chars: dl.chars, my: dl.my, mine: dl.mine, items: dl.items };
+  fs.writeFileSync(path.join(path.dirname(out), 'dialect', id + '.js'),
+    '// このファイルは welcome/tools/build-thanks-data.mjs が dialect/src/' + f + ' から作ります。直接書きかえないでください。\n'
+    + '(window.THANKS_DIALECTS = window.THANKS_DIALECTS || {})[' + JSON.stringify(id) + '] = ' + JSON.stringify(pack, null, 1) + ';\n');
+  dialects.push({ id, pref: dl.pref });
+}
+if (!dialects.length) throw new Error('県の言葉の束が1つも無い（ブルースが話せない）');
+
+const data = { version: led.version, chars: CHARS, quick: QUICK, items, dialects };
 const js = '// このファイルは welcome/tools/build-thanks-data.mjs が FAQ台帳から作ります。直接書きかえないでください。\n'
   + 'window.THANKS_DATA = ' + JSON.stringify(data, null, 1) + ';\n';
 fs.writeFileSync(out, js);
-console.log('wrote', path.relative(process.cwd(), out), '・問', items.length, '（公開', items.filter(i => i.open).length, '）');
+console.log('wrote', path.relative(process.cwd(), out), '・問', items.length, '（公開', items.filter(i => i.open).length, '）・県の言葉', dialects.map(d => d.pref).join(' '));

@@ -1,6 +1,6 @@
 // ブルエアくん（welcome/chara/base.svg）に小物を足して、案内係4人の着せ替えを作る。
 //   node welcome/tools/build-chara.mjs
-// 出力：welcome/chara/{buruyan,buruko,burusama,buruseijin}.svg
+// 出力：welcome/chara/{buruyan,buruko,burusama,bruce}.svg
 // 絵は「型」だけ。実在の人を思わせる小物（特定の衣装・髪型）は使わない（キャラ台本 1節-6）。
 import fs from 'node:fs';
 import path from 'node:path';
@@ -56,18 +56,20 @@ const LOOKS = {
   <path d="M108 92 q13 -8 26 0" fill="none" stroke="${INK}" stroke-width="5" stroke-linecap="round"/>
   <path d="M64 86 l14 -6 M144 84 l14 -6" stroke="#8f7fb0" stroke-width="4" stroke-linecap="round"/>`
   },
-  // 宇宙人：アンテナ2本、薄緑の体、星のバッジ
-  buruseijin: {
-    label: 'ブル星人（アンテナ2本と薄緑の体のブルエアくん）',
-    swap: [['fill="#fbfaf7"', 'fill="#d4f2c4"'], ['fill="#d9b48f"', 'fill="#a8dc8c"'], ['fill="#e9cdb0"', 'fill="#b9e6a3"']],
+  // 4人目：イギリスから来た留学生ブルース。黒い学帽（金の校章）と、えんじと紺のしま模様のマフラー
+  bruce: {
+    label: 'ブルース（黒い学帽としま模様のマフラーのブルエアくん）',
     add: `
-  <!-- アンテナ -->
-  <path d="M92 42 L76 12" stroke="${INK}" stroke-width="4" stroke-linecap="round"/>
-  <path d="M148 42 L164 12" stroke="${INK}" stroke-width="4" stroke-linecap="round"/>
-  <circle cx="75" cy="10" r="8" fill="#ff8ad8" stroke="${INK}" stroke-width="3"/>
-  <circle cx="165" cy="10" r="8" fill="#ff8ad8" stroke="${INK}" stroke-width="3"/>
-  <!-- 星のバッジ -->
-  ${star(200, 116, 12, '#ffd43b', INK, 2.5)}`
+  <!-- しま模様のマフラー -->
+  <path d="M18 160 Q120 200 222 160 L220 180 Q120 222 20 180 Z" fill="#8b1e3f" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M60 177 l-4 14 M90 186 l-3 15 M150 186 l3 15 M180 177 l4 14" stroke="#1f3a6e" stroke-width="7" stroke-linecap="round"/>
+  <path d="M178 176 l14 38 l16 -6 l-10 -36 Z" fill="#8b1e3f" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M184 192 l14 -5" stroke="#1f3a6e" stroke-width="5" stroke-linecap="round"/>
+  <!-- 黒い学帽 -->
+  <path d="M52 52 Q60 8 120 6 Q180 8 188 52 Z" fill="#23232b" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M46 52 Q120 40 194 52 Q196 64 182 66 Q120 56 58 66 Q44 64 46 52 Z" fill="#111116" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M52 46 Q120 34 188 46" fill="none" stroke="#3b3b47" stroke-width="3"/>
+  ${star(120, 28, 11, '#f2c14e', INK, 2.5)}`
   }
 };
 

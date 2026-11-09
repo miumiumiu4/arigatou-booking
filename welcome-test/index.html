@@ -192,8 +192,11 @@
   /* 「ほかの質問」は押しやすい大きさに（11/10 三浦さん） */
   .tc-link[data-menu], .tc-link[data-more] { flex: 1; background: #fff; color: var(--text); text-decoration: none; font-weight: 700; font-size: 16px; padding: 14px 16px; border-radius: 999px; box-shadow: 0 1px 3px rgba(0,0,0,.15); }
   .tc-link[data-more] { display: block; width: 100%; margin-top: 8px; }
-  .tc-foot { align-items: center; }
+  .tc-foot { align-items: center; margin-top: 12px; }
   .tc-log .bubble { white-space: pre-line; }
+  .tc-hint { color: #fff; font-size: 13px; margin: 6px 2px 0; }
+  .tc-copy { display: block; margin: 6px auto 0; }
+  .tc-ctl .btn.line { background: #06c755; color: #fff; margin-top: 8px; }
   .tc-note { text-align: center; font-size: 12px; color: #fff; margin: 10px 0 0; opacity: .9; }
   .tc-contact { background: #fff; border-radius: 16px; padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
   .tc-contact p { font-size: 14px; margin: 6px 0 10px; }
@@ -379,7 +382,8 @@
     FAQBOT_URL: "",
     // LINE 公式「ありがとうエアコンサポート」の友だち追加・トークのリンク。空なら文で案内する
     LINE_URL: "https://lin.ee/rD0Xlot",
-    PHONE: "080-4177-2272"
+    PHONE: "080-4177-2272",
+    MAIL_TO: ""  // 書き足し（宛名・型番）の送り先。空なら確認メールへの返信で送ってもらう
   };
   window.EVLOG_ENDPOINT = CONFIG.EVLOG_URL;
   var cfg = {};
@@ -720,7 +724,8 @@
     var mine = {
       wall: st.units, auto: st.auto, tenkase: st.tenkase, outdoorUnits: (st.set3 || 0) + (st.outdoor || 0) + (st.omatome || 0),
       payment: data.payment || '', parking: data.parking || '', pet: data.pet || '', petCount: data.pet === 'あり' ? (Number(data.pet_count) || 0) : 0,
-      date1: d1, time1: data.time1 || ''
+      date1: d1, time1: data.time1 || '', receiptName: data.receipt_name || '', model: data.model || '', set3: st.set3, coupon: data.coupon || '', refCode: (data.ref_code || '').trim(),
+      nominate: $('f_nominate').checked, nominateName: (data.nominate_name || '').trim()
     };
     // 「予約の中身」で読み上げる一覧（お客様ご本人の画面にだけ出す。送らない）
     var PAYL = { onsite: '作業当日に現金', paypay: '作業当日に PayPay', paypal: 'PayPal の請求書' };
@@ -747,7 +752,7 @@
     $('reset').textContent = '案内係を変える';
     window.ThanksChat.start({
       id: id, mount: $('thanksPanel'), summary: sum, ctx: ctx, mine: mine,
-      faqbotUrl: CONFIG.FAQBOT_URL, lineUrl: CONFIG.LINE_URL, phone: CONFIG.PHONE,
+      faqbotUrl: CONFIG.FAQBOT_URL, lineUrl: CONFIG.LINE_URL, phone: CONFIG.PHONE, mailTo: CONFIG.MAIL_TO,
       track: function (ev, note) { track(ev, note, test); },
       showShare: function (el) { showShare(id, el); }
     });
@@ -762,10 +767,11 @@
   // ?thanks=test：スタッフの試し読み用。予約は送らず、試しの受付番号で送信後の画面だけを出す
   if (new URLSearchParams(location.search).get('thanks') === 'test') {
     hideAll();
-    st = Object.assign({}, ZERO, { units: 2, set3: 1 });
+    st = Object.assign({}, ZERO, { units: 2, set3: 1, tenkase: 1 });
+    $('f_nominate').checked = true;
     $('doneMsg').innerHTML = '受付番号 <b>R0000-0</b>（試し）<br>（試しの画面です。予約は送っていません）';
     $('waitPanel').removeAttribute('hidden');
-    startThanks('R0000-0', [{ name: 'エアコンクリーニング 2台', amount: 17800 }, { name: '3点セット（防カビ抗菌コート・室外機・ドレンホース） 1台', amount: 7500 }], { date1: (function () { var t = new Date(Date.now() + 9 * 36e5 + 7 * 864e5); return t.toISOString().slice(0, 10); })(), time1: '9時〜12時', area: '大阪', address: '（試しの住所）', housing: '戸建て', pet: 'あり', pet_count: '1', payment: 'onsite', parking: '敷地内に駐車可' });
+    startThanks('R0000-0', [{ name: 'エアコンクリーニング 2台', amount: 17800 }, { name: '3点セット（防カビ抗菌コート・室外機・ドレンホース） 1台', amount: 7500 }], { date1: (function () { var t = new Date(Date.now() + 9 * 36e5 + 7 * 864e5); return t.toISOString().slice(0, 10); })(), time1: '9時〜12時', area: '大阪', address: '（試しの住所）', housing: '戸建て', pet: 'あり', pet_count: '1', payment: 'onsite', parking: '敷地内に駐車可', nominate_name: '（試しのスタッフ）' });
   } else {
     track('到着');
     start();
