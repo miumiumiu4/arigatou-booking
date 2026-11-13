@@ -78,7 +78,7 @@ window.THANKS_DATA = {
     "日本の田舎の学校で育ったので、その土地の言葉で話します。あなたの生まれ故郷はどこですか？ 外国の言葉でも話せますよ。"
    ],
    "langs": "ほかの国の言葉 / Other languages",
-   "soon": "ほかの県や国の言葉も、順番に増やしています。",
+   "soon": "ほかの国の言葉も、順番に増やしています。",
    "fail": "ごめんなさい、いまは言葉の準備ができませんでした。ほかの案内係を選んでください。",
    "hello": [],
    "check": "",
@@ -1079,11 +1079,13 @@ window.THANKS_DATA = {
   },
   {
    "id": "hokkaido",
-   "pref": "北海道"
+   "pref": "北海道",
+   "order": 1
   },
   {
    "id": "aomori",
-   "pref": "青森"
+   "pref": "青森",
+   "order": 2
   },
   {
    "id": "zh-cn",
@@ -1092,7 +1094,8 @@ window.THANKS_DATA = {
   },
   {
    "id": "iwate",
-   "pref": "岩手"
+   "pref": "岩手",
+   "order": 3
   },
   {
    "id": "zh-tw",
@@ -1105,8 +1108,14 @@ window.THANKS_DATA = {
    "lang": "ko"
   },
   {
+   "id": "miyagi",
+   "pref": "宮城",
+   "order": 4
+  },
+  {
    "id": "akita",
-   "pref": "秋田"
+   "pref": "秋田",
+   "order": 5
   },
   {
    "id": "vi",
@@ -1120,7 +1129,13 @@ window.THANKS_DATA = {
   },
   {
    "id": "yamagata",
-   "pref": "山形"
+   "pref": "山形",
+   "order": 6
+  },
+  {
+   "id": "fukushima",
+   "pref": "福島",
+   "order": 7
   },
   {
    "id": "tl",
@@ -1129,7 +1144,8 @@ window.THANKS_DATA = {
   },
   {
    "id": "ibaraki",
-   "pref": "茨城"
+   "pref": "茨城",
+   "order": 8
   },
   {
    "id": "id",
@@ -1142,6 +1158,16 @@ window.THANKS_DATA = {
    "lang": "th"
   },
   {
+   "id": "tochigi",
+   "pref": "栃木",
+   "order": 9
+  },
+  {
+   "id": "gunma",
+   "pref": "群馬",
+   "order": 10
+  },
+  {
    "id": "pt",
    "pref": "Português",
    "lang": "pt-BR"
@@ -1150,6 +1176,16 @@ window.THANKS_DATA = {
    "id": "es",
    "pref": "Español",
    "lang": "es"
+  },
+  {
+   "id": "saitama",
+   "pref": "埼玉",
+   "order": 11
+  },
+  {
+   "id": "chiba",
+   "pref": "千葉",
+   "order": 12
   },
   {
    "id": "ru",
@@ -1162,33 +1198,184 @@ window.THANKS_DATA = {
    "lang": "fr"
   },
   {
+   "id": "tokyo",
+   "pref": "東京",
+   "order": 13
+  },
+  {
    "id": "de",
    "pref": "Deutsch",
    "lang": "de"
   },
   {
+   "id": "kanagawa",
+   "pref": "神奈川",
+   "order": 14
+  },
+  {
+   "id": "niigata",
+   "pref": "新潟",
+   "order": 15
+  },
+  {
+   "id": "toyama",
+   "pref": "富山",
+   "order": 16
+  },
+  {
+   "id": "ishikawa",
+   "pref": "石川",
+   "order": 17
+  },
+  {
+   "id": "fukui",
+   "pref": "福井",
+   "order": 18
+  },
+  {
+   "id": "yamanashi",
+   "pref": "山梨",
+   "order": 19
+  },
+  {
+   "id": "nagano",
+   "pref": "長野",
+   "order": 20
+  },
+  {
+   "id": "gifu",
+   "pref": "岐阜",
+   "order": 21
+  },
+  {
+   "id": "shizuoka",
+   "pref": "静岡",
+   "order": 22
+  },
+  {
+   "id": "aichi",
+   "pref": "愛知",
+   "order": 23
+  },
+  {
+   "id": "mie",
+   "pref": "三重",
+   "order": 24
+  },
+  {
+   "id": "shiga",
+   "pref": "滋賀",
+   "order": 25
+  },
+  {
+   "id": "kyoto",
+   "pref": "京都",
+   "order": 26
+  },
+  {
+   "id": "osaka",
+   "pref": "大阪",
+   "order": 27
+  },
+  {
+   "id": "hyogo",
+   "pref": "兵庫",
+   "order": 28
+  },
+  {
+   "id": "nara",
+   "pref": "奈良",
+   "order": 29
+  },
+  {
+   "id": "wakayama",
+   "pref": "和歌山",
+   "order": 30
+  },
+  {
+   "id": "tottori",
+   "pref": "鳥取",
+   "order": 31
+  },
+  {
+   "id": "shimane",
+   "pref": "島根",
+   "order": 32
+  },
+  {
+   "id": "okayama",
+   "pref": "岡山",
+   "order": 33
+  },
+  {
    "id": "hiroshima",
-   "pref": "広島"
+   "pref": "広島",
+   "order": 34
+  },
+  {
+   "id": "yamaguchi",
+   "pref": "山口",
+   "order": 35
+  },
+  {
+   "id": "tokushima",
+   "pref": "徳島",
+   "order": 36
+  },
+  {
+   "id": "kagawa",
+   "pref": "香川",
+   "order": 37
+  },
+  {
+   "id": "ehime",
+   "pref": "愛媛",
+   "order": 38
   },
   {
    "id": "kochi",
-   "pref": "高知"
+   "pref": "高知",
+   "order": 39
   },
   {
    "id": "fukuoka",
-   "pref": "福岡"
+   "pref": "福岡",
+   "order": 40
+  },
+  {
+   "id": "saga",
+   "pref": "佐賀",
+   "order": 41
   },
   {
    "id": "nagasaki",
-   "pref": "長崎"
+   "pref": "長崎",
+   "order": 42
+  },
+  {
+   "id": "kumamoto",
+   "pref": "熊本",
+   "order": 43
+  },
+  {
+   "id": "oita",
+   "pref": "大分",
+   "order": 44
+  },
+  {
+   "id": "miyazaki",
+   "pref": "宮崎",
+   "order": 45
   },
   {
    "id": "kagoshima",
-   "pref": "鹿児島"
+   "pref": "鹿児島",
+   "order": 46
   },
   {
    "id": "okinawa",
-   "pref": "沖縄"
+   "pref": "沖縄",
+   "order": 47
   }
  ]
 };
