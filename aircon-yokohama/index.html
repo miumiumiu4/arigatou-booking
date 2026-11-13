@@ -19,9 +19,13 @@
   .wrap { max-width:640px; margin:0 auto; padding:0 16px; }
   section { padding:32px 0; border-bottom:1px solid var(--line); }
   h1 { font-size:30px; line-height:1.35; margin:8px 0 12px; }
-  h1 .price { display:block; color:var(--accent); font-size:34px; }
-  h1 .price small { font-size:20px; }
+  h1 .price { display:block; color:var(--accent); font-size:32px; }
+  h1 .price small { font-size:18px; white-space:nowrap; }
   h2 { font-size:24px; line-height:1.4; margin:0 0 16px; }
+  .shop { margin:0 0 8px; font-size:22px; font-weight:900; color:var(--navy); letter-spacing:.02em; }
+  .toprank { display:block; margin:0 0 12px; padding:10px 14px; border:2px solid #f2a900; border-radius:12px; background:#fffbea; color:var(--ink); text-decoration:none; font-size:17px; font-weight:700; line-height:1.5; }
+  .toprank b { color:var(--accent); font-size:22px; }
+  .toprank span { font-size:16px; color:var(--muted); margin-left:4px; }
   .tag { display:inline-block; background:var(--navy); color:#fff; font-size:16px; font-weight:700; border-radius:6px; padding:2px 10px; }
   .top { padding-top:16px; }
   .marks { list-style:none; padding:0; margin:16px 0; display:grid; gap:8px; }
@@ -78,6 +82,8 @@
 <main class="wrap">
   <!-- 1. いちばん上 -->
   <section class="top">
+    <p class="shop">ありがとうエアコンお掃除専門店</p>
+    <a class="toprank" href="#rank-note">エアコンクリーニング専門店<br><b>Google口コミ件数 全国1位</b><span>※</span></a>
     <span class="tag">横浜市のエアコンクリーニング</span>
     <h1>エアコンクリーニング<span class="price">壁掛け1台 8,900円<small>（税込）</small></span></h1>
     <p>2台目以降も同じ料金です。分解して、高圧洗浄で中のカビとホコリを洗い流します。</p>
@@ -179,7 +185,7 @@
     <p class="review"><span class="stars" aria-hidden="true">★★★★★</span><span>Googleマップの口コミ <b>3,789件</b>・評価 <b>5.0</b></span><span class="small">（2026年11月14日時点）</span><a href="https://maps.google.com/?cid=18170977408381993537" target="_blank" rel="noopener">すべての口コミを見る</a></p>
     <div class="rank">
       <p class="rank-main">エアコンクリーニング専門店の<br>Google口コミ件数 <b>全国1位</b> <span>※</span></p>
-      <p class="rank-note">※自社調べ。Googleマップで47都道府県の県庁所在地ごとに「エアコンクリーニング」を検索し、表示されたエアコンクリーニング・ハウスクリーニング事業者の口コミ件数を比較しました（家電量販店を除く。2026年11月14日時点。当店3,789件、次に多い事業者1,912件）。</p>
+      <p class="rank-note" id="rank-note">※自社調べ。Googleマップで47都道府県の県庁所在地ごとに「エアコンクリーニング」を検索し、表示されたエアコンクリーニング・ハウスクリーニング事業者の口コミ件数を比較しました（家電量販店を除く。2026年11月14日時点。当店3,789件、次に多い事業者1,912件）。</p>
     </div>
   </section>
 
