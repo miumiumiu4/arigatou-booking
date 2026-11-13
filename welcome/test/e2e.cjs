@@ -148,15 +148,34 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   await tc.locator('.tc-ask input').fill('エアコンの下は片づけた方がいい？');
   await tc.getByRole('button', { name: '送る' }).click();
   await waitText(/畳2畳ほどの作業スペース/);
+  // 入力から探した答えは「合ってた？」と聞く（11/13 三浦さん）
+  await waitText(/この答えで合うてる？/);
+  await tc.getByRole('button', { name: '合ってた' }).click();
+  // 子どもがしそうな質問（雑談）にはキャラのまま答える
+  await tc.locator('.tc-ask input').waitFor();
+  await tc.locator('.tc-ask input').fill('すきなたべものはなに？');
+  await tc.getByRole('button', { name: '送る' }).click();
+  await waitText(/あったかいおにぎり/);
+  await tc.locator('.tc-ask input').waitFor();
+  // 「匂い」の言葉が入っていれば、においの答えを出して確かめる。ちがう時は、ほかの候補
+  await tc.locator('.tc-ask input').fill('エアコンの匂いがきになります');
+  await tc.getByRole('button', { name: '送る' }).click();
+  await waitText(/この答えで合うてる？/);
+  assert.match(await tc.innerText(), /におい/);
+  await tc.getByRole('button', { name: 'ちがう' }).click();
+  await waitText(/これのどれかちゃう？/);
+  await tc.locator('.tc-quick.all [data-q]').first().waitFor();
+  await tc.locator('.tc-quick.all [data-q]').first().click();
+  await waitText(/これで気ぃ済んだ？/); // ボタンで選んだ答えは、いつもの「はい／おしまい」
   await tc.getByRole('button', { name: 'はい' }).click();
   // 台帳にない質問が2回続いたら人へ（裏側も「台帳外」と返したとき）
   await tc.getByRole('button', { name: 'ほかの質問' }).click();
   await tc.locator('.tc-ask input').waitFor();
-  await tc.locator('.tc-ask input').fill('おすすめの晩ごはんは');
+  await tc.locator('.tc-ask input').fill('ぴよぴよぱぱぱ');
   await tc.getByRole('button', { name: '送る' }).click();
   await waitText(/ピンと来えへんかった/);
   await tc.locator('.tc-ask input').waitFor();
-  await tc.locator('.tc-ask input').fill('好きな色は');
+  await tc.locator('.tc-ask input').fill('ほにゃららら');
   await tc.getByRole('button', { name: '送る' }).click();
   await waitText(/守備範囲ちゃうわ/);
   await tc.getByText('人とお話しする').waitFor();
@@ -197,7 +216,7 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   assert.ok(logged.every(e => e.page === 'welcome'));
   const tev = th.map(e => e.event + (e.note ? ':' + e.note : ''));
   assert.deepEqual(tev.slice(0, 5), ['キャラ表示', 'キャラ選択:buruyan', '質問:ボタン:B03', '解決:はい:B03', '質問:入力:B04:○○ ペットがいます']);
-  for (const want of ['質問:ボタン:C01', '解決:人と話したい:C01', '人へ:人と話したい:C01', '質問:ボタン:C07', '追加したい:3点セット', '質問:ボタン:F02', '人へ:未確定:Z99', '質問:入力:なし:おすすめの晩ごはんは', '人へ:2回わからない', 'おしまい:R1109-999:buruyan', '紹介コピー:R1109-999', '星:R1109-999:4:buruyan'])
+  for (const want of ['質問:ボタン:C01', '解決:人と話したい:C01', '人へ:人と話したい:C01', '質問:ボタン:C07', '追加したい:3点セット', '質問:ボタン:F02', '人へ:未確定:Z99', '質問:入力:なし:ぴよぴよぱぱぱ', '解決:合ってた:B01', '雑談:S001:すきなたべものはなに?', '質問:入力:E02:エアコンの匂いがきになります', '解決:ちがう:E02', '人へ:2回わからない', 'おしまい:R1109-999:buruyan', '紹介コピー:R1109-999', '星:R1109-999:4:buruyan'])
     assert.ok(tev.includes(want), want + ' が記録に無い: ' + tev.join(' / '));
   // 個人情報が記録・チャットに出ない
   const all = JSON.stringify(logged);

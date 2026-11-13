@@ -82,6 +82,7 @@ const T_KEYS = ['ui_more', 'ui_ph', 'ui_send', 'ui_hint', 'ui_human', 'ui_human_
   'ui_stars', 'ui_thanks', 'u_h', 'u_m', 'u_to', 'u_and', 'u_colon', 'v_ac', 'v_auto', 'v_out', 'v_coupon', 'v_ref', 'v_who', 'v_staff', 'v_pets',
   'pay_onsite', 'pay_paypay', 'pay_paypal', 'A02_note', 'A02_tenkase', 'C04_after', 'A01_arrive', 'A01_fix', 'B03_in_note', 'B03_coin_note', 'C08_none',
   'E03_base', 'F04_note', 'F05_note', 'C07_note', 'B06_note', 'C05_note',
+  'ui_confirm', 'ui_right', 'ui_wrong', 'ui_alt', 'o_set3', 'o_omatome', 'o_coat', 'o_outdoor', 'o_drain', 'v_units', 'u_list', 'v_opts', 'A02_opt',
   'info_receipt', 'info_receipt_ph', 'info_receipt_has', 'info_receipt_none', 'info_set3', 'info_set3_ph', 'info_set3_none', 'info_model', 'info_model_ph', 'info_model_has', 'info_model_none'];
 // 金額・時間の数字は訳でも同じに（ASCII の数字で書く）
 const nums = t => (String(t).replace(/(\d),(?=\d{3})/g, '$1').match(/\d+/g) || []).filter(n => n.length >= 3);
@@ -121,8 +122,21 @@ dialects.sort((x, y) => x.order - y.order); // 県は北から（JIS の県番�
 for (const d of dialects) if (d.lang) delete d.order; // 県の order（JIS の県番号）は、ページで地方に分けるのに使う
 if (!dialects.length) throw new Error('県の言葉の束が1つも無い（ブルースが話せない）');
 
-const data = { version: led.version, chars: CHARS, quick: QUICK, items, dialects };
+// 雑談（子どもがしそうな質問と、4人の答え。11/13 三浦さん）：welcome/tools/smalltalk.json
+const SMALL_SRC = path.join(path.dirname(fileURLToPath(import.meta.url)), 'smalltalk.json');
+const small = fs.existsSync(SMALL_SRC) ? JSON.parse(fs.readFileSync(SMALL_SRC, 'utf8')) : [];
+const smallIds = new Set();
+for (const s of small) {
+  if (!/^S\d{3}$/.test(s.id) || smallIds.has(s.id)) throw new Error(`雑談 ${s.id}: id の形が違うか、かぶっている`);
+  smallIds.add(s.id);
+  if (!s.q || !Array.isArray(s.kw) || !s.kw.length) throw new Error(`雑談 ${s.id}: q と kw が要る`);
+  for (const c of [...ids, 'bruce']) if (!Array.isArray(s.a && s.a[c]) || !s.a[c].length) throw new Error(`雑談 ${s.id}: ${c} の答えが無い`);
+  if (NG.test(JSON.stringify(s))) throw new Error(`雑談 ${s.id}: 使わない言葉が入っている`);
+  if (/\d{3,}|円/.test(Object.values(s.a).flat().join(''))) throw new Error(`雑談 ${s.id}: 金額や3けたの数字は書かない`);
+}
+
+const data = { version: led.version, chars: CHARS, quick: QUICK, items, small, dialects };
 const js = '// このファイルは welcome/tools/build-thanks-data.mjs が FAQ台帳から作ります。直接書きかえないでください。\n'
   + 'window.THANKS_DATA = ' + JSON.stringify(data, null, 1) + ';\n';
 fs.writeFileSync(out, js);
-console.log('wrote', path.relative(process.cwd(), out), '・問', items.length, '（公開', items.filter(i => i.open).length, '）・県の言葉', dialects.filter(d => !d.lang).map(d => d.pref).join(' '), '・外国の言葉', dialects.filter(d => d.lang).map(d => d.pref).join(' '));
+console.log('wrote', path.relative(process.cwd(), out), '・問', items.length, '・雑談', small.length, '（公開', items.filter(i => i.open).length, '）・県の言葉', dialects.filter(d => !d.lang).map(d => d.pref).join(' '), '・外国の言葉', dialects.filter(d => d.lang).map(d => d.pref).join(' '));

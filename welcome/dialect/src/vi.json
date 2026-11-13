@@ -120,7 +120,20 @@
   "info_model": "Hãng và mã mẫu máy",
   "info_model_ph": "VD: Daikin AN22XXX",
   "info_model_has": "Viết vào đây nếu thông tin bị sai, hoặc cho các máy khác.",
-  "info_model_none": "Nếu biết, bạn hãy viết vào đây nhé. Thông tin nằm trên nhãn dán ở bên hông hoặc mặt dưới của máy."
+  "info_model_none": "Nếu biết, bạn hãy viết vào đây nhé. Thông tin nằm trên nhãn dán ở bên hông hoặc mặt dưới của máy.",
+  "ui_confirm": "Câu trả lời này đúng chưa?",
+  "ui_right": "Đúng rồi",
+  "ui_wrong": "Không đúng",
+  "ui_alt": "Xin lỗi! Có phải là một trong những câu này không?",
+  "o_set3": "gói 3 món",
+  "o_omatome": "gói kết hợp",
+  "o_coat": "lớp phủ chống nấm mốc",
+  "o_outdoor": "vệ sinh dàn nóng",
+  "o_drain": "vệ sinh ống thoát nước",
+  "v_units": "{n} máy",
+  "u_list": ", ",
+  "v_opts": ", tùy chọn: {list}",
+  "A02_opt": "Trong đó, phần tùy chọn mất khoảng {add} (gói 3 món khoảng 15 phút/máy, tùy chọn khác khoảng 10 phút/máy)."
  },
  "q": {
   "MY": "Xem lại lịch đặt của tôi",

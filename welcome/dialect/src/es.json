@@ -120,7 +120,20 @@
   "info_model": "Marca y número de modelo",
   "info_model_ph": "p. ej. Daikin AN22XXX",
   "info_model_has": "Escribe aquí si estaba mal, o para otros aparatos.",
-  "info_model_none": "Si lo sabes, escríbelo aquí. Está en una etiqueta en el lateral o en la parte de abajo del aparato."
+  "info_model_none": "Si lo sabes, escríbelo aquí. Está en una etiqueta en el lateral o en la parte de abajo del aparato.",
+  "ui_confirm": "¿Esta respuesta era la correcta?",
+  "ui_right": "Sí, era",
+  "ui_wrong": "No",
+  "ui_alt": "¡Perdón! ¿Es alguna de estas?",
+  "o_set3": "set de 3 servicios",
+  "o_omatome": "set combinado",
+  "o_coat": "recubrimiento antimoho",
+  "o_outdoor": "limpieza de la unidad exterior",
+  "o_drain": "limpieza de la manguera de drenaje",
+  "v_units": "×{n}",
+  "u_list": ", ",
+  "v_opts": ", con opciones: {list}",
+  "A02_opt": "De ese tiempo, las opciones llevan unos {add} (set de 3: unos 15 min por unidad; otras opciones: unos 10 min por unidad)."
  },
  "q": {
   "MY": "Ver mi reserva",
