@@ -176,6 +176,7 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   for (const re of [/【ふりがな】てすと/, /【ペット】あり 2匹/, /【天カセ】1台/, /【メーカー・型番】ダイキン AN22/, /【その他のお掃除】お風呂換気扇分解/, /【スタッフ指名（＋3,000円）】田中/, /【クーポンコード】CP1/, /【領収書の宛名】株式会社テスト/, /^【希望日】第1 /])
     assert.match(b.note, re);
   assert.match(b.src, /^welcome\?/);
+  assert.match(b.note, /【流入元】今回：src=klp&utm_source=hp/); // どのサイトから来たか
   assert.equal(b.receipt_name, undefined); // 宛名は備考の1行だけで送る
   const hp = logged.filter(e => e.test === 'hp-chat'), th = logged.filter(e => e.test === 'thanks-chat');
   const ev = hp.map(e => e.event);
