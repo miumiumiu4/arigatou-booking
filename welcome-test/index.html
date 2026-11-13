@@ -602,8 +602,40 @@
     var min = now.toISOString().slice(0, 10);
     ['date1', 'date2', 'date3'].forEach(function (n) { $(n).min = min; });
   })();
-  // 紹介リンク（?ref=紹介コード）で来た方は、紹介コードを自動で入れる
-  var refFromUrl = String(cfg.ref || '').trim().slice(0, 30);
+  // どのサイトから来たか（今回と、90日以内の最初の来訪）。予約の備考に【流入元】として残す
+  var fromInfo = (function () {
+    var q = new URLSearchParams(location.search), parts = [];
+    ['src', 'from', 'ref', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].forEach(function (k) { if (q.get(k)) parts.push(k + '=' + q.get(k).slice(0, 60)); });
+    var site = '';
+    try { var h = document.referrer ? new URL(document.referrer).hostname : ''; if (h && h !== location.hostname) site = h; } catch (_) {}
+    var now = parts.join('&') + (site ? (parts.length ? ' ' : '') + '参照元:' + site : '');
+    var first = '';
+    try {
+      var KEY = 'arigatou_from', v = JSON.parse(localStorage.getItem(KEY) || 'null');
+      if (v && v.from && Date.now() - v.at < 90 * 864e5) first = v.from + '（' + new Date(v.at + 9 * 3600e3).toISOString().slice(5, 10).replace('-', '/') + '）';
+      else if (now) localStorage.setItem(KEY, JSON.stringify({ from: now, at: Date.now() }));
+    } catch (_) {}
+    return { now: now, first: first };
+  })();
+  function fromLine() {
+    var s = '【流入元】今回：' + (fromInfo.now || '直接・不明');
+    if (fromInfo.first && fromInfo.first.indexOf(fromInfo.now + '（') !== 0) s += ' ／ 最初：' + fromInfo.first;
+    return s;
+  }
+  // 紹介リンク（?ref=紹介コード）で来た方は、紹介コードを自動で入れる。
+  // いまの予約ページと同じく90日間このブラウザに覚えておく（同じ置き場所 arigatou_ref を使うので、
+  // 紹介リンクで前の予約ページを開いた方が、あとでホームページからこのページに来ても紹介コードが残る）
+  var refFromUrl = (function () {
+    var KEY = 'arigatou_ref', DAYS = 90, code = String(cfg.ref || '').trim().slice(0, 30);
+    try {
+      if (code) localStorage.setItem(KEY, JSON.stringify({ code: code, at: Date.now() }));
+      else {
+        var v = JSON.parse(localStorage.getItem(KEY) || 'null');
+        if (v && v.code && Date.now() - v.at < DAYS * 864e5) code = String(v.code).trim().slice(0, 30);
+      }
+    } catch (_) {}
+    return code;
+  })();
   function applyRef() {
     if (refFromUrl) { $('ref_code').value = refFromUrl; $('refnote').hidden = false; }
   }
@@ -656,6 +688,7 @@
     data.time = '各希望日に記載';
     var ref = (data.ref_code || '').trim();
     if (ref) { data.ref = ref; data.ref_code = ref; note = '【紹介コード】' + ref + '\n' + note; }
+    note = fromLine() + '\n' + note;
     note = '【希望日】第1 ' + data.date1 + ' ／ 第2 ' + data.date2 + ' ／ 第3 ' + data.date3 + '\n' + note;
     var lines = [{ name: 'エアコンクリーニング ' + st.units + '台', amount: st.units * NORMAL.unit, items: [{ name: 'エアコンクリーニング', qty: st.units, unit: NORMAL.unit }] }];
     var NAMES = { auto: 'お掃除機能付き加算', set3: '3点セット（防カビ抗菌コート・室外機・ドレンホース）', coat: '防カビ・抗菌コート', outdoor: '室外機クリーニング', drain: 'ドレンホース洗浄', tenkase: '天井埋め込み（天カセ）', omatome: 'おまとめセット（室外機＋防カビ・抗菌コート）' };
