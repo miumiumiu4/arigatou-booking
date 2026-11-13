@@ -1,0 +1,351 @@
+{
+ "pref": "Bahasa Indonesia",
+ "lang": "id",
+ "order": 8,
+ "note": "外国の言葉の束（インドネシア語）：答えを丸ごと訳す（台帳の元文の金額・時間・条件は変えない）。当日のスタッフ・電話・LINE は日本語であることを最初に伝える。",
+ "chars": {
+  "hello": [
+   "Halo! Aku Bruce. Terima kasih sudah memilihku.",
+   "Aku anjing bulldog pelajar asing dari Inggris. Bahasa Indonesia kupelajari dari teman sekelas orang Indonesia di sekolah. Tanya apa saja tentang pemesananmu, ya.",
+   "Sebagai catatan: chat ini dalam Bahasa Indonesia, tapi staf yang datang pada hari pengerjaan, telepon, dan LINE menggunakan bahasa Jepang."
+  ],
+  "check": "Apakah ini membantu? Silakan tanya sebanyak yang kamu mau.",
+  "more": "Nah, kalau ada lagi yang ingin kamu tahu, ketuk saja.",
+  "miss": "Maaf, aku kurang paham. Coba pakai kata lain, atau pilih tombol di bawah ini.",
+  "handoff": [
+   "Wah, yang ini di luar kemampuanku. Menjawab asal-asalan adalah hal terburuk yang bisa kulakukan, jadi aku akan menyambungkanmu ke orang sungguhan.",
+   "Sebutkan nomor pemesanan {id} supaya lebih cepat. Lewat telepon atau LINE, mana saja yang nyaman (dalam bahasa Jepang)."
+  ],
+  "bye": [
+   "Sampai jumpa di hari pengerjaan! Kami akan bekerja dengan sungguh-sungguh.",
+   "Kalau ada teman yang bilang “Aku juga mau”, kirimkan saja tautan ini. Kerjaanku jadi bertambah, asyik."
+  ]
+ },
+ "my": [
+  "Ini isi yang kamu masukkan di formulir (ditampilkan dalam bahasa Jepang, sesuai yang kamu ketik).",
+  "Kalau ada yang salah, kabari kami lewat LINE atau telepon dengan nomor pemesanan {id}, ya."
+ ],
+ "mine": {
+  "A02_what": "Pemesananmu untuk {what}.",
+  "A02_span": "Perkiraan waktunya sekitar {span}.",
+  "C04_pay": "Di formulir kamu memilih “{pay}”.",
+  "C04_change": "Kalau ingin mengubahnya, kabari kami saja lewat LINE atau telepon.",
+  "A01_day": "Pilihan pertamamu adalah {day}, {time}.",
+  "B03_in": "Kamu bilang kami boleh parkir di area rumahmu. Asyik.",
+  "B03_coin": "Jadi kami akan memakai parkir berbayar (coin parking) di dekat situ.",
+  "C08_codes": "Pemesananmu mencantumkan {codes}. Toko akan memeriksa dan menerapkannya.",
+  "C08_id": "Simpan nomor pemesanan {id}, ya. Nomor ini diperlukan saat menghubungi kami.",
+  "E03_pet": "Kamu menyebutkan ada hewan peliharaan, jadi untuk rumahmu setahun 1 kali adalah yang terbaik.",
+  "C07_has": "Pemesananmu sudah termasuk paket 3 layanan untuk {n} unit. Pilihan yang bagus!",
+  "C07_left": "Kalau ingin menambahkannya juga untuk {left} unit lainnya, gunakan tombol di bawah.",
+  "B06_model": "Kamu menulis modelnya “{model}”. Sangat membantu, terima kasih!",
+  "B06_none": "Kalau kamu bisa memberi tahu, persiapan untuk hari pengerjaan jadi jauh lebih mudah.",
+  "C05_name": "Kuitansi akan dibuat atas nama “{name}”.",
+  "C05_none": "Lupa menulis nama untuk kuitansi tidak apa-apa. Tulis saja di kotak di bawah.",
+  "B04_ok": "Hewan peliharaan sama sekali tidak masalah.",
+  "B04_count": "Kamu menulis ada {n}. Staf kami juga akan diberi tahu.",
+  "B04_next": "Kalau ada yang dikhawatirkan, ketuk “Tidak” berikutnya dan aku akan menyambungkanmu ke orang sungguhan.",
+  "INFO_mail": "Ketuk “Kirim lewat email” di bawah, lalu email berisi pesan ini akan terbuka. Kirim saja apa adanya. Email dikirim dari alamat yang kamu daftarkan, jadi kami bisa langsung menemukannya lewat nomor pemesanan.",
+  "INFO_reply": "Silakan balas email konfirmasi yang baru kamu terima dan tempelkan pesan ini. Email dikirim dari alamat yang kamu daftarkan, jadi kami bisa langsung menemukannya lewat nomor pemesanan.",
+  "INFO_got": "“{val}”, sudah kucatat. Pesan untuk toko sudah kusalin (dalam bahasa Jepang supaya toko bisa membacanya).",
+  "ADD_ask": "Mantap! Untuk berapa unit?",
+  "F04_has": "Pemesananmu mencakup {n} unit AC kaset plafon.",
+  "F05_has": "Pemesananmu meminta {who}."
+ },
+ "t": {
+  "ui_more": "Lihat pertanyaan lain",
+  "ui_ph": "Ketik pertanyaanmu",
+  "ui_send": "Kirim",
+  "ui_hint": "Jangan ketik nama, nomor telepon, atau alamatmu.",
+  "ui_human": "Bicara dengan orang",
+  "ui_human_out": "Saya ingin bicara dengan orang",
+  "ui_menu": "Pertanyaan lain",
+  "ui_bye": "Selesai (ada hadiah)",
+  "ui_bye_out": "Itu saja",
+  "ui_set": "OK",
+  "ui_mail": "Kirim lewat email",
+  "ui_mail_line": "Tidak bisa pakai email? Kirim lewat LINE",
+  "ui_copy_again": "Salin lagi",
+  "ui_copied": "Tersalin",
+  "ui_add_set3": "Saya ingin menambah paket 3 layanan",
+  "ui_yes": "Ya",
+  "ui_no": "Tidak",
+  "ui_about": "Menjawab: “{q}”",
+  "ui_contact": "Bicara dengan orang",
+  "ui_tell_id": "Sebutkan nomor pemesanan {id}.",
+  "ui_ja_only": "Telepon, LINE, dan staf pada hari pengerjaan menggunakan bahasa Jepang.",
+  "ui_call": "Telepon",
+  "ui_line": "Tanya lewat LINE",
+  "ui_line_note": "Kamu juga bisa mengirim pesan ke akun LINE resmi “ありがとうエアコンサポート”.",
+  "ui_copy_msg": "Salin pesan untuk toko (dalam bahasa Jepang)",
+  "ui_stars": "Bagaimana pemandumu?",
+  "ui_thanks": "Terima kasih!",
+  "u_h": "{n} jam",
+  "u_m": "{n} menit",
+  "u_to": " sampai ",
+  "u_and": " dan ",
+  "u_colon": ": ",
+  "v_ac": "{n} unit AC",
+  "v_auto": " ({n} dengan fitur pembersihan otomatis)",
+  "v_out": " dan {n} unit outdoor",
+  "v_coupon": "kode kupon “{code}”",
+  "v_ref": "kode referal “{code}”",
+  "v_who": "staf “{name}”",
+  "v_staff": "staf tertentu",
+  "v_pets": "{n} hewan peliharaan",
+  "pay_onsite": "tunai pada hari pengerjaan",
+  "pay_paypay": "PayPay pada hari pengerjaan",
+  "pay_paypal": "tagihan PayPal (dikirim lewat email)",
+  "A02_note": " (Ini perkiraan untuk 1 orang staf. Bisa lebih lama tergantung model dan cara pemasangan.)",
+  "A02_tenkase": "Untuk {n} unit AC kaset plafon, waktunya tergantung model, jadi staf kami akan memberi tahu.",
+  "C04_after": "Pembayaran dilakukan setelah pekerjaan selesai.",
+  "A01_arrive": "Untuk slot waktu ini, kami akan tiba antara {arr} (ini bukan waktu selesai).",
+  "A01_fix": "Tanggal dipastikan saat staf kami menghubungimu.",
+  "B03_in_note": "Hanya jika tidak ada tempat parkir, biaya aktual parkir berbayar terdekat ditagihkan terpisah.",
+  "B03_coin_note": "Dalam hal itu, biaya aktual parkir berbayar ditagihkan terpisah.",
+  "C08_none": "Kode kupon atau kode referal yang kamu masukkan di formulir pemesanan akan diperiksa dan diterapkan oleh toko.",
+  "E03_base": "Sebagai patokan, membersihkan AC 2 tahun sekali sudah cukup. Tapi rumah dengan hewan peliharaan lebih cepat menumpuk bulu dan bau, jadi setahun 1 kali adalah yang terbaik. Waktu terbaik adalah awal musim semi dan awal musim gugur.",
+  "F04_note": "AC kaset plafon 23,300 yen untuk unit pertama dan 22,300 yen per unit mulai unit kedua. Ada wilayah yang tidak bisa dilayani, jadi staf kami akan menghubungimu.",
+  "F05_note": "Meminta staf tertentu dikenakan biaya +3,000 yen.",
+  "C07_note": "Paket 3 layanan terdiri dari lapisan anti-jamur dan antibakteri, pembersihan unit outdoor, dan pencucian selang drainase, seharga 7,500 yen per unit (9,500 yen jika dipesan terpisah).",
+  "B06_note": "Harga berbeda tergantung ada atau tidaknya fitur pembersihan otomatis, jadi beri tahu sejauh yang kamu tahu, ya.",
+  "C05_note": "Staf kami akan menjelaskan cara penerbitan kuitansi.",
+  "info_receipt": "Nama di kuitansi",
+  "info_receipt_ph": "contoh: PT ABC / Budi Santoso",
+  "info_receipt_has": "Isi hanya jika ingin mengganti nama.",
+  "info_receipt_none": "Kalau lupa menulis nama untuk kuitansi, tulis di sini.",
+  "info_set3": "Tambah paket 3 layanan",
+  "info_set3_ph": "Berapa unit? (contoh: 2)",
+  "info_set3_none": "Tulis berapa unit yang ingin ditambahkan. Bisa atau tidaknya tergantung jadwal hari itu, jadi staf kami akan menghubungimu untuk memastikan.",
+  "info_model": "Merek dan nomor model",
+  "info_model_ph": "contoh: Daikin AN22XXX",
+  "info_model_has": "Tulis di sini jika ada yang salah, atau untuk unit lainnya.",
+  "info_model_none": "Kalau tahu, tulis di sini, ya. Ada di stiker di samping atau bawah unit."
+ },
+ "q": {
+  "MY": "Cek pemesanan saya",
+  "A01": "Jam berapa datangnya?",
+  "A02": "Berapa lama pengerjaannya?",
+  "A03": "Apakah saya harus di rumah?",
+  "A04": "Kapan pemesanan dipastikan?",
+  "A05": "Apakah tetap bekerja saat hujan?",
+  "B01": "Perlukah membereskan sekitar AC?",
+  "B02": "Apakah memakai listrik dan air di rumah?",
+  "B03": "Bagaimana soal parkir?",
+  "B04": "Apakah boleh ada hewan peliharaan?",
+  "B05": "Ada anak kecil. Apa yang perlu diperhatikan?",
+  "B06": "Perlukah memberi tahu nomor model?",
+  "C01": "Berapa biaya saya?",
+  "C02": "Apakah ada biaya tambahan di hari H?",
+  "C03": "Apakah fitur pembersihan otomatis mengubah harga?",
+  "C04": "Kapan dan bagaimana membayar?",
+  "C05": "Bisa dapat kuitansi?",
+  "C06": "Apakah unit kedua lebih murah?",
+  "C07": "Apa isi paket 3 layanan?",
+  "C08": "Bisa pakai kupon atau kode referal?",
+  "D01": "Berapa biaya pembatalan?",
+  "D02": "Bagaimana kalau ingin ganti tanggal?",
+  "D03": "Bisa menambah unit atau opsi nanti?",
+  "E01": "Apakah ada garansi?",
+  "E02": "Bagaimana kalau setelahnya bau atau bocor?",
+  "E03": "Seberapa sering sebaiknya dibersihkan?",
+  "F01": "Bisa pesan mesin cuci atau kamar mandi juga?",
+  "F02": "Benarkah pembersihan toilet gratis?",
+  "F03": "Siapa yang bisa melihat nama dan alamat saya?",
+  "F04": "Apakah melayani AC kaset plafon?",
+  "F05": "Bisa meminta staf tertentu?",
+  "F06": "Apakah chat ini orang sungguhan?"
+ },
+ "kw": {
+  "A01": ["jam berapa", "datang", "tiba"],
+  "A02": ["berapa lama", "durasi", "lama"],
+  "A03": ["di rumah", "tidak di rumah", "pergi"],
+  "A04": ["dipastikan", "konfirmasi", "kapan pasti"],
+  "A05": ["hujan", "cuaca"],
+  "B01": ["beres", "perabot", "pindahkan"],
+  "B02": ["listrik", "air", "stopkontak"],
+  "B03": ["parkir", "mobil"],
+  "B04": ["peliharaan", "anjing", "kucing"],
+  "B05": ["anak", "bayi", "balita"],
+  "B06": ["model", "merek", "tipe"],
+  "C01": ["berapa", "harga", "biaya saya"],
+  "C02": ["tambahan", "biaya lain", "ekstra"],
+  "C03": ["pembersihan otomatis", "otomatis", "auto clean"],
+  "C04": ["bayar", "pembayaran", "tunai", "paypay", "paypal"],
+  "C05": ["kuitansi", "nota", "struk"],
+  "C06": ["diskon", "unit kedua", "lebih murah"],
+  "C07": ["paket", "3 layanan", "set"],
+  "C08": ["kupon", "referal", "kode"],
+  "D01": ["batal", "pembatalan"],
+  "D02": ["ganti tanggal", "ubah jadwal", "hari lain"],
+  "D03": ["tambah", "opsi", "unit lagi"],
+  "E01": ["garansi", "jaminan"],
+  "E02": ["bau", "bocor", "netes"],
+  "E03": ["seberapa sering", "berapa kali", "frekuensi"],
+  "F01": ["mesin cuci", "kamar mandi", "bak mandi"],
+  "F02": ["toilet", "wc", "kloset"],
+  "F03": ["alamat", "data pribadi", "privasi"],
+  "F04": ["plafon", "kaset", "cassette"],
+  "F05": ["minta staf", "pilih staf", "staf tertentu"],
+  "F06": ["orang sungguhan", "robot", "ai", "bot"]
+ },
+ "items": {
+  "A01": [
+   "Penasaran soal jam? Aku juga sudah kepikiran dari pagi.",
+   "Waktu kedatangan akan diinformasikan dalam salah satu rentang berikut: (1) 8:00–9:00, (2) 12:00–14:00, (3) 15:00–18:00. Waktu pastinya akan disampaikan oleh staf penanggung jawab saat menghubungimu.",
+   "Waktu pastinya pasti dikabari oleh staf, tenang saja."
+  ],
+  "A02": [
+   "Soal waktu memang penting. Aku kasih tahu duluan, ya.",
+   "Perkiraan waktu pengerjaan: AC biasa 60–90 menit per unit, AC dengan fitur pembersihan otomatis 90–120 menit per unit, unit outdoor 20–30 menit. Biasanya 1 orang staf yang datang, dan bisa lebih lama tergantung model dan cara pemasangan.",
+   "Sisakan sedikit waktu luang di jadwalmu hari itu supaya tenang."
+  ],
+  "A03": [
+   "Khawatir soal tidak ada di rumah? Wajar kok.",
+   "Pada hari pengerjaan, kami minta ada orang yang mendampingi di rumah. Siapa yang akan mendampingi, tolong beri tahu staf penanggung jawab saat mereka menghubungimu untuk konfirmasi.",
+   "Kalau waktunya tidak cocok, kabari kami lebih awal, ya."
+  ],
+  "A04": [
+   "Menunggu itu bikin deg-degan, aku paham!",
+   "Tanggal pengerjaan dipastikan setelah staf penanggung jawab menghubungimu lagi. Saat pemesanan kami terima, kami sudah mengirimkan email tanda terima.",
+   "Kalau bertanya soal kabar ini, sertakan nomor pemesananmu, ya."
+  ],
+  "A05": [
+   "Hari hujan? Aku sudah memikirkannya duluan.",
+   "Kami tetap bekerja saat hujan. Selain itu, perubahan tanggal karena cuaca, macet, sakit, atau keperluan teknisi selalu gratis.",
+   "Ganti tanggal karena cuaca itu gratis, jadi tenang saja."
+  ],
+  "B01": [
+   "Soal beres-beres, aku kasih tahu duluan, ya.",
+   "Tolong sediakan ruang kerja seluas sekitar 2 tikar tatami (sekitar 3 meter persegi) di bawah AC. Perabot, barang, dan tanaman hias yang bisa dipindah, serta poster atau foto di dinding, tolong dipindahkan sebelum kami tiba. Kalau ada barang yang tidak bisa dipindah seperti kasur atau piano, kirimkan fotonya ke staf penanggung jawab.",
+   "Ada barang yang tidak bisa dipindah juga tidak apa-apa. Kita cek bersama lewat foto."
+  ],
+  "B02": [
+   "Soal listrik dan air, aku jelaskan, ya.",
+   "Kami akan meminjam stopkontak dan air. Komponen dicuci di kamar mandi, atau di balkon atau garasi yang ada kerannya. Kami tidak mencuci di bak cuci dapur atau wastafel. Kami juga meminjam toilet untuk membuang air kotor. Kami juga memakai mesin cuci bertekanan tinggi. Suaranya keras, jadi kami akan memberi tahu sebelum memakainya.",
+   "Hari itu cukup tunjukkan tempat-tempatnya saja."
+  ],
+  "B03": [
+   "Parkir, hal pertama yang dikhawatirkan semua orang, ya.",
+   "Jika tidak ada tempat parkir, biaya aktual parkir berbayar terdekat ditagihkan terpisah.",
+   "Tentukan tempat parkir sebelumnya supaya hari itu lancar."
+  ],
+  "B04": [
+   "Soal hewan peliharaan? Aku jelaskan, ya.",
+   "Ada hewan peliharaan tidak masalah. Keterangan tentang hewan peliharaan yang kamu tulis di formulir pemesanan akan diteruskan ke staf penanggung jawab.",
+   "Kalau ada yang dikhawatirkan, ketuk “Tidak” berikutnya, ya. Aku akan menyambungkanmu ke orang sungguhan."
+  ],
+  "B05": [
+   "Ada si kecil di rumah? Lucunya.",
+   "Ada anak kecil tidak masalah. Kami akan bekerja dengan sangat hati-hati. Selama bekerja kami memakai tangga lipat dan cairan pembersih, jadi akan lebih tenang kalau ada yang menjaga agar anak tidak mendekati AC.",
+   "Kami sudah terbiasa bekerja di rumah yang ada anak kecilnya, jadi tenang saja."
+  ],
+  "B06": [
+   "Nomor model adalah hal pertama yang ingin kuketahui.",
+   "Kalau kamu tulis di kolom “Merek dan nomor model” di formulir pemesanan, persiapan untuk hari pengerjaan jadi lebih lancar. Harga berbeda tergantung ada atau tidaknya fitur pembersihan otomatis.",
+   "Kalau tidak tahu, nanti kita cek bersama."
+  ],
+  "C01": [
+   "Soal biaya, aku sudah semangat menghitungnya.",
+   "Ini perkiraan hasil hitungan otomatis. Jumlah dan ketentuan akhir yang berlaku adalah yang kamu periksa di layar konfirmasi pemesanan.",
+   "Perkiraan hanyalah perkiraan, jadi lihat jumlah di layar konfirmasi, ya."
+  ],
+  "C02": [
+   "Ini bagian yang paling bisa kukatakan dengan yakin.",
+   "Kami tidak memungut biaya tambahan di luar total (termasuk pajak) yang sudah kami sampaikan. Pengecualiannya hanya: (1) Biaya parkir terpisah (biaya aktual). (2) Jika di lokasi ternyata model, jumlah unit berbeda dari pesanan, atau ada pekerjaan khusus (tempat tinggi, unit tidak bisa dibongkar, dll.), kami akan menunjukkan alasan dan fotonya, dan tidak akan bekerja maupun menagih sampai kamu “menyetujui” (kamu bebas menolak).",
+   "Pengecualiannya hanya itu. Kalau ada yang kurang jelas, tanya saja."
+  ],
+  "C03": [
+   "Soal fitur pembersihan otomatis, aku kasih tahu duluan, ya.",
+   "AC dengan fitur pembersihan otomatis dikenakan tambahan 6,000 yen per unit. Jika baru diketahui pada hari pengerjaan bahwa unit punya fitur tersebut, tambahannya sama.",
+   "Kalau baru ketahuan di hari itu tambahannya sama, jadi cek dulu sebelumnya, ya."
+  ],
+  "C04": [
+   "Soal pembayaran, aku jelaskan duluan, ya.",
+   "Pembayaran dilakukan setelah pekerjaan selesai. Caranya: tunai pada hari pengerjaan, PayPay pada hari pengerjaan, atau tagihan PayPal (dikirim lewat email, bisa bayar dengan kartu). Kami akan memakai cara yang kamu pilih di formulir pemesanan.",
+   "Cara yang kamu pilih di formulir sudah cukup."
+  ],
+  "C05": [
+   "Kuitansi? Tentu kami siapkan.",
+   "Jika perlu kuitansi, tulis nama di kolom “Nama di kuitansi” pada formulir pemesanan. Cara penerbitannya akan dijelaskan oleh staf penanggung jawab.",
+   "Kalau lupa menulis nama, kabari kami lewat LINE atau telepon, ya."
+  ],
+  "C06": [
+   "Pesan banyak jadi lebih murah? Pertanyaan bagus.",
+   "Untuk AC dinding, unit kedua dan seterusnya harganya sama dengan unit pertama, biasanya tidak ada diskon. Untuk AC kaset plafon, mulai unit kedua ada potongan 1,000 yen per unit. Semua harga adalah total termasuk pajak.",
+   "Sebenarnya, sesekali kami mengadakan kampanye khusus untuk pembaca buletin email. Pesan saat itu, hematnya lumayan!"
+  ],
+  "C07": [
+   "Aku sudah tidak sabar ingin menjelaskan paket ini.",
+   "Paket 3 layanan terdiri dari lapisan anti-jamur dan antibakteri, pembersihan unit outdoor, dan pencucian selang drainase, seharga 7,500 yen per unit (9,500 yen jika dipesan terpisah). Paket hemat berisi unit outdoor + lapisan anti-jamur dan antibakteri, seharga 5,000 yen per unit.",
+   "Kalau bingung, kita lihat kombinasinya bersama, ya."
+  ],
+  "C08": [
+   "Soal kode, aku cek duluan, ya.",
+   "Kode kupon dan kode referal yang kamu masukkan di formulir pemesanan akan diperiksa dan diterapkan oleh toko.",
+   "Urusan kode serahkan saja ke toko."
+  ],
+  "D01": [
+   "Soal pembatalan, aku kasih tahu duluan, ya.",
+   "Biaya pembatalan: gratis sampai 2 hari sebelumnya, 50% pada hari sebelumnya, 100% pada hari pengerjaan.",
+   "Kalau kamu memutuskan lebih awal, aku juga sangat terbantu."
+  ],
+  "D02": [
+   "Ingin ganti tanggal? Ayo kita pikirkan bersama.",
+   "Perubahan tanggal karena cuaca, macet, sakit, atau keperluan teknisi selalu gratis. Perubahan tanggal lainnya mengikuti aturan biaya yang sama dengan pembatalan (gratis sampai 2 hari sebelumnya, 50% hari sebelumnya, 100% pada hari pengerjaan). Hubungi kami lewat telepon atau LINE untuk mengubahnya.",
+   "Untuk perubahan, hubungi kami lewat telepon atau LINE."
+  ],
+  "D03": [
+   "Mau menambah? Senangnya!",
+   "Bisa atau tidaknya menambah tergantung jumlah pekerjaan sebelum dan sesudahnya dari staf penanggung jawab hari itu. Jika ingin mengubah jumlah unit atau opsi, hubungi kami dengan menyertakan nomor pemesanan. Kami akan menjelaskan rincian dan total setelah perubahan, dan baru mengubahnya setelah kamu setuju.",
+   "Tanpa persetujuanmu, kami tidak akan mengubah apa pun."
+  ],
+  "E01": [
+   "Soal garansi, aku kasih tahu duluan, ya.",
+   "Kami memberi garansi 7 hari (1 minggu) setelah pengerjaan. Jika di tempat yang kami kerjakan ada masalah yang disebabkan oleh pekerjaan kami, kami akan datang dan mengerjakan ulang secara gratis.",
+   "Soal pengerjaan ulang, jangan sungkan bilang, ya."
+  ],
+  "E02": [
+   "Ada bau atau bocor? Tenang dulu, ya.",
+   "1 minggu setelah pengerjaan adalah masa garansi. Jika ada masalah yang disebabkan oleh pekerjaan kami, kami akan datang dan mengerjakan ulang secara gratis. Pertama, hubungi kami lewat telepon atau LINE.",
+   "Jangan panik, hubungi kami dulu saja."
+  ],
+  "E03": [
+   "Kapan sebaiknya berikutnya? Pemikiran yang bagus.",
+   "Patokannya, membersihkan AC 2 tahun sekali. Rumah dengan hewan peliharaan mudah menumpuk bulu dan bau, jadi setahun 1 kali adalah yang terbaik. Meskipun ada fitur pembersihan otomatis, kotoran di dalam tetap ada. Waktu yang disarankan adalah awal musim semi dan awal musim gugur.",
+   "Catat jadwal berikutnya di kalender supaya tenang."
+  ],
+  "F01": [
+   "Mesin cuci dan kamar mandi juga? Aku tanyakan sekalian, ya.",
+   "Kalau kamu centang “Konsultasi pembersihan lain” di formulir pemesanan, staf penanggung jawab akan menjelaskannya sekaligus. Pembongkaran kipas ventilasi kamar mandi dan sejenisnya bisa dipilih di “Pembersihan lainnya”.",
+   "Bisa ditanyakan sekaligus, silakan saja."
+  ],
+  "F02": [
+   "Soal pembersihan toilet, izinkan aku bercerita sedikit!",
+   "Dulu, seorang ibu rumah tangga di Saitama bercerita kepada kami: “Keluarga kami 4 orang. Saya bekerja penuh waktu, dan pekerjaan rumah serta mengurus anak saya kerjakan sendirian. Toilet dipakai semua orang tapi tidak ada yang membersihkan, sampai kami bertengkar gara-gara toilet.”",
+   "Rumah seperti itu pasti banyak di seluruh Jepang. Karena berpikir begitu, kami memutuskan memberikan pembersihan toilet sebagai hadiah untuk semua yang memesan pembersihan AC.",
+   "Ya. Semua yang memesan pembersihan AC mendapat hadiah pembersihan toilet. Menulis ulasan bukan syaratnya.",
+   "AC dan toilet sama-sama kinclong, satu sumber pertengkaran berkurang, satu senyum di rumah bertambah. Itu membuatku senang!"
+  ],
+  "F03": [
+   "Khawatir soal alamat? Izinkan aku menjelaskan duluan.",
+   "Nama, alamat, telepon, dan email hanya digunakan di dalam toko ini. Teknisi penanggung jawab hanya melihat bagian yang diperlukan untuk pekerjaan. Kantor pusat dan toko lain hanya menerima angka seperti nomor pemesanan dan jumlah biaya.",
+   "Kalau ada yang dikhawatirkan, tanyakan saja langsung."
+  ],
+  "F04": [
+   "AC kaset plafon juga bisa!",
+   "Ya, kami melayaninya. AC kaset plafon 23,300 yen untuk unit pertama, mulai unit kedua 22,300 yen/unit. Ada wilayah yang tidak bisa dilayani, jadi staf penanggung jawab akan menghubungimu.",
+   "AC di plafon juga mudah menumpuk kotoran di bagian yang tidak terlihat, lho."
+  ],
+  "F05": [
+   "Bisa minta staf tertentu, lho!",
+   "Ya, bisa. Meminta staf tertentu dikenakan biaya +3,000 yen. Centang “Ingin meminta staf tertentu” di formulir pemesanan dan tulis namanya.",
+   "Staf kami senang sekali kalau diminta secara khusus."
+  ],
+  "F06": [
+   "Penasaran, ya. Aku jawab dengan jujur.",
+   "Panduan ini dijawab oleh robot pemandu AI. Informasi resmi dari staf penanggung jawab yang diutamakan. Jika ingin bicara dengan orang sungguhan, ketuk “Tidak” berikutnya dan aku akan menyambungkanmu.",
+   "Kalau lebih suka orang sungguhan, panggil saja, jangan sungkan."
+  ]
+ }
+}

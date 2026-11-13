@@ -1,0 +1,459 @@
+// このファイルは welcome/tools/build-thanks-data.mjs が dialect/src/en.json から作ります。直接書きかえないでください。
+(window.THANKS_DIALECTS = window.THANKS_DIALECTS || {})["en"] = {
+ "pref": "English",
+ "lang": "en",
+ "chars": {
+  "hello": [
+   "Hello there! Bruce here. Cheers for picking me.",
+   "I'm a bulldog exchange student from Britain, so English is my mother tongue. Ask me anything about your booking.",
+   "Just so you know: this chat is in English, but our staff on the day, the phone and LINE are in Japanese."
+  ],
+  "check": "Does that help? Ask me as many questions as you like.",
+  "more": "Right then, tap anything else you'd like to know.",
+  "miss": "Sorry, I didn't quite catch that. Try different words, or pick a button below.",
+  "handoff": [
+   "Ah, that one's beyond me. Making up an answer would be the worst thing I could do, so I'll pass you to a person.",
+   "Tell them your booking number {id} and things will go faster. Phone or LINE, whichever suits you (in Japanese)."
+  ],
+  "bye": [
+   "See you on the day! We'll do a proper job.",
+   "If a friend says \"I'd like that too\", do pass them this link. More work for me, brilliant."
+  ]
+ },
+ "my": [
+  "Here's what you entered in the form (it's shown in Japanese, as you typed it).",
+  "If anything's wrong, please tell us on LINE or by phone with your booking number {id}."
+ ],
+ "mine": {
+  "A02_what": "Your booking is for {what}.",
+  "A02_span": "That should take roughly {span}.",
+  "C04_pay": "In the form you chose \"{pay}\".",
+  "C04_change": "If you'd like to change it, just drop us a line on LINE or by phone.",
+  "A01_day": "Your first choice is {day}, {time}.",
+  "B03_in": "You said we can park on your property. Lovely.",
+  "B03_coin": "So we'll use a coin parking nearby.",
+  "C08_codes": "Your booking included {codes}. The shop will check it and apply it.",
+  "C08_id": "Please keep your booking number {id}. You'll need it when you contact us.",
+  "E03_pet": "You mentioned pets in your booking, so once a year is best for your home.",
+  "C07_has": "Your booking already has the 3-item set for {n} unit(s). Good choice!",
+  "C07_left": "If you'd like it for your other {left} unit(s) too, use the button below.",
+  "B06_model": "You wrote the model as \"{model}\". That's a great help, thank you!",
+  "B06_none": "If you can tell us, getting ready for the day is much easier.",
+  "C05_name": "Your receipt will be made out to \"{name}\".",
+  "C05_none": "No worries if you forgot the name for the receipt. Just write it in the box below.",
+  "B04_ok": "Pets are absolutely fine.",
+  "B04_count": "You wrote that you have {n}. Our staff will be told as well.",
+  "B04_next": "If anything worries you, tap \"No\" next and I'll put you through to a person.",
+  "INFO_mail": "Tap \"Send by email\" below and an email with this message will open. Just send it as it is. It comes from your registered address, so we can find it by booking number straight away.",
+  "INFO_reply": "Please reply to the confirmation email you just received and paste this message in. It comes from your registered address, so we can find it by booking number straight away.",
+  "INFO_got": "\"{val}\", got it. I've copied the message for the shop (it's in Japanese so the shop can read it).",
+  "ADD_ask": "Brilliant! For how many units?",
+  "F04_has": "Your booking includes {n} ceiling cassette unit(s).",
+  "F05_has": "Your booking requests {who}."
+ },
+ "items": {
+  "A01": [
+   "Wondering about the time? Good question.",
+   "We arrive within one of these windows: (1) 8:00–9:00, (2) 12:00–14:00, (3) 15:00–18:00. Our staff will tell you the confirmed time when they contact you.",
+   "Our staff will let you know the confirmed time, no fear."
+  ],
+  "A02": [
+   "Fair enough, time matters. Here you go.",
+   "As a guide, the work takes 60–90 minutes for a normal unit, 90–120 minutes for an auto-cleaning unit, and 20–30 minutes for an outdoor unit. Usually one staff member comes, and it can take longer depending on the model and how it's installed.",
+   "Leave a bit of room in your day, just in case."
+  ],
+  "A03": [
+   "Worried about being out? Understandable.",
+   "On the day, we ask that someone is at home while we work. Please tell our staff who will be there when they contact you to confirm.",
+   "If the timing doesn't suit you, let us know early."
+  ],
+  "A04": [
+   "Waiting is the worst bit, I know!",
+   "Our staff will contact you again to confirm the date. We sent you a confirmation email when we received your booking.",
+   "If you ask about it, please include your booking number."
+  ],
+  "A05": [
+   "Rainy days? I thought of that too.",
+   "We work on rainy days too. Also, changing the date because of the weather, traffic, illness or our staff's circumstances is always free.",
+   "Weather changes are free, so don't worry."
+  ],
+  "B01": [
+   "Here's what to tidy up first.",
+   "Please clear a working space of about 2 tatami mats (about 3 square metres) under the air conditioner. Please move furniture, belongings, house plants, and posters or photos on the wall before we arrive. If there's something you can't move, like a bed or a piano, please send a photo to our staff.",
+   "Can't move something? No problem, we'll check it together from the photo."
+  ],
+  "B02": [
+   "About electricity and water.",
+   "We'll borrow a power socket and your water. We wash the parts in the bathroom, or on a balcony or garage with a tap. We don't wash them in the kitchen sink or washbasin. We'll also borrow the toilet to pour away dirty water. We use a pressure washer too. It's loud, so we'll let you know before we start.",
+   "Just show us where things are on the day."
+  ],
+  "B03": [
+   "Parking. Everyone's first worry.",
+   "If there's no parking, we charge the actual cost of a nearby coin parking separately.",
+   "Deciding where to park beforehand makes the day go smoothly."
+  ],
+  "B04": [
+   "Pets, eh? Let me tell you.",
+   "Pets are fine. What you wrote about your pets in the booking form will be passed on to our staff.",
+   "If anything worries you, tap \"No\" next and I'll put you through to a person."
+  ],
+  "B05": [
+   "Little ones about? Lovely.",
+   "Small children are fine. We'll take good care while we work. We use a stepladder and cleaning liquid, so it helps if someone keeps them away from the air conditioner.",
+   "We're used to working in homes with children, so rest easy."
+  ],
+  "B06": [
+   "The model number is the first thing I'd like to know.",
+   "If you write it in \"Maker and model number\" on the booking form, we can prepare better for the day. The price depends on whether the unit has auto-cleaning.",
+   "If you're not sure, we'll check it together later."
+  ],
+  "C01": [
+   "I've done the sums for you.",
+   "This is an automatic estimate. The final amount and conditions are the ones you checked on the booking confirmation screen.",
+   "Treat it as a guide and look at the amount on the confirmation screen."
+  ],
+  "C02": [
+   "This is the bit I'm most confident about.",
+   "We don't charge anything on top of the total (tax included) we quoted. The only exceptions: (1) Parking is extra (actual cost). (2) If we find a different model, a different number of units, or special work (high places, units that can't be taken apart, etc.) on site, we'll show you the reason and photos, and we won't work or charge until you approve (you're free to say no).",
+   "Those are the only exceptions. Ask if anything's unclear."
+  ],
+  "C03": [
+   "Let me get ahead of you on auto-cleaning.",
+   "Units with auto-cleaning cost an extra 6,000 yen each. The same extra applies if we find out on the day that the unit has auto-cleaning.",
+   "It's the same extra if we find out on the day, so do check beforehand."
+  ],
+  "C04": [
+   "Payment. Let me explain first.",
+   "You pay after the work is finished. You can pay by cash on the day, PayPay on the day, or a PayPal invoice (sent by email, you can pay by card). We'll go with the method you chose in the booking form.",
+   "The method you chose in the form is fine."
+  ],
+  "C05": [
+   "Receipts? Of course.",
+   "If you need a receipt, write the name in \"Name on the receipt\" in the booking form. Our staff will tell you how it will be issued.",
+   "If you forgot to write the name, tell us on LINE or by phone."
+  ],
+  "C06": [
+   "Is it cheaper to book more? Fair question.",
+   "For wall-mounted units, the second and later units cost the same as the first. We don't usually discount. For ceiling cassette units, it's 1,000 yen off each from the second unit. All prices are totals including tax.",
+   "Between you and me, we sometimes run campaigns just for our newsletter readers. Booking then is a real bargain!"
+  ],
+  "C07": [
+   "I've been itching to explain this set.",
+   "The 3-item set is an anti-mould coating, outdoor unit cleaning and drain hose cleaning, for 7,500 yen per unit (9,500 yen if ordered separately). The combo set is outdoor unit plus anti-mould coating, for 5,000 yen per unit.",
+   "If you can't decide, let's look at the options together."
+  ],
+  "C08": [
+   "Let me look at the codes for you.",
+   "Any coupon or referral code you entered in the booking form will be checked and applied by the shop.",
+   "Leave the codes to the shop."
+  ],
+  "D01": [
+   "Cancellations. Best to know early.",
+   "The cancellation fee is free up to two days before, 50% the day before, and 100% on the day.",
+   "Deciding early helps us a lot."
+  ],
+  "D02": [
+   "Need a different date? Let's sort it.",
+   "Changing the date because of the weather, traffic, illness or our staff's circumstances is always free. Other date changes follow the same rules as cancellations (free up to two days before, 50% the day before, 100% on the day). Please contact us by phone or LINE to change.",
+   "Contact us by phone or LINE to change."
+  ],
+  "D03": [
+   "Want to add more? Lovely!",
+   "Whether we can add more depends on that day's schedule for our staff. If you want to change the number of units or options, contact us with your booking number. We'll explain the new breakdown and total, and change it only after you agree.",
+   "We never change anything without your OK."
+  ],
+  "E01": [
+   "Guarantees. Here's the deal.",
+   "We guarantee our work for 7 days (1 week) afterwards. If there's a problem in the place we worked that was caused by our work, we'll come back and redo it for free.",
+   "Don't be shy about asking us to redo it."
+  ],
+  "E02": [
+   "A smell or a leak? Right, let's stay calm.",
+   "The first week after the work is the guarantee period. If there's a problem caused by our work, we'll come back and redo it for free. First, please contact us by phone or LINE.",
+   "No panic. Just get in touch first."
+  ],
+  "E03": [
+   "When's the next one? Good thinking.",
+   "As a guide, air conditioner cleaning every 2 years is enough. Homes with pets collect hair and smells faster, so once a year is best. Even auto-cleaning units get dirty inside. Early spring and early autumn are the best times.",
+   "Pop a note in your calendar for next time."
+  ],
+  "F01": [
+   "Washing machine or bathroom too? Go on then.",
+   "Tick \"Other cleaning requests\" in the booking form and our staff will tell you about it too. Taking apart the bathroom fan and so on can be chosen under \"Other cleaning\".",
+   "You can ask about it all at once."
+  ],
+  "F02": [
+   "Toilet cleaning. Let me tell you a story!",
+   "A mum in Saitama once told us: \"There are four of us. I work full time and do all the housework and childcare alone. Everyone uses the toilet but nobody cleans it, and we end up fighting about it.\"",
+   "There must be homes like that all over Japan. So we decided to give toilet cleaning as a gift to everyone who books air conditioner cleaning.",
+   "Yes. Everyone who orders air conditioner cleaning gets toilet cleaning as a gift. Writing a review is not a condition.",
+   "A sparkling air conditioner and toilet, one less thing to argue about, and more smiles at home. That would make me happy!"
+  ],
+  "F03": [
+   "Your address. Let me explain first.",
+   "Your name, address, phone and email are only used inside this shop. Our cleaning staff only see what they need for the work. Head office and other shops only get numbers, like your booking number and the amount.",
+   "If anything worries you, just ask."
+  ],
+  "F04": [
+   "Ceiling cassettes? No problem!",
+   "Yes, we do. Ceiling cassette units are 23,300 yen for the first and 22,300 yen each from the second. Some areas can't be covered, so our staff will contact you.",
+   "Ceiling units collect dirt where you can't see it."
+  ],
+  "F05": [
+   "You can request someone!",
+   "Yes, you can. Requesting a staff member costs +3,000 yen. Tick \"I'd like to request a staff member\" in the booking form and write their name.",
+   "Our staff are chuffed to bits when they're requested."
+  ],
+  "F06": [
+   "Fair question. I'll be honest.",
+   "This guide is an AI robot. Official information from our staff comes first. If you'd like to talk to a person, tap \"No\" next and I'll put you through.",
+   "If you'd rather have a person, just ask."
+  ]
+ },
+ "t": {
+  "ui_more": "See more questions",
+  "ui_ph": "Type your question",
+  "ui_send": "Send",
+  "ui_hint": "Please don't type your name, phone number or address.",
+  "ui_human": "Talk to a person",
+  "ui_human_out": "I'd like to talk to a person",
+  "ui_menu": "Other questions",
+  "ui_bye": "Finish (with a gift)",
+  "ui_bye_out": "That's all",
+  "ui_set": "OK",
+  "ui_mail": "Send by email",
+  "ui_mail_line": "Can't use email? Send on LINE",
+  "ui_copy_again": "Copy again",
+  "ui_copied": "Copied",
+  "ui_add_set3": "I'd like to add the 3-item set",
+  "ui_yes": "Yes",
+  "ui_no": "No",
+  "ui_about": "Answering: \"{q}\"",
+  "ui_contact": "Talk to a person",
+  "ui_tell_id": "Please give your booking number {id}.",
+  "ui_ja_only": "Phone, LINE and our staff on the day speak Japanese.",
+  "ui_call": "Call",
+  "ui_line": "Ask on LINE",
+  "ui_line_note": "You can also message our official LINE account \"ありがとうエアコンサポート\".",
+  "ui_copy_msg": "Copy a message for the shop (in Japanese)",
+  "ui_stars": "How was your guide?",
+  "ui_thanks": "Thank you!",
+  "u_h": "{n} h",
+  "u_m": "{n} min",
+  "u_to": " to ",
+  "u_and": " and ",
+  "u_colon": ": ",
+  "v_ac": "{n} air conditioner(s)",
+  "v_auto": " ({n} with auto-cleaning)",
+  "v_out": " and {n} outdoor unit(s)",
+  "v_coupon": "coupon code \"{code}\"",
+  "v_ref": "referral code \"{code}\"",
+  "v_who": "\"{name}\" as your staff member",
+  "v_staff": "a specific staff member",
+  "v_pets": "{n} pet(s)",
+  "pay_onsite": "cash on the day",
+  "pay_paypay": "PayPay on the day",
+  "pay_paypal": "PayPal invoice (sent by email)",
+  "A02_note": " (This is a guide for one staff member. It can take longer depending on the model and how it's installed.)",
+  "A02_tenkase": "For the {n} ceiling cassette unit(s), it depends on the model, so our staff will let you know.",
+  "C04_after": "You pay after the work is finished.",
+  "A01_arrive": "For this time slot, we'll arrive between {arr} (this is not the finishing time).",
+  "A01_fix": "The date is confirmed when our staff contact you.",
+  "B03_in_note": "Only if there's no parking, we charge the actual cost of a nearby coin parking separately.",
+  "B03_coin_note": "In that case, we charge the actual coin parking cost separately.",
+  "C08_none": "Any coupon or referral code you entered in the booking form will be checked and applied by the shop.",
+  "E03_base": "As a guide, air conditioner cleaning every 2 years is enough. But homes with pets collect hair and smells faster, so once a year is best. Early spring and early autumn are the best times.",
+  "F04_note": "Ceiling cassette units are 23,300 yen for the first and 22,300 yen each from the second. Some areas can't be covered, so our staff will contact you.",
+  "F05_note": "Requesting a staff member costs +3,000 yen.",
+  "C07_note": "The 3-item set is an anti-mould coating, outdoor unit cleaning and drain hose cleaning, for 7,500 yen per unit (9,500 yen if ordered separately).",
+  "B06_note": "The price depends on whether the unit has auto-cleaning, so please tell us as far as you know.",
+  "C05_note": "Our staff will tell you how the receipt will be issued.",
+  "info_receipt": "Name on the receipt",
+  "info_receipt_ph": "e.g. ABC Ltd. / John Smith",
+  "info_receipt_has": "Only fill this in if you want to change the name.",
+  "info_receipt_none": "If you forgot the name for the receipt, write it here.",
+  "info_set3": "Add the 3-item set",
+  "info_set3_ph": "How many units? (e.g. 2)",
+  "info_set3_none": "Write how many units you'd like to add. Whether we can add it depends on that day's schedule, so our staff will contact you to confirm.",
+  "info_model": "Maker and model number",
+  "info_model_ph": "e.g. Daikin AN22XXX",
+  "info_model_has": "Write here if it was wrong, or for any other units.",
+  "info_model_none": "If you know it, please write it here. It's on a sticker on the side or bottom of the unit."
+ },
+ "q": {
+  "MY": "Check my booking",
+  "A01": "What time will you arrive?",
+  "A02": "How long does it take?",
+  "A03": "Do I need to be at home?",
+  "A04": "When will the date be confirmed?",
+  "A05": "Do you work on rainy days?",
+  "B01": "Should I clear the area around the air conditioner?",
+  "B02": "Will you use my electricity and water?",
+  "B03": "What about parking?",
+  "B04": "Is it OK if I have pets?",
+  "B05": "I have small children. Anything to watch out for?",
+  "B06": "Should I tell you the model number?",
+  "C01": "How much will it cost me?",
+  "C02": "Will there be extra charges on the day?",
+  "C03": "Does auto-cleaning change the price?",
+  "C04": "When and how do I pay?",
+  "C05": "Can I get a receipt?",
+  "C06": "Is it cheaper from the second unit?",
+  "C07": "What's in the 3-item set?",
+  "C08": "Can I use a coupon or referral code?",
+  "D01": "How much is the cancellation fee?",
+  "D02": "What if I want to change the date?",
+  "D03": "Can I add units or options later?",
+  "E01": "Is there a guarantee?",
+  "E02": "What if there's a smell or a leak afterwards?",
+  "E03": "How often should I get it cleaned?",
+  "F01": "Can I also book the washing machine or bathroom?",
+  "F02": "Is toilet cleaning really free?",
+  "F03": "Who can see my name and address?",
+  "F04": "Do you clean ceiling cassette units?",
+  "F05": "Can I request a staff member?",
+  "F06": "Is this chat a person?"
+ },
+ "kw": {
+  "A01": [
+   "arrive",
+   "arrival",
+   "what time"
+  ],
+  "A02": [
+   "how long",
+   "duration"
+  ],
+  "A03": [
+   "at home",
+   "away",
+   "absent"
+  ],
+  "A04": [
+   "confirm",
+   "confirmed"
+  ],
+  "A05": [
+   "rain"
+  ],
+  "B01": [
+   "clear",
+   "tidy",
+   "furniture"
+  ],
+  "B02": [
+   "electricity",
+   "water",
+   "power"
+  ],
+  "B03": [
+   "parking",
+   "park",
+   "car"
+  ],
+  "B04": [
+   "pet",
+   "dog",
+   "cat"
+  ],
+  "B05": [
+   "child",
+   "children",
+   "baby",
+   "kid"
+  ],
+  "B06": [
+   "model",
+   "maker"
+  ],
+  "C01": [
+   "how much",
+   "price",
+   "cost"
+  ],
+  "C02": [
+   "extra",
+   "additional"
+  ],
+  "C03": [
+   "auto-clean",
+   "auto clean"
+  ],
+  "C04": [
+   "pay",
+   "payment",
+   "cash",
+   "paypay",
+   "paypal"
+  ],
+  "C05": [
+   "receipt"
+  ],
+  "C06": [
+   "discount",
+   "second unit",
+   "cheaper"
+  ],
+  "C07": [
+   "3-item",
+   "set"
+  ],
+  "C08": [
+   "coupon",
+   "referral",
+   "code"
+  ],
+  "D01": [
+   "cancel"
+  ],
+  "D02": [
+   "change the date",
+   "reschedule",
+   "another day"
+  ],
+  "D03": [
+   "add",
+   "more units",
+   "option"
+  ],
+  "E01": [
+   "guarantee",
+   "warranty"
+  ],
+  "E02": [
+   "smell",
+   "leak"
+  ],
+  "E03": [
+   "how often",
+   "frequency"
+  ],
+  "F01": [
+   "washing machine",
+   "bathroom",
+   "bath"
+  ],
+  "F02": [
+   "toilet"
+  ],
+  "F03": [
+   "privacy",
+   "personal",
+   "address"
+  ],
+  "F04": [
+   "ceiling",
+   "cassette"
+  ],
+  "F05": [
+   "request",
+   "nominate"
+  ],
+  "F06": [
+   "human",
+   "robot",
+   "ai",
+   "bot"
+  ]
+ }
+};
