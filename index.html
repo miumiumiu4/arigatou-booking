@@ -230,7 +230,8 @@ fetch(location.href.split("#")[0], { method:"HEAD", cache:"no-store" }).then(r =
 // どのサイトから来たか（今回と、90日以内の最初の来訪）。予約の備考に【流入元】として残す
 const fromLine = (() => {
   const q = new URLSearchParams(location.search), parts = [];
-  ["src", "from", "ref", "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"].forEach(k => { if (q.get(k)) parts.push(k + "=" + q.get(k).slice(0, 60)); });
+  // 媒体・サイト名だけ（紹介コードや個人が分かる文は入れない）。英数字と . _ - 以外は捨てる
+  ["src", "from", "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"].forEach(k => { const v = (q.get(k) || "").replace(/[^A-Za-z0-9._-]/g, "").slice(0, 40); if (v) parts.push(k + "=" + v); });
   let site = "";
   try { const h = document.referrer ? new URL(document.referrer).hostname : ""; if (h && h !== location.hostname) site = h; } catch (_) {}
   const now = parts.join("&") + (site ? (parts.length ? " " : "") + "参照元:" + site : "");

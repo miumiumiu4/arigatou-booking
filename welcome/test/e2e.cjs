@@ -188,6 +188,7 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
     assert.match(b.note, re);
   assert.match(b.src, /^welcome\?/);
   assert.match(b.note, /【流入元】今回：src=klp&utm_source=hp/); // どのサイトから来たか
+  assert.doesNotMatch(b.note.split('\n').find(l => l.startsWith('【流入元】')), /ref=/);
   assert.equal(b.receipt_name, undefined); // 宛名は備考の1行だけで送る
   const hp = logged.filter(e => e.test === 'hp-chat'), th = logged.filter(e => e.test === 'thanks-chat');
   const ev = hp.map(e => e.event);
