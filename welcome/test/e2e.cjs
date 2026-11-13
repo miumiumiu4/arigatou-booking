@@ -229,6 +229,7 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   await page.getByRole('button', { name: '案内係を変える' }).click();
   // ブルース：生まれ故郷を選ぶと、その県の言葉で話す。料金などの元文は標準語のまま。県は計測に送らない
   await page.locator('#thanksPanel').getByRole('button', { name: /ブルース/ }).click();
+  await page.locator('#thanksPanel').getByRole('button', { name: '北海道・東北' }).click();
   await page.locator('#thanksPanel').getByRole('button', { name: '秋田' }).click();
   await page.locator('#thanksPanel').getByRole('button', { name: '支払い' }).waitFor();
   assert.match(await page.locator('#thanksPanel').innerText(), /すっかり秋田弁になってしまったんだ/);
@@ -255,6 +256,8 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   // ブルース：外国の言葉。答え・ボタン・予約の中身の文もその言葉。お店へ送る文だけは日本語のまま
   await page.getByRole('button', { name: '案内係を変える' }).click();
   await page.locator('#thanksPanel').getByRole('button', { name: /ブルース/ }).click();
+  await page.locator('#thanksPanel').getByRole('button', { name: '前回：秋田' }).waitFor();
+  await page.locator('#thanksPanel').getByRole('button', { name: /Other languages/ }).click();
   await page.locator('#thanksPanel').getByRole('button', { name: 'English' }).click();
   await page.locator('#thanksPanel').getByRole('button', { name: 'When and how do I pay?' }).waitFor();
   assert.match(await page.locator('#thanksPanel').innerText(), /our staff on the day, the phone and LINE are in Japanese/);

@@ -131,26 +131,41 @@
     say(ch().hello, menu);
   }
   // ブルース：生まれ故郷を聞いて、その県の言葉の束を読み込む。選んだ県はこの端末の中だけ（計測にも送らない）
+  // 県は47あるので、まず地方を選んでから県を選ぶ（11/13）。前に選んだ言葉は一番上に1つだけ出す
+  var REGIONS = [['北海道・東北', 1, 7], ['関東', 8, 14], ['中部', 15, 23], ['近畿', 24, 30], ['中国', 31, 35], ['四国', 36, 39], ['九州・沖縄', 40, 47]];
   function hometown() {
+    say(D.chars.bruce.ask, function () { prefMenu(); });
+  }
+  function prefMenu(group) {
     var list = D.dialects || [], last = store(PREF);
-    say(D.chars.bruce.ask, function () {
-      var btn = function (d) {
-        return '<button type="button" class="btn ghost' + (d.id === last ? ' last' : '') + '" data-pref="' + d.id + '"' + (d.lang ? ' lang="' + d.lang + '"' : '') + '>' + esc(d.pref) + (d.id === last ? '（前回）' : '') + '</button>';
-      };
-      var ken = list.filter(function (d) { return !d.lang; }), gai = list.filter(function (d) { return d.lang; });
-      controls('<div class="tc-quick tc-pref">' + ken.map(btn).join('') + '</div>'
-        + (gai.length ? '<p class="tc-hint">' + esc(D.chars.bruce.langs) + '</p><div class="tc-quick tc-pref tc-lang">' + gai.map(btn).join('') + '</div>' : '')
-        + '<p class="tc-hint">' + esc(D.chars.bruce.soon) + '</p>');
-      on('[data-pref]', function (b) {
-        var d = list.filter(function (x) { return x.id === b.dataset.pref; })[0];
-        controls('');
-        row('out', esc(d.pref));
-        loadDialect(d.id, function (dl) {
-          if (!dl) { say([D.chars.bruce.fail], function () { intro(true); }); return; }
-          store(PREF, d.id);
-          useDialect(dl);
-          say(ch().hello, menu);
-        });
+    var prev = list.filter(function (d) { return d.id === last; })[0];
+    var btn = function (d) {
+      return '<button type="button" class="btn ghost' + (d.id === last ? ' last' : '') + '" data-pref="' + d.id + '"' + (d.lang ? ' lang="' + d.lang + '"' : '') + '>' + esc(d.pref) + (d.id === last ? '（前回）' : '') + '</button>';
+    };
+    var html;
+    if (group === 'lang') {
+      html = '<p class="tc-hint">' + esc(D.chars.bruce.langs) + '</p><div class="tc-quick tc-pref tc-lang">' + list.filter(function (d) { return d.lang; }).map(btn).join('') + '</div>';
+    } else if (group != null) {
+      var r = REGIONS[group];
+      html = '<p class="tc-hint">' + esc(r[0]) + '</p><div class="tc-quick tc-pref">' + list.filter(function (d) { return !d.lang && d.order >= r[1] && d.order <= r[2]; }).map(btn).join('') + '</div>';
+    } else {
+      html = (prev ? '<button type="button" class="btn primary wide" data-pref="' + prev.id + '"' + (prev.lang ? ' lang="' + prev.lang + '"' : '') + '>前回：' + esc(prev.pref) + '</button>' : '')
+        + '<div class="tc-quick tc-pref">' + REGIONS.map(function (r, i) {
+          return list.some(function (d) { return !d.lang && d.order >= r[1] && d.order <= r[2]; }) ? '<button type="button" class="btn ghost" data-region="' + i + '">' + esc(r[0]) + '</button>' : '';
+        }).join('') + (list.some(function (d) { return d.lang; }) ? '<button type="button" class="btn ghost" data-region="lang">' + esc(D.chars.bruce.langs) + '</button>' : '') + '</div>';
+    }
+    controls(html + (group != null ? '<button type="button" class="tc-link" data-back="1">地方を選び直す</button>' : '') + '<p class="tc-hint">' + esc(D.chars.bruce.soon) + '</p>');
+    on('[data-region]', function (b) { prefMenu(b.dataset.region === 'lang' ? 'lang' : +b.dataset.region); });
+    on('[data-back]', function () { prefMenu(); });
+    on('[data-pref]', function (b) {
+      var d = list.filter(function (x) { return x.id === b.dataset.pref; })[0];
+      controls('');
+      row('out', esc(d.pref));
+      loadDialect(d.id, function (dl) {
+        if (!dl) { say([D.chars.bruce.fail], function () { intro(true); }); return; }
+        store(PREF, d.id);
+        useDialect(dl);
+        say(ch().hello, menu);
       });
     });
   }

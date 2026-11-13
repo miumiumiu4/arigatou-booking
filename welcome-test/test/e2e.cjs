@@ -63,6 +63,7 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   assert.equal(await tc.locator('.tc-card').count(), 4);
   await page.waitForFunction(() => [...document.querySelectorAll('#thanksPanel img')].every(i => i.complete && i.naturalWidth > 0));
   await tc.getByRole('button', { name: /ブルース/ }).click();
+  await tc.getByRole('button', { name: '北海道・東北' }).click();
   await tc.getByRole('button', { name: '秋田' }).click();
   await tc.getByRole('button', { name: 'おしまい' }).click();
   await tc.getByText('ご家族やお知り合いに紹介しませんか').waitFor();

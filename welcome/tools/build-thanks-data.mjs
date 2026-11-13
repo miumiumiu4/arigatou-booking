@@ -46,7 +46,7 @@ const CHARS = {
     name: 'ブルース', kind: '留学生', pick: 'ふるさとの言葉で答えます', img: 'chara/bruce.svg',
     ask: ['ハロー、ブルースです。イギリスから来た留学生のブルドッグです。', '日本の田舎の学校で育ったので、その土地の言葉で話します。あなたの生まれ故郷はどこですか？ 外国の言葉でも話せますよ。'],
     langs: 'ほかの国の言葉 / Other languages',
-    soon: 'ほかの県や国の言葉も、順番に増やしています。',
+    soon: 'ほかの国の言葉も、順番に増やしています。',
     fail: 'ごめんなさい、いまは言葉の準備ができませんでした。ほかの案内係を選んでください。',
     hello: [], check: '', more: '', miss: '', handoff: [], bye: []
   }
@@ -118,7 +118,7 @@ for (const f of (fs.existsSync(DL_SRC) ? fs.readdirSync(DL_SRC) : []).filter(f =
   dialects.push(dl.lang ? { id, pref: dl.pref, lang: dl.lang, order: +dl.order || 999 } : { id, pref: dl.pref, order: +dl.order || 999 });
 }
 dialects.sort((x, y) => x.order - y.order); // 県は北から（JIS の県番号）、外国の言葉は order の順
-for (const d of dialects) delete d.order;
+for (const d of dialects) if (d.lang) delete d.order; // 県の order（JIS の県番号）は、ページで地方に分けるのに使う
 if (!dialects.length) throw new Error('県の言葉の束が1つも無い（ブルースが話せない）');
 
 const data = { version: led.version, chars: CHARS, quick: QUICK, items, dialects };
