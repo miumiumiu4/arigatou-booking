@@ -43,7 +43,7 @@
   "C05_none": "Quên ghi tên trên biên lai cũng không sao. Bạn cứ viết vào ô bên dưới nhé.",
   "B04_ok": "Có thú cưng hoàn toàn không sao.",
   "B04_count": "Bạn ghi là có {n}. Nhân viên cũng sẽ được báo trước.",
-  "B04_next": "Nếu có gì lo lắng, bạn bấm “Không” ở bước tiếp theo, mình sẽ chuyển sang người thật.",
+  "B04_next": "Nếu có gì lo lắng, bạn bấm “Tôi muốn nói chuyện với người thật” ở bước tiếp theo, mình sẽ chuyển sang người thật.",
   "INFO_mail": "Bấm “Gửi qua email” bên dưới, một email có sẵn nội dung này sẽ mở ra. Bạn cứ gửi nguyên như vậy. Email gửi từ địa chỉ bạn đã đăng ký nên tụi mình tìm được ngay theo mã đặt lịch.",
   "INFO_reply": "Bạn hãy trả lời email xác nhận vừa nhận được và dán nội dung này vào nhé. Email gửi từ địa chỉ bạn đã đăng ký nên tụi mình tìm được ngay theo mã đặt lịch.",
   "INFO_got": "“{val}”, mình ghi nhận rồi. Mình đã sao chép tin nhắn gửi cửa hàng (bằng tiếng Nhật để cửa hàng đọc được).",
@@ -95,7 +95,7 @@
   "B04": [
    "Chuyện thú cưng à? Để mình nói nhé.",
    "Có thú cưng cũng không sao. Những gì bạn ghi về thú cưng trong biểu mẫu đặt lịch sẽ được chuyển cho nhân viên phụ trách.",
-   "Nếu có gì lo lắng, bạn bấm “Không” ở bước tiếp theo nhé. Mình sẽ chuyển sang người thật."
+   "Nếu có gì lo lắng, bạn bấm “Tôi muốn nói chuyện với người thật” ở bước tiếp theo nhé. Mình sẽ chuyển sang người thật."
   ],
   "B05": [
    "Có bé nhỏ trong nhà à? Đáng yêu quá.",
@@ -206,7 +206,7 @@
   ],
   "F06": [
    "Bạn thắc mắc nhỉ. Mình trả lời thật lòng nhé.",
-   "Phần hướng dẫn này do robot hướng dẫn AI trả lời. Thông báo chính thức từ nhân viên phụ trách được ưu tiên. Nếu muốn nói chuyện với người thật, bạn bấm “Không” ở bước tiếp theo, mình sẽ chuyển sang người thật.",
+   "Phần hướng dẫn này do robot hướng dẫn AI trả lời. Thông báo chính thức từ nhân viên phụ trách được ưu tiên. Nếu muốn nói chuyện với người thật, bạn bấm “Tôi muốn nói chuyện với người thật” ở bước tiếp theo, mình sẽ chuyển sang người thật.",
    "Muốn gặp người thật thì cứ gọi, đừng ngại nhé."
   ]
  },

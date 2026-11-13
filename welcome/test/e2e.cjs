@@ -101,7 +101,10 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   await tc.locator('.tc-ask input').fill('090-1234-5678 ペットがいます');
   await tc.getByRole('button', { name: '送る' }).click();
   await waitText(/ペットがおっても大丈夫やで[\s\S]*ペット2匹おるって書いてくれてたな/);
-  await tc.getByRole('button', { name: 'いいえ' }).click();
+  // 答えのあとは「はい／おしまい（特典あり）」。人へは下の「人と話したい」（11/13 三浦さん）
+  assert.equal(await tc.getByRole('button', { name: 'いいえ' }).count(), 0);
+  await tc.getByRole('button', { name: 'おしまい（特典あり）' }).waitFor();
+  await tc.getByRole('button', { name: '人と話したい' }).click();
   await tc.getByText('人とお話しする').waitFor();
   assert.match(await tc.innerText(), /「ペットがいても大丈夫ですか？」のことでお答えします/);
   assert.match(await tc.innerText(), /○○ ペットがいます/);
@@ -115,9 +118,9 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   await tc.getByRole('button', { name: 'ほかの質問も見る' }).click();
   await tc.getByRole('button', { name: '私の料金はいくらですか？' }).click();
   await waitText(/概算 51,100円/);
-  await tc.getByRole('button', { name: 'いいえ' }).waitFor();
+  await tc.getByRole('button', { name: '人と話したい' }).waitFor();
   // 解決しない → 人へ
-  await tc.getByRole('button', { name: 'いいえ' }).click();
+  await tc.getByRole('button', { name: '人と話したい' }).click();
   await tc.getByText('人とお話しする').waitFor();
   // 3点セット：答えのあとに「追加したい」ボタン。台数を書くと受付番号つきの文になる（予約は書き換えない）
   await tc.getByRole('button', { name: 'ほかの質問' }).click();
@@ -164,6 +167,12 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   await tc.locator('.share .link button').click();
   await tc.getByRole('button', { name: '星4つ' }).click();
   await tc.getByText('ありがとうございました。').waitFor();
+  { // おしまいの画面：紹介リンクがいちばん上、電話・LINE はいちばん下
+    const sy = (await tc.locator('.tc-share').boundingBox()).y, cy = (await tc.locator('.tc-ctl .tc-contact').boundingBox()).y;
+    assert.ok(sy < cy, `紹介 ${sy} が 連絡 ${cy} より上`);
+    assert.equal(await tc.locator('.tc-ctl .tc-contact a[href="tel:08041772272"]').count(), 1);
+    assert.equal(await tc.locator('.tc-ctl .tc-contact a[href="https://lin.ee/rD0Xlot"]').count(), 1);
+  }
   await snap('7_bye');
 
   // 裏側へは台帳外の自由入力だけ。お名前・住所・電話・メール・予約の中身は送らない
@@ -184,7 +193,7 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   assert.ok(logged.every(e => e.page === 'welcome'));
   const tev = th.map(e => e.event + (e.note ? ':' + e.note : ''));
   assert.deepEqual(tev.slice(0, 5), ['キャラ表示', 'キャラ選択:buruyan', '質問:ボタン:B03', '解決:はい:B03', '質問:入力:B04:○○ ペットがいます']);
-  for (const want of ['質問:ボタン:C01', '解決:いいえ:C01', '人へ:いいえ:C01', '質問:ボタン:C07', '追加したい:3点セット', '質問:ボタン:F02', '人へ:未確定:Z99', '質問:入力:なし:おすすめの晩ごはんは', '人へ:2回わからない', 'おしまい:R1109-999:buruyan', '紹介コピー:R1109-999', '星:R1109-999:4:buruyan'])
+  for (const want of ['質問:ボタン:C01', '解決:人と話したい:C01', '人へ:人と話したい:C01', '質問:ボタン:C07', '追加したい:3点セット', '質問:ボタン:F02', '人へ:未確定:Z99', '質問:入力:なし:おすすめの晩ごはんは', '人へ:2回わからない', 'おしまい:R1109-999:buruyan', '紹介コピー:R1109-999', '星:R1109-999:4:buruyan'])
     assert.ok(tev.includes(want), want + ' が記録に無い: ' + tev.join(' / '));
   // 個人情報が記録・チャットに出ない
   const all = JSON.stringify(logged);

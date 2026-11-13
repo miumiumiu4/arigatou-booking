@@ -44,7 +44,7 @@
   "C05_none": "No worries if you forgot the name for the receipt. Just write it in the box below.",
   "B04_ok": "Pets are absolutely fine.",
   "B04_count": "You wrote that you have {n}. Our staff will be told as well.",
-  "B04_next": "If anything worries you, tap \"No\" next and I'll put you through to a person.",
+  "B04_next": "If anything worries you, tap \"I'd like to talk to a person\" next and I'll put you through to a person.",
   "INFO_mail": "Tap \"Send by email\" below and an email with this message will open. Just send it as it is. It comes from your registered address, so we can find it by booking number straight away.",
   "INFO_reply": "Please reply to the confirmation email you just received and paste this message in. It comes from your registered address, so we can find it by booking number straight away.",
   "INFO_got": "\"{val}\", got it. I've copied the message for the shop (it's in Japanese so the shop can read it).",
@@ -342,7 +342,7 @@
   "B04": [
    "Pets, eh? Let me tell you.",
    "Pets are fine. What you wrote about your pets in the booking form will be passed on to our staff.",
-   "If anything worries you, tap \"No\" next and I'll put you through to a person."
+   "If anything worries you, tap \"I'd like to talk to a person\" next and I'll put you through to a person."
   ],
   "B05": [
    "Little ones about? Lovely.",
@@ -453,7 +453,7 @@
   ],
   "F06": [
    "Fair question. I'll be honest.",
-   "This guide is an AI robot. Official information from our staff comes first. If you'd like to talk to a person, tap \"No\" next and I'll put you through.",
+   "This guide is an AI robot. Official information from our staff comes first. If you'd like to talk to a person, tap \"I'd like to talk to a person\" next and I'll put you through.",
    "If you'd rather have a person, just ask."
   ]
  }

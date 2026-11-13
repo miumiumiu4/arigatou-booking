@@ -43,7 +43,7 @@
   "C05_none": "Kein Problem, falls du den Namen für die Quittung vergessen hast. Schreib ihn einfach ins Feld unten.",
   "B04_ok": "Haustiere sind absolut kein Problem.",
   "B04_count": "Du hast geschrieben, dass du {n} hast. Unser Team wird auch informiert.",
-  "B04_next": "Wenn dich etwas beunruhigt, tippe als Nächstes auf „Nein“ und ich verbinde dich mit einem Menschen.",
+  "B04_next": "Wenn dich etwas beunruhigt, tippe als Nächstes auf „Ich möchte mit einem Menschen sprechen“ und ich verbinde dich mit einem Menschen.",
   "INFO_mail": "Tippe unten auf „Per E-Mail senden“, dann öffnet sich eine E-Mail mit dieser Nachricht. Schick sie einfach so ab. Sie kommt von deiner registrierten Adresse, so finden wir sie sofort über die Buchungsnummer.",
   "INFO_reply": "Bitte antworte auf die Bestätigungs-E-Mail, die du gerade bekommen hast, und füge diese Nachricht ein. Sie kommt von deiner registrierten Adresse, so finden wir sie sofort über die Buchungsnummer.",
   "INFO_got": "„{val}“, notiert. Ich habe die Nachricht für den Laden kopiert (sie ist auf Japanisch, damit der Laden sie lesen kann).",
@@ -95,7 +95,7 @@
   "B04": [
    "Haustiere, was? Ich erzähl's dir.",
    "Haustiere sind kein Problem. Was du im Buchungsformular über deine Haustiere geschrieben hast, wird an unser Team weitergegeben.",
-   "Wenn dich etwas beunruhigt, tippe als Nächstes auf „Nein“ und ich verbinde dich mit einem Menschen."
+   "Wenn dich etwas beunruhigt, tippe als Nächstes auf „Ich möchte mit einem Menschen sprechen“ und ich verbinde dich mit einem Menschen."
   ],
   "B05": [
    "Kleine Kinder im Haus? Wie schön.",
@@ -206,7 +206,7 @@
   ],
   "F06": [
    "Berechtigte Frage. Ich bin ehrlich.",
-   "Dieser Guide ist ein KI-Roboter. Offizielle Informationen von unserem Team haben Vorrang. Wenn du mit einem Menschen sprechen möchtest, tippe als Nächstes auf „Nein“ und ich verbinde dich.",
+   "Dieser Guide ist ein KI-Roboter. Offizielle Informationen von unserem Team haben Vorrang. Wenn du mit einem Menschen sprechen möchtest, tippe als Nächstes auf „Ich möchte mit einem Menschen sprechen“ und ich verbinde dich.",
    "Wenn dir ein Mensch lieber ist, sag einfach Bescheid."
   ]
  },

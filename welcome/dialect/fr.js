@@ -43,7 +43,7 @@
   "C05_none": "Pas de souci si vous avez oublié le nom pour le reçu. Écrivez-le simplement dans le champ ci-dessous.",
   "B04_ok": "Les animaux sont tout à fait les bienvenus.",
   "B04_count": "Vous avez indiqué avoir {n}. Notre équipe en sera aussi informée.",
-  "B04_next": "Si quelque chose vous inquiète, touchez « Non » juste après et je vous passe à une personne.",
+  "B04_next": "Si quelque chose vous inquiète, touchez « Je voudrais parler à une personne » juste après et je vous passe à une personne.",
   "INFO_mail": "Touchez « Envoyer par e-mail » ci-dessous : un e-mail avec ce message s'ouvrira. Envoyez-le tel quel. Il part de votre adresse enregistrée, donc on le retrouve tout de suite grâce au numéro de réservation.",
   "INFO_reply": "Répondez à l'e-mail de confirmation que vous venez de recevoir et collez-y ce message. Il part de votre adresse enregistrée, donc on le retrouve tout de suite grâce au numéro de réservation.",
   "INFO_got": "« {val} », c'est noté. J'ai copié le message pour la boutique (il est en japonais pour que la boutique puisse le lire).",
@@ -95,7 +95,7 @@
   "B04": [
    "Des animaux, hein ? Je vous explique.",
    "Les animaux ne posent pas de problème. Ce que vous avez écrit sur vos animaux dans le formulaire de réservation sera transmis à notre équipe.",
-   "Si quelque chose vous inquiète, touchez « Non » juste après et je vous passe à une personne."
+   "Si quelque chose vous inquiète, touchez « Je voudrais parler à une personne » juste après et je vous passe à une personne."
   ],
   "B05": [
    "Des petits à la maison ? Adorable.",
@@ -206,7 +206,7 @@
   ],
   "F06": [
    "Bonne question. Je vais être franc.",
-   "Ce guide est un robot IA. Les informations officielles de notre équipe passent en priorité. Si vous voulez parler à une personne, touchez « Non » juste après et je vous mets en relation.",
+   "Ce guide est un robot IA. Les informations officielles de notre équipe passent en priorité. Si vous voulez parler à une personne, touchez « Je voudrais parler à une personne » juste après et je vous mets en relation.",
    "Si vous préférez une personne, demandez simplement."
   ]
  },

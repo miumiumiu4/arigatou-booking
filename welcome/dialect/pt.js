@@ -43,7 +43,7 @@
   "C05_none": "Sem problema se esqueceu o nome para o recibo. É só escrever no campo abaixo.",
   "B04_ok": "Pets são super bem-vindos.",
   "B04_count": "Você escreveu que tem {n}. A nossa equipe também será avisada.",
-  "B04_next": "Se algo te preocupar, toque em \"Não\" em seguida e eu passo você para uma pessoa.",
+  "B04_next": "Se algo te preocupar, toque em \"Quero falar com uma pessoa\" em seguida e eu passo você para uma pessoa.",
   "INFO_mail": "Toque em \"Enviar por e-mail\" abaixo e vai abrir um e-mail com esta mensagem. É só enviar do jeito que está. Ele sai do seu endereço cadastrado, então encontramos tudo na hora pelo número de reserva.",
   "INFO_reply": "Responda ao e-mail de confirmação que você acabou de receber e cole esta mensagem nele. Ele sai do seu endereço cadastrado, então encontramos tudo na hora pelo número de reserva.",
   "INFO_got": "\"{val}\", anotado. Copiei a mensagem para a loja (está em japonês para a loja conseguir ler).",
@@ -95,7 +95,7 @@
   "B04": [
    "Pets, é? Deixa eu te contar.",
    "Pets não são problema. O que você escreveu sobre os seus pets no formulário de reserva será passado para a nossa equipe.",
-   "Se algo te preocupar, toque em \"Não\" em seguida e eu passo você para uma pessoa."
+   "Se algo te preocupar, toque em \"Quero falar com uma pessoa\" em seguida e eu passo você para uma pessoa."
   ],
   "B05": [
    "Tem pequenos em casa? Que fofura.",
@@ -206,7 +206,7 @@
   ],
   "F06": [
    "Pergunta justa. Vou ser sincero.",
-   "Este guia é um robô de IA. As informações oficiais da nossa equipe vêm em primeiro lugar. Se quiser falar com uma pessoa, toque em \"Não\" em seguida e eu passo você.",
+   "Este guia é um robô de IA. As informações oficiais da nossa equipe vêm em primeiro lugar. Se quiser falar com uma pessoa, toque em \"Quero falar com uma pessoa\" em seguida e eu passo você.",
    "Se preferir uma pessoa, é só pedir."
   ]
  },

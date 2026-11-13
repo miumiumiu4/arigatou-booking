@@ -355,8 +355,8 @@
         buruyan: 'ペット' + n + 'おるって書いてくれてたな。担当者にもちゃんと伝わるで。', buruko: 'ペットが' + n + 'いると書いていただいてますね。担当者にも伝わります。',
         burusama: 'ペット' + n + 'がいるのね。担当者にもちゃんと伝わるわ。'
       }, 'B04_count', {n: n}), V({
-        buruyan: '気になることがあったら、このあと「いいえ」を押してな。人につなぐで。', buruko: '気になることがあれば、このあと「いいえ」を押してくださいね。人におつなぎします。',
-        burusama: '気になることがあれば、このあと「いいえ」を押してちょうだい。人につなぐわ。'
+        buruyan: '気になることがあったら、このあと「人と話したい」を押してな。人につなぐで。', buruko: '気になることがあれば、このあと「人と話したい」を押してくださいね。人におつなぎします。',
+        burusama: '気になることがあれば、このあと「人と話したい」を押してちょうだい。人につなぐわ。'
       }, 'B04_next')];
     }
   };
@@ -475,9 +475,12 @@
     if (it.human && !S.mine) return contact(); // 人に回す形の問で、この予約から言えることも無いときだけ連絡先を出す
     S.last = it.id;
     say([ch().check], function () {
-      controls('<div class="choices tc-yn"><button type="button" class="btn primary" data-y="1">' + esc(T('ui_yes', 'はい')) + '</button><button type="button" class="btn ghost" data-n="1">' + esc(T('ui_no', 'いいえ')) + '</button></div>');
+      // 「いいえ」はやめて「おしまい（特典あり）」に。人と話したい人は、その下の小さいボタンから（11/13 三浦さん）
+      controls('<div class="choices tc-yn"><button type="button" class="btn primary" data-y="1">' + esc(T('ui_yes', 'はい')) + '</button><button type="button" class="btn ghost" data-bye="1">' + esc(T('ui_bye', 'おしまい（特典あり）')) + '</button></div>'
+        + '<div class="tc-foot"><button type="button" class="tc-link" data-human="1">' + esc(T('ui_human_out', '人と話したい')) + '</button></div>');
       on('[data-y]', function () { S.opts.track('解決', 'はい:' + S.last); row('out', esc(T('ui_yes', 'はい'))); controls(''); say([ch().more], menu); });
-      on('[data-n]', function () { S.opts.track('解決', 'いいえ:' + S.last); row('out', esc(T('ui_no', 'いいえ'))); handoff('いいえ:' + S.last); });
+      on('[data-bye]', function () { S.opts.track('解決', 'おしまい:' + S.last); bye(); });
+      on('[data-human]', function () { S.opts.track('解決', '人と話したい:' + S.last); row('out', esc(T('ui_human_out', '人と話したい'))); handoff('人と話したい:' + S.last); });
     });
   }
 
@@ -541,22 +544,30 @@
     S.opts.track('人へ', reason);
     say(ch().handoff, contact);
   }
-  function contact() {
+  // 電話・LINE の欄。人へつなぐ時と、おしまいの画面のいちばん下で使う
+  function contactBox() {
     var o = S.opts;
     var msg = '受付番号 ' + S.id + ' について質問です。';
-    var html = '<div class="tc-contact"><b>' + esc(T('ui_contact', '人とお話しする')) + '</b>'
-      + '<p>' + T('ui_tell_id', '受付番号 {id} をお伝えください。').split('{id}').map(esc).join('<b>' + esc(S.id) + '</b>') + '</p>'
-      + (LG() ? '<p>' + esc(T('ui_ja_only', '')) + '</p>' : '') // 電話・LINE・当日のスタッフは日本語
-      + '<a class="btn primary wide" href="tel:' + esc(o.phone.replace(/-/g, '')) + '">' + esc(T('ui_call', '電話する')) + ' ' + esc(o.phone) + '</a>'
-      + (o.lineUrl ? '<a class="btn line wide" href="' + esc(o.lineUrl) + '" target="_blank" rel="noopener">' + esc(T('ui_line', 'LINE で聞く')) + '</a>'
-        : '<p>' + esc(T('ui_line_note', 'LINE 公式「ありがとうエアコンサポート」のトークでも受け付けます。')) + '</p>')
-      + '<button type="button" class="tc-link" data-copy="1">' + esc(T('ui_copy_msg', '「' + msg + '」をコピー', {msg: msg})) + '</button></div>'
-      + '<div class="tc-foot">' + MENU() + BYE() + '</div>';
-    controls(html);
-    on('[data-copy]', function (b) {
-      try { navigator.clipboard.writeText(msg).then(function () { b.textContent = T('ui_copied', 'コピーしました'); }); } catch (e) { b.textContent = msg; }
-    });
-    S.ctl.querySelectorAll('.tc-contact a').forEach(function (a) { a.addEventListener('click', function () { o.track('連絡', /^tel:/.test(a.getAttribute('href')) ? '電話' : 'LINE'); }); });
+    return {
+      html: '<div class="tc-contact"><b>' + esc(T('ui_contact', '人とお話しする')) + '</b>'
+        + '<p>' + T('ui_tell_id', '受付番号 {id} をお伝えください。').split('{id}').map(esc).join('<b>' + esc(S.id) + '</b>') + '</p>'
+        + (LG() ? '<p>' + esc(T('ui_ja_only', '')) + '</p>' : '') // 電話・LINE・当日のスタッフは日本語
+        + '<a class="btn primary wide" href="tel:' + esc(o.phone.replace(/-/g, '')) + '">' + esc(T('ui_call', '電話する')) + ' ' + esc(o.phone) + '</a>'
+        + (o.lineUrl ? '<a class="btn line wide" href="' + esc(o.lineUrl) + '" target="_blank" rel="noopener">' + esc(T('ui_line', 'LINE で聞く')) + '</a>'
+          : '<p>' + esc(T('ui_line_note', 'LINE 公式「ありがとうエアコンサポート」のトークでも受け付けます。')) + '</p>')
+        + '<button type="button" class="tc-link" data-copy="1">' + esc(T('ui_copy_msg', '「' + msg + '」をコピー', {msg: msg})) + '</button></div>',
+      bind: function () {
+        on('[data-copy]', function (b) {
+          try { navigator.clipboard.writeText(msg).then(function () { b.textContent = T('ui_copied', 'コピーしました'); }, function () { b.textContent = msg; }); } catch (e) { b.textContent = msg; }
+        });
+        S.ctl.querySelectorAll('.tc-contact a').forEach(function (a) { a.addEventListener('click', function () { o.track('連絡', /^tel:/.test(a.getAttribute('href')) ? '電話' : 'LINE'); }); });
+      }
+    };
+  }
+  function contact() {
+    var cb = contactBox();
+    controls(cb.html + '<div class="tc-foot">' + MENU() + BYE() + '</div>');
+    cb.bind();
     on('[data-menu]', function () { S.gen++; controls(''); say([ch().more], menu); });
     on('[data-bye]', bye);
   }
@@ -570,7 +581,8 @@
     say(ch().bye, function () {
       var c = controls('<div class="tc-share"></div><div class="tc-stars"><b>' + esc(T('ui_stars', 'この案内係はどうでしたか？')) + '</b><div>'
         + [1, 2, 3, 4, 5].map(function (n) { return '<button type="button" data-star="' + n + '" aria-label="星' + n + 'つ">★</button>'; }).join('')
-        + '</div></div><div class="tc-foot">' + MENU() + '</div>');
+        + '</div></div><div class="tc-foot">' + MENU() + '</div>' + contactBox().html); // 紹介リンクがいちばん上、電話・LINE はいちばん下（11/13 三浦さん）
+      contactBox().bind();
       if (S.opts.showShare) S.opts.showShare(c.querySelector('.tc-share'));
       on('[data-star]', function (b) {
         var n = +b.dataset.star;
