@@ -44,7 +44,7 @@
   "C05_none": "Pas de souci si vous avez oublié le nom pour le reçu. Écrivez-le simplement dans le champ ci-dessous.",
   "B04_ok": "Les animaux sont tout à fait les bienvenus.",
   "B04_count": "Vous avez indiqué avoir {n}. Notre équipe en sera aussi informée.",
-  "B04_next": "Si quelque chose vous inquiète, touchez « Non » juste après et je vous passe à une personne.",
+  "B04_next": "Si quelque chose vous inquiète, touchez « Je voudrais parler à une personne » juste après et je vous passe à une personne.",
   "INFO_mail": "Touchez « Envoyer par e-mail » ci-dessous : un e-mail avec ce message s'ouvrira. Envoyez-le tel quel. Il part de votre adresse enregistrée, donc on le retrouve tout de suite grâce au numéro de réservation.",
   "INFO_reply": "Répondez à l'e-mail de confirmation que vous venez de recevoir et collez-y ce message. Il part de votre adresse enregistrée, donc on le retrouve tout de suite grâce au numéro de réservation.",
   "INFO_got": "« {val} », c'est noté. J'ai copié le message pour la boutique (il est en japonais pour que la boutique puisse le lire).",
@@ -157,37 +157,154 @@
   "F06": "Ce chat, c'est une personne ?"
  },
  "kw": {
-  "A01": ["arrivée", "arrivez", "quelle heure", "heure"],
-  "A02": ["combien de temps", "durée"],
-  "A03": ["à la maison", "absent", "présent"],
-  "A04": ["confirm", "confirmation"],
-  "A05": ["pluie", "pleut"],
-  "B01": ["dégager", "ranger", "meubles"],
-  "B02": ["électricité", "eau", "prise"],
-  "B03": ["parking", "stationnement", "garer", "voiture"],
-  "B04": ["animal", "animaux", "chien", "chat"],
-  "B05": ["enfant", "bébé", "petit"],
-  "B06": ["modèle", "marque", "référence"],
-  "C01": ["combien", "prix", "coût", "tarif"],
-  "C02": ["supplément", "en plus", "frais"],
-  "C03": ["auto-nettoyage", "autonettoyage"],
-  "C04": ["payer", "paiement", "espèces", "paypay", "paypal"],
-  "C05": ["reçu", "facture"],
-  "C06": ["réduction", "deuxième", "moins cher"],
-  "C07": ["3 services", "pack"],
-  "C08": ["promo", "parrainage", "code"],
-  "D01": ["annul"],
-  "D02": ["changer de date", "reporter", "autre jour"],
-  "D03": ["ajouter", "plus d'appareils", "option"],
-  "E01": ["garantie"],
-  "E02": ["odeur", "fuite"],
-  "E03": ["fréquence", "tous les combien"],
-  "F01": ["lave-linge", "machine à laver", "salle de bain"],
-  "F02": ["toilettes", "wc"],
-  "F03": ["confidentialité", "données personnelles", "adresse"],
-  "F04": ["plafond", "cassette"],
-  "F05": ["demander", "technicien", "choisir"],
-  "F06": ["humain", "robot", "ia", "bot"]
+  "A01": [
+   "arrivée",
+   "arrivez",
+   "quelle heure",
+   "heure"
+  ],
+  "A02": [
+   "combien de temps",
+   "durée"
+  ],
+  "A03": [
+   "à la maison",
+   "absent",
+   "présent"
+  ],
+  "A04": [
+   "confirm",
+   "confirmation"
+  ],
+  "A05": [
+   "pluie",
+   "pleut"
+  ],
+  "B01": [
+   "dégager",
+   "ranger",
+   "meubles"
+  ],
+  "B02": [
+   "électricité",
+   "eau",
+   "prise"
+  ],
+  "B03": [
+   "parking",
+   "stationnement",
+   "garer",
+   "voiture"
+  ],
+  "B04": [
+   "animal",
+   "animaux",
+   "chien",
+   "chat"
+  ],
+  "B05": [
+   "enfant",
+   "bébé",
+   "petit"
+  ],
+  "B06": [
+   "modèle",
+   "marque",
+   "référence"
+  ],
+  "C01": [
+   "combien",
+   "prix",
+   "coût",
+   "tarif"
+  ],
+  "C02": [
+   "supplément",
+   "en plus",
+   "frais"
+  ],
+  "C03": [
+   "auto-nettoyage",
+   "autonettoyage"
+  ],
+  "C04": [
+   "payer",
+   "paiement",
+   "espèces",
+   "paypay",
+   "paypal"
+  ],
+  "C05": [
+   "reçu",
+   "facture"
+  ],
+  "C06": [
+   "réduction",
+   "deuxième",
+   "moins cher"
+  ],
+  "C07": [
+   "3 services",
+   "pack"
+  ],
+  "C08": [
+   "promo",
+   "parrainage",
+   "code"
+  ],
+  "D01": [
+   "annul"
+  ],
+  "D02": [
+   "changer de date",
+   "reporter",
+   "autre jour"
+  ],
+  "D03": [
+   "ajouter",
+   "plus d'appareils",
+   "option"
+  ],
+  "E01": [
+   "garantie"
+  ],
+  "E02": [
+   "odeur",
+   "fuite"
+  ],
+  "E03": [
+   "fréquence",
+   "tous les combien"
+  ],
+  "F01": [
+   "lave-linge",
+   "machine à laver",
+   "salle de bain"
+  ],
+  "F02": [
+   "toilettes",
+   "wc"
+  ],
+  "F03": [
+   "confidentialité",
+   "données personnelles",
+   "adresse"
+  ],
+  "F04": [
+   "plafond",
+   "cassette"
+  ],
+  "F05": [
+   "demander",
+   "technicien",
+   "choisir"
+  ],
+  "F06": [
+   "humain",
+   "robot",
+   "ia",
+   "bot"
+  ]
  },
  "items": {
   "A01": [
@@ -233,7 +350,7 @@
   "B04": [
    "Des animaux, hein ? Je vous explique.",
    "Les animaux ne posent pas de problème. Ce que vous avez écrit sur vos animaux dans le formulaire de réservation sera transmis à notre équipe.",
-   "Si quelque chose vous inquiète, touchez « Non » juste après et je vous passe à une personne."
+   "Si quelque chose vous inquiète, touchez « Je voudrais parler à une personne » juste après et je vous passe à une personne."
   ],
   "B05": [
    "Des petits à la maison ? Adorable.",
@@ -344,7 +461,7 @@
   ],
   "F06": [
    "Bonne question. Je vais être franc.",
-   "Ce guide est un robot IA. Les informations officielles de notre équipe passent en priorité. Si vous voulez parler à une personne, touchez « Non » juste après et je vous mets en relation.",
+   "Ce guide est un robot IA. Les informations officielles de notre équipe passent en priorité. Si vous voulez parler à une personne, touchez « Je voudrais parler à une personne » juste après et je vous mets en relation.",
    "Si vous préférez une personne, demandez simplement."
   ]
  }

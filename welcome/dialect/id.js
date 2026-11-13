@@ -43,7 +43,7 @@
   "C05_none": "Lupa menulis nama untuk kuitansi tidak apa-apa. Tulis saja di kotak di bawah.",
   "B04_ok": "Hewan peliharaan sama sekali tidak masalah.",
   "B04_count": "Kamu menulis ada {n}. Staf kami juga akan diberi tahu.",
-  "B04_next": "Kalau ada yang dikhawatirkan, ketuk “Tidak” berikutnya dan aku akan menyambungkanmu ke orang sungguhan.",
+  "B04_next": "Kalau ada yang dikhawatirkan, ketuk “Saya ingin bicara dengan orang” berikutnya dan aku akan menyambungkanmu ke orang sungguhan.",
   "INFO_mail": "Ketuk “Kirim lewat email” di bawah, lalu email berisi pesan ini akan terbuka. Kirim saja apa adanya. Email dikirim dari alamat yang kamu daftarkan, jadi kami bisa langsung menemukannya lewat nomor pemesanan.",
   "INFO_reply": "Silakan balas email konfirmasi yang baru kamu terima dan tempelkan pesan ini. Email dikirim dari alamat yang kamu daftarkan, jadi kami bisa langsung menemukannya lewat nomor pemesanan.",
   "INFO_got": "“{val}”, sudah kucatat. Pesan untuk toko sudah kusalin (dalam bahasa Jepang supaya toko bisa membacanya).",
@@ -95,7 +95,7 @@
   "B04": [
    "Soal hewan peliharaan? Aku jelaskan, ya.",
    "Ada hewan peliharaan tidak masalah. Keterangan tentang hewan peliharaan yang kamu tulis di formulir pemesanan akan diteruskan ke staf penanggung jawab.",
-   "Kalau ada yang dikhawatirkan, ketuk “Tidak” berikutnya, ya. Aku akan menyambungkanmu ke orang sungguhan."
+   "Kalau ada yang dikhawatirkan, ketuk “Saya ingin bicara dengan orang” berikutnya, ya. Aku akan menyambungkanmu ke orang sungguhan."
   ],
   "B05": [
    "Ada si kecil di rumah? Lucunya.",
@@ -206,7 +206,7 @@
   ],
   "F06": [
    "Penasaran, ya. Aku jawab dengan jujur.",
-   "Panduan ini dijawab oleh robot pemandu AI. Informasi resmi dari staf penanggung jawab yang diutamakan. Jika ingin bicara dengan orang sungguhan, ketuk “Tidak” berikutnya dan aku akan menyambungkanmu.",
+   "Panduan ini dijawab oleh robot pemandu AI. Informasi resmi dari staf penanggung jawab yang diutamakan. Jika ingin bicara dengan orang sungguhan, ketuk “Saya ingin bicara dengan orang” berikutnya dan aku akan menyambungkanmu.",
    "Kalau lebih suka orang sungguhan, panggil saja, jangan sungkan."
   ]
  },

@@ -43,7 +43,7 @@
   "C05_none": "Okay lang kung nakalimutan ninyo ang pangalan para sa resibo. Isulat lang ito sa kahon sa ibaba.",
   "B04_ok": "Ayos na ayos lang po ang may alagang hayop.",
   "B04_count": "Isinulat ninyo na mayroon kayong {n}. Sasabihan din ang aming staff.",
-  "B04_next": "Kung may ikinababahala kayo, i-tap ang “Hindi” pagkatapos at ikokonekta ko kayo sa isang tao.",
+  "B04_next": "Kung may ikinababahala kayo, i-tap ang “Gusto kong makipag-usap sa tao” pagkatapos at ikokonekta ko kayo sa isang tao.",
   "INFO_mail": "I-tap ang “Ipadala sa email” sa ibaba at magbubukas ang email na may mensaheng ito. Ipadala lang ito nang ganoon. Galing ito sa nakarehistro ninyong address, kaya mahahanap namin agad gamit ang booking number.",
   "INFO_reply": "Paki-reply po sa confirmation email na kararating lang at i-paste ang mensaheng ito. Galing ito sa nakarehistro ninyong address, kaya mahahanap namin agad gamit ang booking number.",
   "INFO_got": "“{val}”, sige po. Kinopya ko na ang mensahe para sa shop (nasa Japanese para mabasa ng shop).",
@@ -95,7 +95,7 @@
   "B04": [
    "May alaga kayo? Heto po.",
    "Okay lang ang may alagang hayop. Ang isinulat ninyo tungkol sa alaga ninyo sa booking form ay ipapasa sa aming staff.",
-   "Kung may ikinababahala kayo, i-tap ang “Hindi” pagkatapos at ikokonekta ko kayo sa isang tao."
+   "Kung may ikinababahala kayo, i-tap ang “Gusto kong makipag-usap sa tao” pagkatapos at ikokonekta ko kayo sa isang tao."
   ],
   "B05": [
    "May mga chikiting? Ang cute.",
@@ -206,7 +206,7 @@
   ],
   "F06": [
    "Makatwirang tanong. Magiging tapat ako.",
-   "AI robot ang gabay na ito. Mas inuuna ang opisyal na impormasyon mula sa aming staff. Kung gusto ninyong makipag-usap sa tao, i-tap ang “Hindi” pagkatapos at ikokonekta ko kayo.",
+   "AI robot ang gabay na ito. Mas inuuna ang opisyal na impormasyon mula sa aming staff. Kung gusto ninyong makipag-usap sa tao, i-tap ang “Gusto kong makipag-usap sa tao” pagkatapos at ikokonekta ko kayo.",
    "Kung mas gusto ninyo ang tao, sabihin lang."
   ]
  },
