@@ -120,7 +120,20 @@
   "info_model": "廠牌和型號",
   "info_model_ph": "例：大金 AN22XXX",
   "info_model_has": "如果寫錯了，或是還有其他冷氣，請寫在這裡。",
-  "info_model_none": "知道的話請寫在這裡。型號在機身側面或底部的貼紙上。"
+  "info_model_none": "知道的話請寫在這裡。型號在機身側面或底部的貼紙上。",
+  "ui_confirm": "這個回答對嗎？",
+  "ui_right": "對",
+  "ui_wrong": "不對",
+  "ui_alt": "抱歉！是下面其中一個嗎？",
+  "o_set3": "三件組",
+  "o_omatome": "組合方案",
+  "o_coat": "防霉抗菌塗層",
+  "o_outdoor": "室外機清洗",
+  "o_drain": "排水管清洗",
+  "v_units": "{n}台",
+  "u_list": "、",
+  "v_opts": "，選項：{list}",
+  "A02_opt": "其中選項大約需要{add}（三件組每台約15分鐘，其他選項每台約10分鐘）。"
  },
  "q": {
   "MY": "查看我的預約",

@@ -120,7 +120,20 @@
   "info_model": "Merek dan nomor model",
   "info_model_ph": "contoh: Daikin AN22XXX",
   "info_model_has": "Tulis di sini jika ada yang salah, atau untuk unit lainnya.",
-  "info_model_none": "Kalau tahu, tulis di sini, ya. Ada di stiker di samping atau bawah unit."
+  "info_model_none": "Kalau tahu, tulis di sini, ya. Ada di stiker di samping atau bawah unit.",
+  "ui_confirm": "Apakah jawaban ini sudah sesuai?",
+  "ui_right": "Sudah sesuai",
+  "ui_wrong": "Bukan",
+  "ui_alt": "Maaf! Apakah salah satu dari ini?",
+  "o_set3": "paket 3 item",
+  "o_omatome": "paket kombinasi",
+  "o_coat": "lapisan anti-jamur",
+  "o_outdoor": "pembersihan unit luar",
+  "o_drain": "pembersihan selang pembuangan",
+  "v_units": "{n} unit",
+  "u_list": ", ",
+  "v_opts": ", dengan opsi: {list}",
+  "A02_opt": "Dari waktu itu, opsi memakan sekitar {add} (paket 3 item sekitar 15 menit per unit, opsi lain sekitar 10 menit per unit)."
  },
  "q": {
   "MY": "Cek pemesanan saya",

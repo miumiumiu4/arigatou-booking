@@ -278,7 +278,20 @@
   "info_model": "Hersteller und Modellnummer",
   "info_model_ph": "z. B. Daikin AN22XXX",
   "info_model_has": "Schreib hier, falls es falsch war, oder für weitere Geräte.",
-  "info_model_none": "Wenn du sie kennst, schreib sie bitte hier hin. Sie steht auf einem Aufkleber an der Seite oder Unterseite des Geräts."
+  "info_model_none": "Wenn du sie kennst, schreib sie bitte hier hin. Sie steht auf einem Aufkleber an der Seite oder Unterseite des Geräts.",
+  "ui_confirm": "Hat diese Antwort gepasst?",
+  "ui_right": "Ja, passt",
+  "ui_wrong": "Nein",
+  "ui_alt": "Entschuldigung! Ist es eine davon?",
+  "o_set3": "3er-Set",
+  "o_omatome": "Kombi-Set",
+  "o_coat": "Anti-Schimmel-Beschichtung",
+  "o_outdoor": "Reinigung des Außengeräts",
+  "o_drain": "Reinigung des Abflussschlauchs",
+  "v_units": "×{n}",
+  "u_list": ", ",
+  "v_opts": ", mit Optionen: {list}",
+  "A02_opt": "Davon entfallen etwa {add} auf die Optionen (3er-Set: ca. 15 Min. pro Gerät, andere Optionen: ca. 10 Min. pro Gerät)."
  },
  "q": {
   "MY": "Meine Buchung ansehen",

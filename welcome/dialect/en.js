@@ -278,7 +278,20 @@
   "info_model": "Maker and model number",
   "info_model_ph": "e.g. Daikin AN22XXX",
   "info_model_has": "Write here if it was wrong, or for any other units.",
-  "info_model_none": "If you know it, please write it here. It's on a sticker on the side or bottom of the unit."
+  "info_model_none": "If you know it, please write it here. It's on a sticker on the side or bottom of the unit.",
+  "ui_confirm": "Did that answer your question?",
+  "ui_right": "Yes, it did",
+  "ui_wrong": "No",
+  "ui_alt": "Sorry! Is it one of these?",
+  "o_set3": "3-point set",
+  "o_omatome": "combo set",
+  "o_coat": "anti-mold coating",
+  "o_outdoor": "outdoor unit cleaning",
+  "o_drain": "drain hose cleaning",
+  "v_units": "×{n}",
+  "u_list": ", ",
+  "v_opts": ", with options: {list}",
+  "A02_opt": "Of this, the options take about {add} (3-point set: about 15 min per unit; other options: about 10 min per unit)."
  },
  "q": {
   "MY": "Check my booking",

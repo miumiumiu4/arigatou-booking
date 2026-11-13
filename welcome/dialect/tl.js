@@ -278,7 +278,20 @@
   "info_model": "Brand at model number",
   "info_model_ph": "hal. Daikin AN22XXX",
   "info_model_has": "Isulat dito kung mali, o para sa ibang unit.",
-  "info_model_none": "Kung alam ninyo, pakisulat dito. Nasa sticker ito sa gilid o ilalim ng unit."
+  "info_model_none": "Kung alam ninyo, pakisulat dito. Nasa sticker ito sa gilid o ilalim ng unit.",
+  "ui_confirm": "Tama ba ang sagot na ito?",
+  "ui_right": "Tama",
+  "ui_wrong": "Hindi",
+  "ui_alt": "Pasensya na! Isa ba sa mga ito?",
+  "o_set3": "3-point set",
+  "o_omatome": "combo set",
+  "o_coat": "anti-mold coating",
+  "o_outdoor": "paglilinis ng outdoor unit",
+  "o_drain": "paglilinis ng drain hose",
+  "v_units": "{n} unit",
+  "u_list": ", ",
+  "v_opts": ", may options: {list}",
+  "A02_opt": "Sa oras na ito, mga {add} ang para sa options (3-point set: mga 15 minuto bawat unit; ibang options: mga 10 minuto bawat unit)."
  },
  "q": {
   "MY": "Tingnan ang booking ko",

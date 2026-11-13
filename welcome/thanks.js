@@ -57,6 +57,68 @@
     return best;
   }
 
+  // ②' 言葉で探す：入力の中の言葉（におい・カビ など）が、台帳の質問・言い換え・答えの文に入っている問を、当たりの強い順に（11/13 三浦さん）
+  //   ほとんどの答えに出てくる言葉（エアコン など）と、「ですか」のような言い回しは数えない
+  var SYN = [['におい', '匂い', '臭い', 'ニオイ', 'くさい', '臭う', 'におう', '匂う'], ['カビ', 'かび', '黴'], ['水漏れ', '水もれ', 'みずもれ', 'ポタポタ', 'ぽたぽた', '垂れ'],
+    ['料金', '値段', 'ねだん', '金額', '費用', '代金', 'いくら'], ['子ども', '子供', 'こども', '赤ちゃん', 'あかちゃん'], ['ほこり', 'ホコリ', '埃'], ['汚れ', 'よごれ', '汚い', 'きたない'],
+    ['ペット', 'いぬ', 'イヌ', 'ねこ', 'ネコ'], ['駐車', 'ちゅうしゃ', 'パーキング'], ['キャンセル', 'とりけし', '取り消し'], ['支払', 'しはらい', '払い', 'はらい', 'お金', 'おかね'], ['領収', 'りょうしゅう']];
+  var STOP = /^(ですか|ますか|ください|ありますか|できますか|でしょうか|ですよね|について|いいですか|ほしい|したい|たいです|ないです|ません|ことは|ですが|けど|それ|これ|あれ|どれ|どの|どう|なに|なん|いつ|ところ|くらい|ぐらい|ちょっと|すこし|ほんと|ほんとう|おしえて|教えて|知りたい|大丈夫|気になる|きになる|エアコン|クリーニング|お願い)$/;
+  var kwIdx = null;
+  function kwIndex() {
+    if (kwIdx && kwIdx.lg === LG()) return kwIdx;
+    var docs = D.items.filter(function (it) { return it.open && it.a; }).map(function (it) {
+      return { it: it, text: norm([it.q, qLabel(it)].concat(it.aliases || [], (LG() && S.dl.kw && S.dl.kw[it.id]) || [], it.a.buruko || [], (LG() && it.a.bruce) || []).join(' ')) };
+    });
+    kwIdx = { lg: LG(), docs: docs, df: {} };
+    return kwIdx;
+  }
+  function kwTokens(t) {
+    var n = norm(t), out = {};
+    SYN.forEach(function (g) { if (g.some(function (w) { return n.indexOf(norm(w)) >= 0; })) g.forEach(function (w) { out[norm(w)] = 1; }); });
+    // 字の種類が続くところで区切る（漢字・カタカナ・英数字はそのまま、ひらがなは3字以上の切れはし）
+    (n.match(/[一-鿿々]+[ぁ-ん]{0,2}|[ァ-ー]{2,}|[a-z0-9]{2,}|[ぁ-ん]{3,}/g) || []).forEach(function (w) {
+      if (/^[ぁ-ん]+$/.test(w)) {
+        for (var len = Math.min(w.length, 6); len >= 3; len--) for (var i = 0; i + len <= w.length; i++) out[w.substr(i, len)] = 1;
+      } else {
+        out[w] = 1;
+        var k = w.replace(/[ぁ-ん]+$/, ''); // 臭う → 臭
+        if (k && k !== w) out[k] = 1;
+        if (/^[一-鿿]{3,}$/.test(k)) for (var j = 0; j + 2 <= k.length; j++) out[k.substr(j, 2)] = 1; // 水漏れ跡 → 水漏
+      }
+    });
+    return Object.keys(out).filter(function (w) { return !STOP.test(w) && !(w.length < 2 && !/[一-鿿]/.test(w)); });
+  }
+  function kwSearch(text) {
+    var ix = kwIndex(), toks = kwTokens(text), N = ix.docs.length;
+    toks = toks.filter(function (w) {
+      if (ix.df[w] == null) ix.df[w] = ix.docs.filter(function (d) { return d.text.indexOf(w) >= 0; }).length;
+      return ix.df[w] > 0 && ix.df[w] <= Math.max(3, N * 0.25); // どの答えにも出てくる言葉は手がかりにならない
+    });
+    return ix.docs.map(function (d) {
+      var hit = toks.filter(function (w) { return d.text.indexOf(w) >= 0; });
+      hit = hit.filter(function (w) { return !hit.some(function (v) { return v !== w && v.indexOf(w) >= 0; }); }); // 長い言葉に含まれる短い言葉は数えない
+      var score = hit.reduce(function (s, w) { return s + Math.min(w.length, 4) * (/^[ぁ-ん]+$/.test(w) ? 0.8 : 1) * (1 + 2 / ix.df[w]) * (norm(d.it.q + (d.it.aliases || []).join(' ')).indexOf(w) >= 0 ? 1.5 : 1); }, 0);
+      return { it: d.it, score: score };
+    }).filter(function (r) { return r.score >= 2; }).sort(function (a, b) { return b.score - a.score; }).map(function (r) { return r.it; });
+  }
+  // 雑談（子どもがしそうな質問。11/13 三浦さん）：言い方の一覧が入力に入っていれば、いちばん長く当たったもの
+  function smallMatch(text) {
+    var t = norm(text), best = null, score = 0;
+    if (LG()) return null; // 外国の言葉では使わない（日本語の答えしかない）
+    (D.small || []).forEach(function (s) {
+      [s.q].concat(s.kw || []).forEach(function (a) {
+        var n = norm(a);
+        if (n.length >= 2 && t.indexOf(n) >= 0 && n.length > score) { score = n.length; best = s; }
+      });
+    });
+    return best && { s: best, score: score };
+  }
+  function localScore(text, it) {
+    var t = norm(text), score = 0;
+    [it.q].concat(it.aliases || [], (LG() && S.dl.kw && S.dl.kw[it.id]) || []).forEach(function (a) { var n = norm(a); if (n.length >= 2 && t.indexOf(n) >= 0 && n.length > score) score = n.length; });
+    return score;
+  }
+
   // ---------- 吹き出し ----------
   function avatar(c) {
     var src = HERE + (c ? D.chars[c].img : 'chara/base.svg');
@@ -236,19 +298,25 @@
     return (t.getUTCMonth() + 1) + '月' + t.getUTCDate() + '日（' + '日月火水木金土'.charAt(t.getUTCDay()) + '）';
   }
   var MINE = {
-    A02: function (m) { // 作業時間：通常60〜90分・お掃除機能付き90〜120分・室外機20〜30分（事務マニュアル01）
-      var auto = Math.min(m.auto || 0, m.wall || 0), normal = (m.wall || 0) - auto, out = m.outdoorUnits || 0;
+    A02: function (m) { // 作業時間：通常60〜90分・お掃除機能付き90〜120分（事務マニュアル01）。オプションは 3点セット1台15分・ほかのオプション1台10分の目安を足す（11/13 三浦さん）
+      var auto = Math.min(m.auto || 0, m.wall || 0), normal = (m.wall || 0) - auto, c = S.opts.ctx || {};
       if (!normal && !auto) return null;
-      var lo = normal * 60 + auto * 90 + out * 20, hi = normal * 90 + auto * 120 + out * 30;
-      var what = T('v_ac', 'エアコン' + (normal + auto) + '台', {n: normal + auto}) + (auto ? T('v_auto', '（うちお掃除機能付き' + auto + '台）', {n: auto}) : '') + (out ? T('v_out', 'と室外機' + out + '台', {n: out}) : '');
-      var span = hm(lo) + T('u_to', '〜') + hm(hi);
+      var n = function (k) { return +(m[k] != null ? m[k] : c[k]) || 0; };
+      var OPT = [['set3', '3点セット', 15], ['omatome', 'おまとめセット', 10], ['coat', '防カビ・抗菌コート', 10], ['outdoor', '室外機クリーニング', 10], ['drain', 'ドレンホース洗浄', 10]];
+      var opts = OPT.filter(function (o) { return n(o[0]) > 0; });
+      var add = opts.reduce(function (s, o) { return s + n(o[0]) * o[2]; }, 0);
+      var lo = normal * 60 + auto * 90 + add, hi = normal * 90 + auto * 120 + add;
+      var list = opts.map(function (o) { return T('o_' + o[0], o[1]) + ' ' + T('v_units', n(o[0]) + '台', {n: n(o[0])}); }).join(T('u_list', '・'));
+      var what = T('v_ac', 'エアコン' + (normal + auto) + '台', {n: normal + auto}) + (auto ? T('v_auto', '（うちお掃除機能付き' + auto + '台）', {n: auto}) : '') + (opts.length ? T('v_opts', '、オプションは' + list, {list: list}) : '');
+      var span = hm(lo) + T('u_to', '〜') + hm(hi), wo = opts.length ? 'オプションも入れて、' : '';
       var r = [V({
         buruyan: 'お客さんの予約は、' + what + 'やな。', buruko: 'ご予約は、' + what + 'ですね。',
         burusama: 'あなたの予約は、' + what + 'ね。'
       }, 'A02_what', {what: what}), V({
-        buruyan: 'それやと、だいたい' + span + 'くらい見といてな。', buruko: 'それだと、だいたい' + span + 'くらいです。',
-        burusama: 'それなら、だいたい' + span + 'ってところね。'
+        buruyan: 'それやと、' + wo + 'だいたい' + span + 'くらい見といてな。', buruko: 'それだと、' + wo + 'だいたい' + span + 'くらいです。',
+        burusama: 'それなら、' + wo + 'だいたい' + span + 'ってところね。'
       }, 'A02_span', {span: span}) + T('A02_note', '（スタッフ1名で伺う目安です。機種や設置の状況で長くなることがあります）')];
+      if (add) r.push(T('A02_opt', 'このうちオプションの分は、だいたい' + hm(add) + 'です（3点セットは1台15分、ほかのオプションは1台10分くらい）。', {add: hm(add)}));
       if (m.tenkase) r.push(T('A02_tenkase', '天井埋め込み（天カセ）' + m.tenkase + '台の分は、機種で変わるので担当者からご案内します。', {n: m.tenkase}));
       return r;
     },
@@ -393,6 +461,7 @@
     S.opts.track('質問', via + ':' + id);
     if (!it.open) return handoff('未確定:' + id, true);
     S.miss = 0;
+    S.guess = false;
     say(answerLines(it, it.a[S.chara]), function () { after(it); });
   }
   // あとから書き足してもらう欄（領収書の宛名・メーカー型番）。中身は裏側にも計測にも送らない。
@@ -474,6 +543,7 @@
     }
     if (it.human && !S.mine) return contact(); // 人に回す形の問で、この予約から言えることも無いときだけ連絡先を出す
     S.last = it.id;
+    if (S.guess) { S.guess = false; return confirmGuess(it); }
     say([ch().check], function () {
       // 「いいえ」はやめて「おしまい（特典あり）」に。人と話したい人は、その下の小さいボタンから（11/13 三浦さん）
       controls('<div class="choices tc-yn"><button type="button" class="btn primary" data-y="1">' + esc(T('ui_yes', 'はい')) + '</button><button type="button" class="btn ghost" data-bye="1">' + esc(T('ui_bye', 'おしまい（特典あり）')) + '</button></div>'
@@ -484,18 +554,65 @@
     });
   }
 
+  // 入力から探した答えは、合っていたかを聞く（11/13 三浦さん）。ちがう時は、ほかの候補を出す
+  var CONFIRM = {
+    buruyan: 'この答えで合うてる？ ちゃうかったら言うてな。', buruko: 'この答えで合ってましたか？ 違ったら教えてください！',
+    burusama: 'この答えで合ってたかしら？ 違うなら遠慮なく言って。', bruce: 'この答えで合っていますか？'
+  };
+  var ALT = {
+    buruyan: 'すまん！ ほな、これのどれかちゃう？', buruko: 'ごめんなさい！ もしかして、このどれかですか？',
+    burusama: 'あら、ごめんなさいね。じゃあ、このどれかかしら。', bruce: 'ごめんなさい。この中にありますか？'
+  };
+  var SMALL_MORE = {
+    buruyan: 'ほかにも、なんでも聞いてや。エアコンのことも、それ以外も。', buruko: 'ほかにも聞きたいこと、どんどんどうぞ！',
+    burusama: 'ほかにも聞きたいことがあれば、どうぞ。', bruce: 'ほかにも、なんでも聞いてくださいね。'
+  };
+  function confirmGuess(it) {
+    say([T('ui_confirm', CONFIRM[S.chara] || CONFIRM.bruce)], function () {
+      controls('<div class="choices tc-yn"><button type="button" class="btn primary" data-y="1">' + esc(T('ui_right', '合ってた')) + '</button><button type="button" class="btn ghost" data-alt="1">' + esc(T('ui_wrong', 'ちがう')) + '</button></div>'
+        + '<div class="tc-foot"><button type="button" class="tc-link" data-human="1">' + esc(T('ui_human_out', '人と話したい')) + '</button>' + BYE() + '</div>');
+      on('[data-y]', function () { S.opts.track('解決', '合ってた:' + it.id); row('out', esc(T('ui_right', '合ってた'))); controls(''); say([ch().more], menu); });
+      on('[data-alt]', function () {
+        S.opts.track('解決', 'ちがう:' + it.id);
+        row('out', esc(T('ui_wrong', 'ちがう')));
+        controls('');
+        var alt = (S.alt || []).filter(function (x) { return x.open; });
+        if (!alt.length) return miss();
+        say([T('ui_alt', ALT[S.chara] || ALT.bruce)], function () {
+          controls('<div class="tc-quick all">' + alt.map(function (x) { return '<button type="button" class="btn ghost" data-q="' + x.id + '">' + esc(qLabel(x)) + '</button>'; }).join('') + '</div>'
+            + '<div class="tc-foot"><button type="button" class="tc-link" data-menu="1">' + esc(T('ui_menu', 'ほかの質問')) + '</button><button type="button" class="tc-link" data-human="1">' + esc(T('ui_human_out', '人と話したい')) + '</button></div>');
+          on('[data-q]', function (b) { ask(b.dataset.q, 'ちがう→候補', b.textContent); });
+          on('[data-menu]', function () { S.gen++; controls(''); say([ch().more], menu); });
+          on('[data-human]', function () { row('out', esc(T('ui_human_out', '人と話したい'))); handoff('ちがう:' + it.id); });
+        });
+      });
+      on('[data-bye]', function () { S.opts.track('解決', 'おしまい:' + it.id); bye(); });
+      on('[data-human]', function () { S.opts.track('解決', '人と話したい:' + it.id); row('out', esc(T('ui_human_out', '人と話したい'))); handoff('人と話したい:' + it.id); });
+    });
+  }
+
   // 自由入力：② 端末内の照合 → ③ 裏側 → どちらもだめなら、2回目で人へ
   function free(raw) {
     var t = mask(raw);
     S.gen++;
     controls('');
     row('out', esc(t));
-    var hit = localMatch(t);
+    var hit = localMatch(t), sm = smallMatch(t);
+    if (sm && (!hit || sm.score > localScore(t, hit))) { // 「好きな食べ物は？」のような雑談
+      S.opts.track('雑談', sm.s.id + ':' + t.slice(0, 80));
+      S.miss = 0;
+      return say((sm.s.a[S.chara] || sm.s.a.buruko).map(fill), function () { say([SMALL_MORE[S.chara] || ch().more], menu); });
+    }
+    var found = kwSearch(t);
+    if (hit) found = [hit].concat(found.filter(function (it) { return it !== hit; }));
+    hit = found[0];
     if (hit) {
       S.opts.track('質問', '入力:' + hit.id + ':' + t.slice(0, 80));
       if (!hit.open) return handoff('未確定:' + hit.id, true);
       note(T('ui_about', '「' + hit.q + '」のことでお答えします', {q: qLabel(hit)}));
       S.miss = 0;
+      S.alt = found.slice(1, 4); // 「ちがう」と言われた時に出す、ほかの答えの候補
+      S.guess = true;
       return say(answerLines(hit, hit.a[S.chara]), function () { after(hit); });
     }
     var used = +(store('thanks_ai_' + S.id) || 0);
@@ -514,6 +631,8 @@
           S.opts.track('質問', '入力:AI:' + it.id + ':' + t.slice(0, 80));
           note(T('ui_about', '「' + it.q + '」のことでお答えします', {q: qLabel(it)}));
           S.miss = 0;
+          S.alt = kwSearch(t).filter(function (x) { return x !== it; }).slice(0, 3);
+          S.guess = true;
           var lines = S.chara !== 'bruce' && Array.isArray(j.bubbles) && j.bubbles.length && j.bubbles.length <= 3 ? j.bubbles : it.a[S.chara];
           return say(answerLines(it, lines), function () { after(it); });
         }
@@ -609,6 +728,6 @@
     },
     active: function () { return !!S; },
     pick: function () { if (S) intro(true); }, // 画面は動かさない。新しい吹き出しが出る所だけ見せる
-    _mask: mask, _match: localMatch
+    _mask: mask, _match: localMatch, _kw: kwSearch, _small: smallMatch
   };
 })();

@@ -120,7 +120,20 @@
   "info_model": "厂家和型号",
   "info_model_ph": "例：大金 AN22XXX",
   "info_model_has": "如果写错了，或者还有其他空调，请写在这里。",
-  "info_model_none": "知道的话请写在这里。型号在机身侧面或底部的标签上。"
+  "info_model_none": "知道的话请写在这里。型号在机身侧面或底部的标签上。",
+  "ui_confirm": "这个回答对吗？",
+  "ui_right": "对",
+  "ui_wrong": "不对",
+  "ui_alt": "抱歉！是下面其中一个吗？",
+  "o_set3": "三件套",
+  "o_omatome": "组合套餐",
+  "o_coat": "防霉抗菌涂层",
+  "o_outdoor": "室外机清洗",
+  "o_drain": "排水管清洗",
+  "v_units": "{n}台",
+  "u_list": "、",
+  "v_opts": "，选项：{list}",
+  "A02_opt": "其中选项大约需要{add}（三件套每台约15分钟，其他选项每台约10分钟）。"
  },
  "q": {
   "MY": "查看我的预约",

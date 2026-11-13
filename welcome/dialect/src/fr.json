@@ -120,7 +120,20 @@
   "info_model": "Marque et référence du modèle",
   "info_model_ph": "ex. Daikin AN22XXX",
   "info_model_has": "Écrivez ici si c'était faux, ou pour d'autres appareils.",
-  "info_model_none": "Si vous la connaissez, écrivez-la ici. Elle figure sur une étiquette sur le côté ou sous l'appareil."
+  "info_model_none": "Si vous la connaissez, écrivez-la ici. Elle figure sur une étiquette sur le côté ou sous l'appareil.",
+  "ui_confirm": "Cette réponse vous convient-elle ?",
+  "ui_right": "Oui",
+  "ui_wrong": "Non",
+  "ui_alt": "Désolé ! Est-ce l'une de celles-ci ?",
+  "o_set3": "formule 3 services",
+  "o_omatome": "formule combinée",
+  "o_coat": "traitement anti-moisissure",
+  "o_outdoor": "nettoyage de l'unité extérieure",
+  "o_drain": "nettoyage du tuyau d'évacuation",
+  "v_units": "×{n}",
+  "u_list": ", ",
+  "v_opts": ", avec options : {list}",
+  "A02_opt": "Sur ce temps, les options prennent environ {add} (formule 3 services : environ 15 min par unité ; autres options : environ 10 min par unité)."
  },
  "q": {
   "MY": "Voir ma réservation",
