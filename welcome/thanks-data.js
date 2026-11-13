@@ -71,7 +71,7 @@ window.THANKS_DATA = {
   "bruce": {
    "name": "ブルース",
    "kind": "留学生",
-   "pick": "ふるさとの言葉で答えます",
+   "pick": "ふるさとの言葉・外国語で答えます",
    "img": "chara/bruce.svg",
    "ask": [
     "ハロー、ブルースです。イギリスから来た留学生のブルドッグです。",
