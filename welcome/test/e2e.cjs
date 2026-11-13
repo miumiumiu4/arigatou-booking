@@ -321,6 +321,45 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   await page.locator('#thanksPanel').getByRole('button', { name: 'Send' }).click();
   await page.locator('#thanksPanel').getByRole('button', { name: 'Yes' }).waitFor();
   assert.match(await page.locator('#thanksPanel').innerText(), /Answering: "What about parking\?"/);
+
+  // ---- リスティング広告（11/14）：gclid を備考に残す・Googleのタグが止められても予約が終わる・「何で知りましたか」は備考の1行だけ ----
+  {
+    const ctx2 = await browser.newContext({ ...devices['iPhone 13'] });
+    const p2 = await ctx2.newPage();
+    const booked2 = [], logged2 = [], gtm = [];
+    p2.on('pageerror', e => errs.push(e.message));
+    await p2.route(/googletagmanager\.com/, r => { gtm.push(r.request().url()); return r.abort(); }); // 広告ブロックと同じ状態
+    await p2.route(/script\.google\.com/, r => {
+      const body = JSON.parse(r.request().postData() || '{}');
+      if (body.event) { logged2.push(body); return r.fulfill({ status: 200, body: '{}' }); }
+      booked2.push(body);
+      return r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true, id: 'R1114-777' }) });
+    });
+    await p2.goto(url + '?src=adlp&utm_source=google&utm_medium=cpc&utm_campaign=test-20261114&gclid=TEST-gclid-123');
+    await p2.getByRole('button', { name: 'はい' }).click();
+    await p2.getByRole('button', { name: 'ご予約フォームへ進む' }).click();
+    const d2 = new Date(Date.now() + 9 * 3600e3 + 5 * 864e5).toISOString().slice(0, 10);
+    await p2.fill('#f_name', 'テスト'); await p2.fill('#f_kana', 'てすと');
+    await p2.fill('#f_phone', '0000000000'); await p2.fill('#f_email', 'test@example.com');
+    await p2.selectOption('#f_area', '神奈川'); await p2.fill('#f_address', 'テスト住所');
+    await p2.check('input[name=housing][value="戸建て"]');
+    for (const n of ['date1', 'date2', 'date3']) await p2.fill('#' + n, d2);
+    await p2.check('input[name=pet][value="なし"]');
+    await p2.selectOption('#f_how', 'Googleの広告');
+    await p2.fill('#f_howNote', '横浜で検索');
+    await p2.getByRole('button', { name: 'この内容で予約する' }).click();
+    await p2.getByText('ご予約を受け付けました。').waitFor();
+    assert.equal(booked2.length, 1);
+    const b = booked2[0];
+    assert.match(b.note, /【流入元】今回：src=adlp&utm_source=google&utm_medium=cpc&utm_campaign=test-20261114&gclid=TEST-gclid-123/);
+    assert.match(b.note, /【きっかけ】Googleの広告（横浜で検索）/);
+    assert.ok(!('how' in b) && !('how_note' in b), '「何で知りましたか」が独立の項目で送られている');
+    assert.ok(gtm.length >= 1, 'Googleのタグを読みにいっていない');
+    const done = logged2.find(e => e.event === '申込完了');
+    assert.ok(done && / 受付:R1114-777$/.test(done.note), '申込完了に受付番号が無い');
+    assert.ok(!JSON.stringify(logged2).includes('test@example.com'));
+    await ctx2.close();
+  }
   assert.deepEqual(errs, []);
   await browser.close();
   console.log('e2e ok:', ev.join(' → '));
