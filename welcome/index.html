@@ -337,6 +337,9 @@
           <label><input type="checkbox" name="consult" value="washer">洗濯機</label>
           <label><input type="checkbox" name="consult" value="other">その他（備考にご記入ください）</label>
         </div>
+        <label for="f_how">当店を何でお知りになりましたか？ <small>任意</small></label>
+        <select id="f_how" name="how"><option value="">選んでください</option><option>Googleで検索</option><option>Googleの広告</option><option>Googleマップ</option><option>YouTube</option><option>LINE</option><option>メール</option><option>ご紹介</option><option>チラシ・その他</option></select>
+        <input id="f_howNote" name="how_note" autocomplete="off" placeholder="ひとこと（任意）例：○○さんの紹介で" style="margin-top:6px">
         <label for="f_note">ご要望・備考</label>
         <textarea id="f_note" name="note" placeholder="設置場所、メーカー、気になる症状、10年以上の機種かどうか、その他のお掃除のご相談内容 など"></textarea>
         <label for="f_coupon">クーポンコード <small>任意</small></label>
@@ -359,7 +362,7 @@
     <!-- 送信後の案内係チャット（thanks.js が中身を作る） -->
     <section id="thanksPanel" hidden></section>
   </main>
-  <footer>ありがとうエアコンお掃除専門店 ☎ <a href="tel:08041772272">080-4177-2272</a><br>© エイムポイント合同会社</footer>
+  <footer>ありがとうエアコンお掃除専門店 ☎ <a href="tel:08041772272">080-4177-2272</a><br>© エイムポイント合同会社<br><small>このページでは広告の効果を確かめるためにGoogleの計測タグを使っています（数えるのは回数と概算金額だけ。お名前などは送りません）。</small></footer>
 
 <!-- welcome-test/ からも同じ部品を読むので ../welcome/ から -->
 <script src="../welcome/thanks-data.js"></script>
@@ -432,6 +435,25 @@
         console.log('[計測]', ev);
       }
     } catch (e) { console.warn('記録に失敗', e); }
+  }
+
+  // ---------- Google広告の計測タグ（リスティング広告。11/14 エバー講座プロジェクトから追加） ----------
+  // 数えるのは「予約が送られた回数・概算金額・受付番号」だけ。名前・電話・メール・住所は送らない。
+  // 読み込めなくても（広告ブロックなど）予約は必ず完了する。テスト版（page=welcome-test）では読み込まない。
+  var AW = { ID: 'AW-10882393108', LABEL_BOOK: 'rRRXCKW2_rcdEJTIkMUo' };
+  try {
+    if (cfg.page === 'welcome') {
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () { dataLayer.push(arguments); };
+      gtag('consent', 'default', { ad_storage: 'granted', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied' });
+      gtag('js', new Date());
+      gtag('config', AW.ID);
+      var gs = document.createElement('script'); gs.async = true; gs.src = 'https://www.googletagmanager.com/gtag/js?id=' + AW.ID;
+      document.head.appendChild(gs);
+    }
+  } catch (e) {}
+  function adConversion(value, id) {
+    try { if (cfg.page === 'welcome' && window.gtag) gtag('event', 'conversion', { send_to: AW.ID + '/' + AW.LABEL_BOOK, value: Number(value) || 0, currency: 'JPY', transaction_id: id || '' }); } catch (e) {}
   }
 
   // ---------- 画面 ----------
@@ -581,6 +603,8 @@
     var q = new URLSearchParams(location.search), parts = [];
     // 媒体・サイト名だけ（紹介コードや個人が分かる文は入れない）。英数字と . _ - 以外は捨てる
     ['src', 'from', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].forEach(function (k) { var v = (q.get(k) || '').replace(/[^A-Za-z0-9._-]/g, '').slice(0, 40); if (v) parts.push(k + '=' + v); });
+    // Google広告のクリックID（リスティング広告の照合用。11/14 エバー講座プロジェクトから追加）。この3つだけ150字まで
+    ['gclid', 'gbraid', 'wbraid'].forEach(function (k) { var v = (q.get(k) || '').replace(/[^A-Za-z0-9._-]/g, '').slice(0, 150); if (v) parts.push(k + '=' + v); });
     var site = '';
     try { var h = document.referrer ? new URL(document.referrer).hostname : ''; if (h && h !== location.hostname) site = h; } catch (_) {}
     var now = parts.join('&') + (site ? (parts.length ? ' ' : '') + '参照元:' + site : '');
@@ -658,6 +682,10 @@
     delete data.receipt_name; Object.defineProperty(data, 'receipt_name', { value: rcpt, enumerable: false });
     if (rcpt) add.push('【領収書の宛名】' + rcpt);
     if (consults.length) add.push('【その他のご相談】' + consults.join('、'));
+    // 「何で知りましたか」は備考の1行だけで送る（領収書の宛名と同じやり方。独立の項目としては送らない）
+    var how = (data.how || '').trim().slice(0, 20), howNote = (data.how_note || '').trim().replace(/\s+/g, ' ').slice(0, 60);
+    delete data.how; delete data.how_note;
+    if (how || howNote) add.push('【きっかけ】' + (how || '未選択') + (howNote ? '（' + howNote + '）' : ''));
     note = add.join('\n') + (note ? '\n' + note : '');
     ['1', '2', '3'].forEach(function (n) { if (data['date' + n]) data['date' + n] = data['date' + n] + ' ' + (data['time' + n] || ''); });
     data.time = '各希望日に記載';
@@ -688,7 +716,9 @@
         // iPhone 等で返事が読めないときは受付済みとして扱う（いまの予約ページと同じ）
         var j; try { j = JSON.parse(txt); } catch (_) { j = { ok: true, id: '（確認メールをご覧ください）' }; }
         if (!j.ok) throw new Error(j.error || '送信失敗');
-        track('申込完了', '台数:' + st.units + (st.tenkase ? ' 天カセ:' + st.tenkase : '') + ' 概算:' + total() + (ref ? ' 紹介コードあり' : ''));
+        var rid = /^[RT]\d{4}-[A-Z0-9]+$/.test(String(j.id)) ? String(j.id) : '';
+        track('申込完了', '台数:' + st.units + (st.tenkase ? ' 天カセ:' + st.tenkase : '') + ' 概算:' + total() + (ref ? ' 紹介コードあり' : '') + (rid ? ' 受付:' + rid : ''));
+        adConversion(total(), rid);
         hideAll();
         $('doneMsg').innerHTML = '受付番号 <b>' + esc(j.id) + '</b><br>確認メールをお送りしました。作業日は担当者よりご連絡のうえ確定します。';
         $('waitPanel').hidden = false;
