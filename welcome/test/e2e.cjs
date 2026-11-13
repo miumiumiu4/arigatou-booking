@@ -170,6 +170,8 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   { // おしまいの画面：紹介リンクがいちばん上、電話・LINE はいちばん下
     const sy = (await tc.locator('.tc-share').boundingBox()).y, cy = (await tc.locator('.tc-ctl .tc-contact').boundingBox()).y;
     assert.ok(sy < cy, `紹介 ${sy} が 連絡 ${cy} より上`);
+    const fb = await tc.locator('.tc-ctl .tc-foot').boundingBox();
+    assert.ok(cy - (fb.y + fb.height) >= 8, '「ほかの質問」と電話・LINE の枠が重なっている');
     assert.equal(await tc.locator('.tc-ctl .tc-contact a[href="tel:08041772272"]').count(), 1);
     assert.equal(await tc.locator('.tc-ctl .tc-contact a[href="https://lin.ee/rD0Xlot"]').count(), 1);
   }
