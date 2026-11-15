@@ -1,0 +1,61 @@
+{
+  "_使い方": "このファイルを kata/companies/c0XX.json（会社番号）に写して、記入票の答えを入れる。_ で始まる行は消してよい。入れたら node kata/build.mjs c0XX。",
+  "id": "c0XX",
+  "honban": false,
+  "_honban": "true にすると本番ページ shop/c0XX/ も作る。HAPPY の判断と三浦さんの「出してよい」の後だけ true にする。",
+  "shop_name": "（画面の上に出る短い屋号）",
+  "shop_full": "（ページの題と下に出る正式な屋号）",
+  "company": "（© の後ろの会社名）",
+  "phone": "000-0000-0000",
+  "line_url": "",
+  "line_name": "",
+  "mail_to": "",
+  "logo": "",
+  "booking_url": "",
+  "_booking_url": "その会社の帳簿（予約の受け口の Apps Script /exec）。個人情報はここへ直接入る。本部は持たない。",
+  "test_booking_url": "",
+  "_test_booking_url": "空なら試し用ページは画面だけ（どこにも送らない）。本番と同じ URL は入れられない。",
+  "evlog_url": "",
+  "price_note": "税込・駐車場代別",
+  "parking_note": "",
+  "prices": {
+    "unit": 0,
+    "auto": null,
+    "tenkase": null,
+    "tenkase_2nd_discount": null,
+    "set3": null,
+    "coat": null,
+    "outdoor": null,
+    "drain": null,
+    "omatome": null,
+    "nominate": null
+  },
+  "_prices": "null の物は画面に出さない。料金表から C03（お掃除機能付き）・C07（3点セット）・F04（天カセ）・F05（指名）の答えを自動で作る。",
+  "tenkase_note": "",
+  "extras": [],
+  "areas": [
+    { "group": "（地方）", "prefs": ["（都府県）"] }
+  ],
+  "time_slots": ["9時〜12時", "12時〜15時", "15時〜18時"],
+  "payments": [
+    { "value": "onsite", "label": "作業当日にお支払い（現金）", "say": "作業当日に現金" }
+  ],
+  "coupon": false,
+  "referral": null,
+  "_referral": "紹介リンクを出す会社は { \"reward_text\": \"このリンクから予約した方の作業とお支払いが終わると、…\" }。出さないなら null。",
+  "texts": {
+    "after_submit": "送信後、確認メールをお送りします。作業日は担当者よりご連絡のうえ確定します。",
+    "reschedule": ""
+  },
+  "faq": {},
+  "_faq": "差し替える問の答え（A01 A02 A03 A04 A05 B03 C02 C03 C04 C06 C07 D01 D02 D03 E01 E02 F01 F02 F04 F05）。その会社の出典がある問だけ書く。書かない問はチャットが答えずに人へつなぐ。",
+  "faq_source": {},
+  "_faq_source": "faq に書いた問ごとに、どこから取ったか（例：〇〇店の料金表 2026-11）。公開ページには出ない。無いと作れない。",
+  "mine": {
+    "pay_after": "",
+    "arrive": null,
+    "parking_in": "",
+    "parking_coin": ""
+  },
+  "_mine": "予約の中身に合わせた答えで使う、その会社の言い方。arrive は {\"9時〜12時\": \"8〜9時\"} のように希望の時間帯→到着の幅。空なら使わない。"
+}
