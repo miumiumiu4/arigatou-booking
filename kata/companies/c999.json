@@ -1,0 +1,61 @@
+{
+  "id": "c999",
+  "honban": false,
+  "shop_name": "C999 試験店",
+  "shop_full": "C999 試験店（エアコンお掃除）",
+  "company": "C999 試験用（実在しない会社）",
+  "phone": "000-0000-0000",
+  "line_url": "",
+  "line_name": "",
+  "mail_to": "",
+  "logo": "",
+  "booking_url": "",
+  "test_booking_url": "",
+  "evlog_url": "",
+  "price_note": "税込・駐車場代別",
+  "parking_note": "駐車場代は別途実費",
+  "prices": {
+    "unit": 9900,
+    "auto": 5500,
+    "tenkase": null,
+    "tenkase_2nd_discount": null,
+    "set3": 8000,
+    "coat": 3500,
+    "outdoor": 4500,
+    "drain": 2000,
+    "omatome": null,
+    "nominate": null
+  },
+  "tenkase_note": "",
+  "extras": [
+    { "name": "レンジフード", "price": 16000 }
+  ],
+  "areas": [
+    { "group": "九州", "prefs": ["福岡", "熊本"] }
+  ],
+  "time_slots": ["9時〜12時", "13時〜17時"],
+  "payments": [
+    { "value": "onsite", "label": "作業当日にお支払い（現金）", "say": "作業当日に現金" },
+    { "value": "paypay", "label": "作業当日にお支払い（PayPay）", "say": "作業当日に PayPay" }
+  ],
+  "coupon": false,
+  "referral": null,
+  "texts": {
+    "after_submit": "送信後、確認メールをお送りします。作業日は担当者よりご連絡のうえ確定します。",
+    "reschedule": ""
+  },
+  "faq": {
+    "C04": "お支払いは、作業が終わってからです。方法は、当日に現金か PayPay のどちらかで、予約フォームで選んだ方法でご案内します。",
+    "D01": "キャンセル料は、前日まで無料・当日100%です。"
+  },
+  "faq_source": {
+    "C04": "試し用の値（C999 は実在しない会社）",
+    "D01": "試し用の値（C999 は実在しない会社）"
+  },
+  "mine": {
+    "pay_after": "お支払いは、作業が終わってからです。",
+    "arrive": null,
+    "parking_in": "",
+    "parking_coin": ""
+  }
+}

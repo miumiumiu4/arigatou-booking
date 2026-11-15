@@ -1,0 +1,15 @@
+name: kata の型と各社ページが合っているか
+on:
+  pull_request:
+    paths: ['welcome/**', 'kata/**', 'shop/**']
+  push:
+    branches: [main]
+    paths: ['welcome/**', 'kata/**', 'shop/**']
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: node kata/build.mjs --check
