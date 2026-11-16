@@ -606,7 +606,7 @@
     // Google広告のクリックID（リスティング広告の照合用。11/14 エバー講座プロジェクトから追加）。この3つだけ150字まで
     ['gclid', 'gbraid', 'wbraid'].forEach(function (k) { var v = (q.get(k) || '').replace(/[^A-Za-z0-9._-]/g, '').slice(0, 150); if (v) parts.push(k + '=' + v); });
     var site = '';
-    try { var h = document.referrer ? new URL(document.referrer).hostname : ''; if (h && h !== location.hostname) site = h; } catch (_) {}
+    try { var h = (new URLSearchParams(location.search).get('_rf') || '').replace(/[^A-Za-z0-9.-]/g, '').slice(0, 80) || (document.referrer ? new URL(document.referrer).hostname : ''); if (h && h !== location.hostname) site = h; } catch (_) {}
     var now = parts.join('&') + (site ? (parts.length ? ' ' : '') + '参照元:' + site : '');
     var first = '';
     try {
@@ -625,7 +625,8 @@
   // いまの予約ページと同じく90日間このブラウザに覚えておく（同じ置き場所 arigatou_ref を使うので、
   // 紹介リンクで前の予約ページを開いた方が、あとでホームページからこのページに来ても紹介コードが残る）
   var refFromUrl = (function () {
-    var KEY = 'arigatou_ref', DAYS = 90, code = String(cfg.ref || '').trim().slice(0, 30);
+    // _sref＝古い住所（miumiumiu4.github.io）で覚えていた紹介コード。転送ページが渡す（置き場所が別の住所になったため）
+    var KEY = 'arigatou_ref', DAYS = 90, code = String(cfg.ref || new URLSearchParams(location.search).get('_sref') || '').trim().slice(0, 30);
     try {
       if (code) localStorage.setItem(KEY, JSON.stringify({ code: code, at: Date.now() }));
       else {

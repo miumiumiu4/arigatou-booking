@@ -5,7 +5,7 @@
   const p = new URLSearchParams(location.search);
   const UTM = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"];
   const click = p.get("fbclid") ? "fbclid:" + p.get("fbclid") : p.get("gclid") ? "gclid:" + p.get("gclid") : p.get("yclid") ? "yclid:" + p.get("yclid") : p.get("ldtag_cl") ? "line:" + p.get("ldtag_cl") : "";
-  let ref = ""; try { const h = document.referrer ? new URL(document.referrer).hostname : ""; ref = h && h !== location.hostname ? h : ""; } catch (_) {}
+  let ref = ""; try { const h = (new URLSearchParams(location.search).get("_rf") || "").replace(/[^A-Za-z0-9.-]/g, "").slice(0, 80) || (document.referrer ? new URL(document.referrer).hostname : ""); ref = h && h !== location.hostname ? h : ""; } catch (_) {}
   const now = { ref: ref, click_id: click.slice(0, 120), landing: location.pathname.split("/").pop() || "index.html", first_seen: new Date().toISOString() };
   UTM.forEach(k => { if (p.get(k)) now[k] = p.get(k).slice(0, 100); });
   if (p.get("src")) now.utm_source = now.utm_source || p.get("src");

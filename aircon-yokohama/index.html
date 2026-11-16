@@ -300,7 +300,7 @@
       var p2 = [];
       ['src', 'from', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].forEach(function (k) { var v = (q.get(k) || '').replace(/[^A-Za-z0-9._-]/g, '').slice(0, 40); if (v) p2.push(k + '=' + v); });
       var site = '';
-      try { var h = document.referrer ? new URL(document.referrer).hostname : ''; if (h && h !== location.hostname) site = h; } catch (_) {}
+      try { var h = (new URLSearchParams(location.search).get('_rf') || '').replace(/[^A-Za-z0-9.-]/g, '').slice(0, 80) || (document.referrer ? new URL(document.referrer).hostname : ''); if (h && h !== location.hostname) site = h; } catch (_) {}
       var now = p2.join('&') + (site ? (p2.length ? ' ' : '') + '参照元:' + site : '');
       if (now) localStorage.setItem(KEY, JSON.stringify({ from: now, at: Date.now() }));
     }
