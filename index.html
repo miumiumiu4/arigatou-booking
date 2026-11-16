@@ -233,7 +233,7 @@ const fromLine = (() => {
   // 媒体・サイト名だけ（紹介コードや個人が分かる文は入れない）。英数字と . _ - 以外は捨てる
   ["src", "from", "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"].forEach(k => { const v = (q.get(k) || "").replace(/[^A-Za-z0-9._-]/g, "").slice(0, 40); if (v) parts.push(k + "=" + v); });
   let site = "";
-  try { const h = document.referrer ? new URL(document.referrer).hostname : ""; if (h && h !== location.hostname) site = h; } catch (_) {}
+  try { const h = (new URLSearchParams(location.search).get("_rf") || "").replace(/[^A-Za-z0-9.-]/g, "").slice(0, 80) || (document.referrer ? new URL(document.referrer).hostname : ""); if (h && h !== location.hostname) site = h; } catch (_) {}
   const now = parts.join("&") + (site ? (parts.length ? " " : "") + "参照元:" + site : "");
   let first = "";
   try {
@@ -249,7 +249,7 @@ const fromLine = (() => {
   const KEY = "arigatou_ref", DAYS = 90;
   let code = "";
   try {
-    const q = new URLSearchParams(location.search).get("ref");
+    const sp = new URLSearchParams(location.search), q = sp.get("ref") || sp.get("_sref"); // _sref＝古い住所で覚えていた紹介コード（転送ページが渡す）
     if (q) { code = q.trim().slice(0, 30); localStorage.setItem(KEY, JSON.stringify({ code, at: Date.now() })); }
     else {
       const v = JSON.parse(localStorage.getItem(KEY) || "null");
