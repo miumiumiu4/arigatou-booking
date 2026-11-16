@@ -1,0 +1,7 @@
+# Cloudflare Pages の応答ヘッダー（tools/cf-build.sh が _site/ に写す。GitHub Pages では _ で始まるので出ない）
+/*
+  X-Content-Type-Options: nosniff
+
+# テスト版は検索に出さない（ページ内の noindex に加えて）
+/welcome-test/*
+  X-Robots-Tag: noindex
