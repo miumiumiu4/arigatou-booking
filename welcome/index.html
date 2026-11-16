@@ -117,6 +117,15 @@
   .donemsg { font-size: 15px; text-align: left; margin-top: 12px; }
   .donemsg .revisit { font-size: 13px; margin-top: 8px; }
   .donemsg .revisit a { word-break: break-all; }
+  /* 予約完了の画面で、質問コーナーの入口を目立たせる（11/17 三浦さん。FAQの利用が約2割だったため） */
+  .wait.has-chat { padding: 20px 16px 24px; }
+  .wait.has-chat img { width: 84px; }
+  .wait.has-chat #doneTitle { font-size: 20px; margin-top: 8px; }
+  .faqcta { margin-top: 14px; background: #fff7e6; border: 2px solid #e8590c; border-radius: 14px; padding: 14px; text-align: left; }
+  .faqcta b { display: block; font-size: 17px; line-height: 1.5; }
+  .faqcta ul { margin: 8px 0 12px; padding-left: 1.2em; font-size: 14px; color: var(--muted); }
+  .faqcta li { margin: 2px 0; }
+  .faqcta button { display: block; width: 100%; border: 0; border-radius: 12px; padding: 14px; font: inherit; font-size: 17px; font-weight: 700; color: #fff; background: #e8590c; cursor: pointer; }
   .share { margin-top: 14px; border: 1px solid var(--line); border-radius: 12px; padding: 14px; text-align: left; }
   .share b { display: block; font-size: 15px; }
   .share .link { display: flex; gap: 8px; margin-top: 8px; }
@@ -794,8 +803,25 @@
       data.name && 'お名前：' + data.name + ' 様' + (data.phone ? '（電話 ' + data.phone + '）' : '')
     ].filter(Boolean);
     saveThanks(id, sum, ctx, mine, data.area || '');
+    faqCta(id);
     revisitLink(id);
     runThanks(id, sum, ctx, mine);
+  }
+  // 予約完了のすぐ下に「ここで聞けます」の入口を出す。押すと案内係の選択まで下がる（11/17 三浦さん）
+  // 計測：入口を押したら「FAQ入口」。表示は既存の「キャラ表示」で数える
+  function faqCta(id) {
+    $('waitPanel').classList.add('has-chat');
+    var box = document.createElement('div');
+    box.className = 'faqcta';
+    box.innerHTML = '<b>当日までの気になること、この画面で聞けます</b>'
+      + '<ul><li>当日はエアコンの周りを片づけておく？</li><li>作業は何分くらい？</li><li>お支払いはいつ・どうやって？</li></ul>'
+      + '<button type="button">質問してみる（案内係を選ぶ）</button>';
+    box.querySelector('button').addEventListener('click', function () {
+      track('FAQ入口', id, /^(R0000-|T)/.test(id) ? 'thanks-chat-test' : 'thanks-chat');
+      var to = document.querySelector('#thanksPanel .tc-pick') || $('thanksPanel');
+      to.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+    });
+    $('doneMsg').appendChild(box);
   }
   // ---------- あとから質問コーナーを開く（?faq=受付番号。11/10 三浦さん） ----------
   // 予約の中身は、この端末（ブラウザ）の中にだけ残す。お名前・電話・住所の番地・領収書の宛名は残さない。どこにも送らない。
