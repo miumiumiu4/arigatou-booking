@@ -28,10 +28,23 @@ node welcome-test/build.mjs
 作り直し忘れは GitHub の「welcome-test が本番と合っているか」チェックが赤になって知らせる。
 本番の形が変わって置き換えが当たらなくなったときも、`build.mjs` が止まって知らせる（黙って本番へ送る版は作らない）。
 
+## 会話型の予約フォーム（?form=chat）
+
+`welcome/chatform.js`。「はい」のあと、キャラが1問ずつ聞いて、答えをいつものフォームの欄に入れる。
+送るのはいつものフォームと同じ処理（同じ必須チェック・同じ送り先・同じ中身）。予約サイトの GAS は変えない。
+
+- `welcome/index.html` の `CONFIG.CHAT_FORM` が `false` のあいだは、いつものフォーム。`?form=chat` を付けると会話型
+- `?form=classic` を付けると、設定に関係なくいつものフォーム
+- 会話の途中で「フォームでまとめて入力する」を押すと、そこまでの答えが入ったフォームに切り替わる
+- 計測：`会話フォーム:開始／台数／連絡先／希望日／確認画面／直す／送信`。申込完了の note の頭に `会話フォーム`
+
+試す URL：`https://arigatou-booking.pages.dev/welcome-test/?form=chat`
+
 ## 確かめ方
 
 ```
 NODE_PATH=$(npm root -g) node welcome-test/test/e2e.cjs     # スマホの大きさで通し
+NODE_PATH=$(npm root -g) node welcome-test/test/chatform-e2e.cjs   # 会話型の予約フォームを通し
 node welcome-test/test/receiver.test.mjs                   # 受け口
 ```
 
