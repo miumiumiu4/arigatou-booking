@@ -167,7 +167,18 @@
   "F03": "Qui peut voir mon nom et mon adresse ?",
   "F04": "Nettoyez-vous les cassettes au plafond ?",
   "F05": "Puis-je demander un technicien précis ?",
-  "F06": "Ce chat, c'est une personne ?"
+  "F06": "Ce chat, c'est une personne ?",
+  "G01": "Pouvez-vous nettoyer un climatiseur de plus de 10 ans ?",
+  "G02": "Y a-t-il des modèles que vous ne nettoyez pas ?",
+  "G03": "Nettoyez-vous un appareil en erreur ou en panne ?",
+  "G04": "Où trouver le numéro de modèle et l'année de fabrication ?",
+  "G05": "Je ne sais pas si le mien a une fonction d'autonettoyage.",
+  "H01": "L'odeur partira-t-elle complètement ?",
+  "H02": "Le détergent est-il sans danger pour les bébés et les animaux ?",
+  "H03": "Pouvez-vous intervenir dans une pièce aux murs en terre ou à la chaux ?",
+  "H04": "Mon climatiseur est installé en hauteur. Est-ce possible ?",
+  "H05": "Faut-il préparer la télécommande ?",
+  "H06": "Avec quel véhicule venez-vous ?"
  },
  "kw": {
   "A01": [
@@ -317,6 +328,63 @@
    "robot",
    "ia",
    "bot"
+  ],
+  "G01": [
+   "10 ans",
+   "vieux",
+   "ancien",
+   "année de fabrication"
+  ],
+  "G02": [
+   "pas nettoyer",
+   "non pris en charge",
+   "fenêtre",
+   "modèle"
+  ],
+  "G03": [
+   "erreur",
+   "panne",
+   "ne marche pas",
+   "réparation"
+  ],
+  "G04": [
+   "numéro de modèle",
+   "où",
+   "étiquette"
+  ],
+  "G05": [
+   "autonettoyage",
+   "je ne sais pas"
+  ],
+  "H01": [
+   "odeur",
+   "mauvaise odeur",
+   "complètement"
+  ],
+  "H02": [
+   "détergent",
+   "sans danger",
+   "écologique"
+  ],
+  "H03": [
+   "mur en terre",
+   "chaux",
+   "bois massif",
+   "mur"
+  ],
+  "H04": [
+   "haut",
+   "hauteur",
+   "escabeau"
+  ],
+  "H05": [
+   "télécommande",
+   "piles"
+  ],
+  "H06": [
+   "voiture",
+   "véhicule",
+   "camion"
   ]
  },
  "items": {
@@ -476,6 +544,61 @@
    "Bonne question. Je vais être franc.",
    "Ce guide est un robot IA. Les informations officielles de notre équipe passent en priorité. Si vous voulez parler à une personne, touchez « Je voudrais parler à une personne » juste après et je vous mets en relation.",
    "Si vous préférez une personne, demandez simplement."
+  ],
+  "G01": [
+   "Un appareil qui travaille depuis si longtemps, chapeau.",
+   "Oui, nous nettoyons les appareils fabriqués il y a plus de 10 ans. Mais les appareils de 10 ans ou plus ne sont pas couverts par la garantie d'1 semaine après l'intervention, car les pièces en plastique peuvent devenir fragiles avec l'âge. Nous pouvons refuser les appareils très anciens : indiquez l'année de fabrication dans les remarques de la réservation ou lors de l'appel du responsable.",
+   "Si vous connaissez l'année, dites-le-nous à l'avance."
+  ],
+  "G02": [
+   "C'est important, je le dis d'abord.",
+   "Nous ne nettoyons pas ces modèles : FUJITSU nocria série AS-X, MITSUBISHI Kirigamine Advance série FZ, SHARP série Airest, SHARP série AY-Z (AY-Z〜SD possible), climatiseurs de fenêtre et climatiseurs encastrés dans le mur. En cas de doute, donnez le numéro de modèle au responsable.",
+   "Avec le numéro de modèle, nous vérifions."
+  ],
+  "G03": [
+   "C'est une inquiétude légitime.",
+   "Nous ne pouvons pas nettoyer un climatiseur en panne ou qui affiche une erreur. Avant le jour de l'intervention, vérifiez qu'il fonctionne sans erreur. S'il affiche une erreur, prévenez le responsable avant l'intervention.",
+   "L'allumer une fois avant aide beaucoup."
+  ],
+  "G04": [
+   "Cherchons l'étiquette.",
+   "Le numéro de modèle et l'année se trouvent souvent sur une étiquette sur le côté de l'appareil, ou à l'intérieur en ouvrant le panneau avant. Le plus sûr est de photographier l'étiquette et de l'envoyer au responsable.",
+   "Une photo suffit."
+  ],
+  "G05": [
+   "C'est difficile à voir de l'extérieur.",
+   "Si vous ne savez pas, écrivez le numéro de modèle dans 「Marque・Modèle」 du formulaire, ou envoyez au responsable une photo de l'étiquette. Nous vérifions. Si le jour même l'appareil s'avère autonettoyant, il y a un supplément de 6,000 yens par appareil, expliqué avant de commencer.",
+   "Avec le numéro de modèle, c'est vite vérifié."
+  ],
+  "H01": [
+   "Les odeurs gênent au quotidien.",
+   "Le nettoyage élimine bien la saleté et les moisissures qui causent les odeurs. Mais une odeur imprégnée dans les matériaux à l'intérieur peut ne pas partir complètement, même après nettoyage. Nous ferons de notre mieux, merci de votre compréhension.",
+   "La plupart du temps, la différence est nette."
+  ],
+  "H02": [
+   "La famille passe avant tout.",
+   "Nous utilisons un détergent écologique, sans danger pour les bébés et les animaux. Pas d'odeur forte, pas de résidu de détergent.",
+   "Vous pouvez être tranquille."
+  ],
+  "H03": [
+   "Les belles pièces demandent plus de soin.",
+   "Pour les murs en terre, à la chaux, enduits, ou les murs et sols en bois massif, l'eau peut couler et les mouiller ou les abîmer, donc en principe nous refusons. Si vous acceptez ce risque, nous pouvons intervenir. Envoyez une photo du mur avant de réserver ou lors de l'appel du responsable.",
+   "Avec une photo, nous répondons vite."
+  ],
+  "H04": [
+   "La hauteur demande de la préparation.",
+   "S'il y a 2.3 m ou plus entre le sol et le bas de l'appareil, c'est un travail en hauteur avec un escabeau spécial, avec un supplément. Si c'est peut-être le cas, mesurez et prévenez le responsable à l'avance. Nous expliquons le montant avant l'intervention et ne commençons qu'avec votre accord.",
+   "Une hauteur approximative suffit."
+  ],
+  "H05": [
+   "Les télécommandes disparaissent souvent.",
+   "Oui, préparez la télécommande du climatiseur. Nous l'utilisons pour vérifier le fonctionnement avant et après.",
+   "Vérifiez aussi les piles si possible."
+  ],
+  "H06": [
+   "Pas un gros camion, rassurez-vous.",
+   "Nous venons avec une petite voiture ou une voiture de tourisme normale. S'il n'y a pas de place, le coût réel d'un parking payant proche est facturé à part.",
+   "Si vous avez une place, dites-le-nous."
   ]
  }
 }

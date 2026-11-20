@@ -167,7 +167,18 @@
   "F03": "Sino ang makakakita ng pangalan at address ko?",
   "F04": "Naglilinis ba kayo ng ceiling cassette unit?",
   "F05": "Puwede bang mag-request ng staff?",
-  "F06": "Tao ba ang chat na ito?"
+  "F06": "Tao ba ang chat na ito?",
+  "G01": "Puwede bang linisin ang aircon na mahigit 10 taon na?",
+  "G02": "May mga model ba na hindi ninyo nalilinis?",
+  "G03": "Puwede bang linisin ang aircon na may error o sira?",
+  "G04": "Saan makikita ang model number at taon ng pagkagawa?",
+  "G05": "Hindi ko alam kung may auto-cleaning ang aircon ko.",
+  "H01": "Mawawala ba nang tuluyan ang amoy?",
+  "H02": "Ligtas ba ang sabong panlinis para sa baby at alagang hayop?",
+  "H03": "Puwede ba sa kuwartong may pader na lupa o plaster?",
+  "H04": "Mataas ang pagkakakabit ng aircon. Okay lang ba?",
+  "H05": "Kailangan bang ihanda ang remote sa araw ng trabaho?",
+  "H06": "Anong sasakyan ang dala ninyo?"
  },
  "kw": {
   "A01": [
@@ -319,6 +330,64 @@
    "robot",
    "ai",
    "bot"
+  ],
+  "G01": [
+   "10 taon",
+   "luma",
+   "taon ng pagkagawa"
+  ],
+  "G02": [
+   "hindi nalilinis",
+   "hindi puwede",
+   "window type",
+   "model"
+  ],
+  "G03": [
+   "error",
+   "sira",
+   "hindi umaandar",
+   "repair"
+  ],
+  "G04": [
+   "model number",
+   "saan",
+   "sticker",
+   "label"
+  ],
+  "G05": [
+   "auto-cleaning",
+   "hindi alam"
+  ],
+  "H01": [
+   "amoy",
+   "mabaho",
+   "tuluyan"
+  ],
+  "H02": [
+   "sabon",
+   "panlinis",
+   "ligtas",
+   "eco"
+  ],
+  "H03": [
+   "pader na lupa",
+   "plaster",
+   "kahoy",
+   "pader"
+  ],
+  "H04": [
+   "mataas",
+   "taas",
+   "hagdan"
+  ],
+  "H05": [
+   "remote",
+   "baterya"
+  ],
+  "H06": [
+   "sasakyan",
+   "kotse",
+   "trak"
   ]
  },
  "items": {
@@ -478,6 +547,61 @@
    "Makatwirang tanong. Magiging tapat ako.",
    "AI robot ang gabay na ito. Mas inuuna ang opisyal na impormasyon mula sa aming staff. Kung gusto ninyong makipag-usap sa tao, i-tap ang “Gusto kong makipag-usap sa tao” pagkatapos at ikokonekta ko kayo.",
    "Kung mas gusto ninyo ang tao, sabihin lang."
+  ],
+  "G01": [
+   "Ang tagal nang naglilingkod ng aircon na 'yan, saludo kami.",
+   "Oo, kaya naming linisin ang aircon na mahigit 10 taon na mula nang gawin. Pero ang mga unit na 10 taon pataas ay hindi sakop ng aming 1 linggong garantiya, dahil puwedeng humina na ang mga plastik na piyesa. Maaaring hindi namin matanggap ang sobrang lumang unit, kaya pakisabi ang taon ng pagkagawa sa notes ng booking o kapag kumontak ang staff.",
+   "Kung alam ninyo ang taon, pakisabi nang maaga."
+  ],
+  "G02": [
+   "Mahalaga ito kaya uunahin ko.",
+   "Hindi namin tinatanggap ang paglilinis ng: FUJITSU nocria AS-X series, MITSUBISHI Kirigamine Advance FZ series, SHARP Airest series, SHARP AY-Z series (puwede ang AY-Z〜SD), window type na aircon, at aircon na nakabaon sa pader. Kung hindi sigurado, pakisabi ang model number sa staff.",
+   "Basta may model number, kami na ang titingin."
+  ],
+  "G03": [
+   "Nakakabahala nga 'yan.",
+   "Hindi namin malilinis ang aircon na sira o may error. Bago ang araw ng trabaho, pakitingnan kung umaandar ito nang walang error. Kung may error, pakisabi sa staff bago ang trabaho.",
+   "Subukan ninyong buksan minsan bago ang araw."
+  ],
+  "G04": [
+   "Hanapin natin ang sticker.",
+   "Karaniwang nakasulat ang model number at taon sa sticker sa gilid ng unit, o sa loob kapag binuksan ang front panel. Pinakasigurado kung kukunan ninyo ng litrato ang sticker at ipapadala sa staff.",
+   "Isang litrato lang, sapat na."
+  ],
+  "G05": [
+   "Mahirap talagang malaman sa itsura lang.",
+   "Kung hindi sigurado, isulat ang model number sa 「Maker・Model」 ng booking form, o ipadala sa staff ang litrato ng model sticker. Kami ang titingin. Kung sa araw mismo malalamang may auto-cleaning, may dagdag na 6,000 yen bawat unit, at ipapaliwanag namin bago magsimula.",
+   "Mabilis matiyak kapag may model number."
+  ],
+  "H01": [
+   "Nakakainis talaga ang amoy araw-araw.",
+   "Lilinisin namin nang mabuti ang dumi at amag na sanhi ng amoy. Pero ang amoy na kumapit na sa materyales sa loob ng aircon ay posibleng hindi tuluyang mawala kahit linisin. Gagawin namin ang aming makakaya, salamat sa pag-unawa.",
+   "Kadalasan, malaki ang pagbabago."
+  ],
+  "H02": [
+   "Pamilya ang pinakamahalaga.",
+   "Gumagamit kami ng eco na panlinis na ligtas kahit sa baby at alagang hayop. Walang matapang na amoy at walang natitirang sabon.",
+   "Panatag lang kayo."
+  ],
+  "H03": [
+   "Mas kailangan ng ingat ang magagandang kuwarto.",
+   "Sa pader na lupa, plaster, pinahiran na pader, o pader at sahig na solid na kahoy, puwedeng dumaloy ang tubig at mabasa o magasgas ito, kaya karaniwan ay tumatanggi kami. Kung tanggap ninyo ito, puwede naming gawin. Pakipadala ang litrato ng pader bago mag-book o kapag kumontak ang staff.",
+   "Mabilis kaming makakasagot kapag may litrato."
+  ],
+  "H04": [
+   "Kailangan ng paghahanda sa mataas.",
+   "Kung 2.3 m pataas mula sahig hanggang ilalim ng unit, ito ay trabaho sa mataas na kailangan ng espesyal na hagdan, at may dagdag na bayad. Kung posibleng ganito, pakisukat at sabihin nang maaga sa staff. Ipapaliwanag namin ang halaga bago ang trabaho at magsisimula lang kapag pumayag kayo.",
+   "Puwede na ang tantiyang taas."
+  ],
+  "H05": [
+   "Madalas talagang mawala ang remote.",
+   "Oo, pakihanda ang remote ng aircon. Ginagamit namin ito para tingnan ang andar bago at pagkatapos ng trabaho.",
+   "Tingnan na rin ang baterya kung puwede."
+  ],
+  "H06": [
+   "Hindi malaking trak, huwag mag-alala.",
+   "Darating kami sakay ng maliit na kotse o karaniwang kotse. Kung walang paradahan, hiwalay naming sisingilin ang aktuwal na bayad sa malapit na coin parking.",
+   "Kung may paradahan, pakisabi sa amin."
   ]
  }
 }
