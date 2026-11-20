@@ -208,6 +208,61 @@
    "Penasaran, ya. Aku jawab dengan jujur.",
    "Panduan ini dijawab oleh robot pemandu AI. Informasi resmi dari staf penanggung jawab yang diutamakan. Jika ingin bicara dengan orang sungguhan, ketuk “Saya ingin bicara dengan orang” berikutnya dan aku akan menyambungkanmu.",
    "Kalau lebih suka orang sungguhan, panggil saja, jangan sungkan."
+  ],
+  "G01": [
+   "AC yang sudah bekerja selama itu, hebat sekali.",
+   "AC yang dibuat lebih dari 10 tahun lalu tetap bisa dibersihkan. Namun, unit berusia 10 tahun atau lebih tidak termasuk garansi 1 minggu setelah pengerjaan, karena bagian plastik bisa sudah rapuh. Unit yang sangat tua mungkin tidak bisa kami terima, jadi mohon beri tahu tahun pembuatan di catatan pemesanan atau saat petugas menghubungi.",
+   "Kalau tahu tahunnya, mohon kabari lebih dulu."
+  ],
+  "G02": [
+   "Ini penting, jadi saya sampaikan dulu.",
+   "Kami tidak menerima pembersihan model berikut: FUJITSU nocria seri AS-X, MITSUBISHI Kirigamine Advance seri FZ, SHARP seri Airest, SHARP seri AY-Z (AY-Z〜SD bisa), AC jendela, dan AC tanam dinding. Kalau ragu, mohon beri tahu nomor model kepada petugas.",
+   "Dengan nomor model, kami yang cek."
+  ],
+  "G03": [
+   "Itu memang mengkhawatirkan.",
+   "AC yang rusak atau menampilkan error tidak bisa kami bersihkan. Sebelum hari pengerjaan, mohon pastikan AC menyala tanpa tampilan error. Jika ada error, beri tahu petugas sebelum pengerjaan.",
+   "Coba nyalakan sekali sebelumnya, ya."
+  ],
+  "G04": [
+   "Ayo cari stikernya.",
+   "Nomor model dan tahun pembuatan biasanya tertulis di stiker di sisi unit, atau di bagian dalam saat panel depan dibuka. Cara paling pasti adalah memotret stiker lalu mengirimkannya ke petugas.",
+   "Satu foto sudah cukup."
+  ],
+  "G05": [
+   "Memang sulit dibedakan dari luar.",
+   "Kalau tidak tahu, tulis nomor model di 「Merek・Model」 pada formulir pemesanan, atau kirim foto stiker model ke petugas. Kami yang akan cek. Jika pada hari pengerjaan ternyata ada fitur pembersih otomatis, ada tambahan 6,000 yen per unit, dan kami jelaskan sebelum mulai.",
+   "Dengan nomor model, cepat dicek."
+  ],
+  "H01": [
+   "Bau memang mengganggu setiap hari.",
+   "Pembersihan menghilangkan kotoran dan jamur penyebab bau. Tetapi bau yang sudah meresap ke material di dalam AC mungkin tidak hilang sepenuhnya walau dibersihkan. Kami akan berusaha sebaik mungkin, mohon pengertiannya.",
+   "Biasanya terasa sangat berbeda."
+  ],
+  "H02": [
+   "Keluarga tentu nomor satu.",
+   "Kami memakai deterjen ramah lingkungan yang aman untuk bayi dan hewan peliharaan. Tidak ada bau menyengat dan tidak ada sisa deterjen.",
+   "Tenang saja."
+  ],
+  "H03": [
+   "Kamar yang bagus perlu ekstra hati-hati.",
+   "Untuk dinding tanah, plester kapur, dinding plester, atau dinding dan lantai kayu solid, air bisa mengalir sehingga basah atau tergores, jadi pada dasarnya kami menolak. Jika Anda menerima risiko itu, kami bisa mengerjakannya. Mohon kirim foto dinding sebelum memesan atau saat petugas menghubungi.",
+   "Dengan foto, kami bisa cepat menjawab."
+  ],
+  "H04": [
+   "Tempat tinggi perlu persiapan.",
+   "Jika jarak dari lantai ke bagian bawah AC 2.3 m atau lebih, ini pekerjaan di ketinggian yang perlu tangga khusus dan ada biaya tambahan. Jika mungkin termasuk, ukur tingginya dan beri tahu petugas lebih dulu. Jumlahnya kami jelaskan sebelum pengerjaan, dan baru dikerjakan setelah Anda setuju.",
+   "Tinggi perkiraan juga boleh."
+  ],
+  "H05": [
+   "Remote memang sering hilang.",
+   "Ya, mohon siapkan remote AC. Kami memakainya untuk mengecek AC sebelum dan sesudah pengerjaan.",
+   "Cek baterainya juga, ya."
+  ],
+  "H06": [
+   "Bukan truk besar, tenang saja.",
+   "Kami datang dengan mobil kecil atau mobil penumpang biasa. Jika tidak ada tempat parkir, biaya parkir koin terdekat dikenakan terpisah sesuai biaya sebenarnya.",
+   "Kalau ada tempat parkir, kabari kami."
   ]
  },
  "t": {
@@ -325,7 +380,18 @@
   "F03": "Siapa yang bisa melihat nama dan alamat saya?",
   "F04": "Apakah melayani AC kaset plafon?",
   "F05": "Bisa meminta staf tertentu?",
-  "F06": "Apakah chat ini orang sungguhan?"
+  "F06": "Apakah chat ini orang sungguhan?",
+  "G01": "Apakah AC yang sudah lebih dari 10 tahun bisa dibersihkan?",
+  "G02": "Apakah ada model yang tidak bisa dibersihkan?",
+  "G03": "Apakah AC yang error atau rusak bisa dibersihkan?",
+  "G04": "Di mana melihat nomor model dan tahun pembuatan?",
+  "G05": "Saya tidak tahu apakah AC saya punya fitur pembersih otomatis.",
+  "H01": "Apakah bau bisa hilang sepenuhnya?",
+  "H02": "Apakah deterjennya aman untuk bayi dan hewan peliharaan?",
+  "H03": "Apakah bisa di kamar berdinding tanah atau plester kapur?",
+  "H04": "AC saya dipasang di tempat tinggi. Apakah tidak apa-apa?",
+  "H05": "Apakah remote perlu disiapkan pada hari pengerjaan?",
+  "H06": "Anda datang dengan mobil apa?"
  },
  "kw": {
   "A01": [
@@ -481,6 +547,63 @@
    "robot",
    "ai",
    "bot"
+  ],
+  "G01": [
+   "10 tahun",
+   "tua",
+   "tahun pembuatan"
+  ],
+  "G02": [
+   "tidak bisa",
+   "tidak didukung",
+   "AC jendela",
+   "model"
+  ],
+  "G03": [
+   "error",
+   "rusak",
+   "tidak menyala",
+   "perbaikan"
+  ],
+  "G04": [
+   "nomor model",
+   "di mana",
+   "stiker",
+   "label"
+  ],
+  "G05": [
+   "pembersih otomatis",
+   "tidak tahu"
+  ],
+  "H01": [
+   "bau",
+   "aroma",
+   "sepenuhnya"
+  ],
+  "H02": [
+   "deterjen",
+   "aman",
+   "ramah lingkungan"
+  ],
+  "H03": [
+   "dinding tanah",
+   "plester",
+   "kayu",
+   "dinding"
+  ],
+  "H04": [
+   "tinggi",
+   "ketinggian",
+   "tangga"
+  ],
+  "H05": [
+   "remote",
+   "baterai"
+  ],
+  "H06": [
+   "mobil",
+   "kendaraan",
+   "truk"
   ]
  }
 };

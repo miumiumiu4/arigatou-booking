@@ -208,6 +208,61 @@
    "Bạn thắc mắc nhỉ. Mình trả lời thật lòng nhé.",
    "Phần hướng dẫn này do robot hướng dẫn AI trả lời. Thông báo chính thức từ nhân viên phụ trách được ưu tiên. Nếu muốn nói chuyện với người thật, bạn bấm “Tôi muốn nói chuyện với người thật” ở bước tiếp theo, mình sẽ chuyển sang người thật.",
    "Muốn gặp người thật thì cứ gọi, đừng ngại nhé."
+  ],
+  "G01": [
+   "Máy lạnh làm việc lâu như vậy thật đáng quý.",
+   "Máy lạnh sản xuất hơn 10 năm vẫn vệ sinh được. Tuy nhiên, máy sản xuất từ 10 năm trở lên không nằm trong bảo hành 1 tuần sau khi làm, vì các bộ phận bằng nhựa có thể đã yếu đi theo thời gian. Máy quá cũ có thể chúng tôi không nhận được, nên xin cho biết năm sản xuất ở phần ghi chú khi đặt hoặc khi nhân viên liên lạc xác nhận.",
+   "Nếu biết năm sản xuất, xin báo trước cho chúng tôi."
+  ],
+  "G02": [
+   "Phần này quan trọng nên nói trước.",
+   "Chúng tôi không nhận vệ sinh các loại sau: FUJITSU nocria dòng AS-X, MITSUBISHI Kirigamine Advance dòng FZ, SHARP dòng Airest, SHARP dòng AY-Z (AY-Z〜SD thì được), máy lạnh cửa sổ, máy lạnh âm tường. Nếu không chắc, xin báo số model cho nhân viên.",
+   "Có số model là chúng tôi kiểm tra được."
+  ],
+  "G03": [
+   "Chuyện này đúng là đáng lo.",
+   "Máy lạnh bị hỏng hoặc đang báo lỗi thì chúng tôi không vệ sinh được. Trước ngày làm, xin kiểm tra máy chạy bình thường, không hiện lỗi. Nếu có báo lỗi, xin báo cho nhân viên trước khi làm.",
+   "Bật thử một lần trước là tốt nhất."
+  ],
+  "G04": [
+   "Cùng tìm miếng tem nhé.",
+   "Số model và năm sản xuất thường ghi trên tem dán ở cạnh bên thân máy, hoặc bên trong khi mở nắp trước. Chụp tem bằng điện thoại rồi gửi cho nhân viên là chắc chắn nhất.",
+   "Một tấm ảnh là đủ."
+  ],
+  "G05": [
+   "Chỉ nhìn bên ngoài thì khó phân biệt.",
+   "Nếu không biết, xin ghi số model vào mục 「Hãng・Model」 trong form đặt, hoặc gửi ảnh tem model cho nhân viên. Chúng tôi sẽ kiểm tra. Nếu ngày làm mới biết máy có chức năng tự làm sạch, mỗi máy cộng thêm 6,000 yên, và chúng tôi sẽ giải thích trước khi làm.",
+   "Có số model là kiểm tra nhanh."
+  ],
+  "H01": [
+   "Mùi hôi thì ngày nào cũng khó chịu.",
+   "Vệ sinh sẽ làm sạch kỹ bụi bẩn và nấm mốc gây mùi. Nhưng mùi đã ngấm vào vật liệu bên trong máy thì có khi vệ sinh cũng không hết hoàn toàn. Chúng tôi sẽ cố gắng hết sức, mong quý khách thông cảm.",
+   "Phần lớn trường hợp sẽ khác hẳn."
+  ],
+  "H02": [
+   "Gia đình là quan trọng nhất.",
+   "Chúng tôi dùng chất tẩy rửa thân thiện môi trường, an toàn cho cả em bé và thú cưng. Không có mùi gắt và không còn sót chất tẩy.",
+   "Xin cứ yên tâm."
+  ],
+  "H03": [
+   "Phòng đẹp thì càng phải cẩn thận.",
+   "Với tường đất, vữa vôi, tường trát, hoặc tường và sàn gỗ nguyên khối, nước có thể chảy xuống làm ướt hoặc trầy, nên về nguyên tắc chúng tôi từ chối. Nếu quý khách chấp nhận điều đó thì chúng tôi vẫn làm được. Xin gửi ảnh bức tường trước khi đặt hoặc khi nhân viên liên lạc.",
+   "Có ảnh là trả lời nhanh được."
+  ],
+  "H04": [
+   "Chỗ cao thì cần chuẩn bị.",
+   "Nếu từ sàn đến đáy máy cao 2.3 m trở lên, đó là công việc trên cao cần thang chuyên dụng và có phí thêm. Nếu có thể thuộc trường hợp này, xin đo chiều cao và báo trước cho nhân viên. Số tiền sẽ được giải thích trước khi làm, và chỉ làm sau khi quý khách đồng ý.",
+   "Chiều cao ước chừng cũng được."
+  ],
+  "H05": [
+   "Điều khiển hay bị lạc lắm.",
+   "Vâng, xin chuẩn bị điều khiển máy lạnh. Chúng tôi dùng để kiểm tra máy chạy trước và sau khi làm.",
+   "Xem giúp luôn pin còn không nhé."
+  ],
+  "H06": [
+   "Không phải xe tải lớn đâu, yên tâm nhé.",
+   "Chúng tôi đến bằng xe hơi cỡ nhỏ hoặc xe con thông thường. Nếu không có chỗ đậu, phí bãi đậu xe gần đó tính riêng theo thực tế.",
+   "Có chỗ đậu xe thì xin báo cho chúng tôi."
   ]
  },
  "t": {
@@ -325,7 +380,18 @@
   "F03": "Ai xem được tên và địa chỉ của tôi?",
   "F04": "Có làm máy âm trần cassette không?",
   "F05": "Có chỉ định nhân viên được không?",
-  "F06": "Chat này là người thật à?"
+  "F06": "Chat này là người thật à?",
+  "G01": "Máy lạnh cũ hơn 10 năm có vệ sinh được không?",
+  "G02": "Có loại máy nào không vệ sinh được không?",
+  "G03": "Máy báo lỗi hoặc bị hỏng có vệ sinh được không?",
+  "G04": "Xem số model và năm sản xuất ở đâu?",
+  "G05": "Tôi không biết máy có chức năng tự làm sạch hay không.",
+  "H01": "Mùi hôi có hết hoàn toàn không?",
+  "H02": "Chất tẩy rửa có an toàn cho em bé và thú cưng không?",
+  "H03": "Phòng tường đất hoặc tường vữa vôi có làm được không?",
+  "H04": "Máy lạnh lắp ở chỗ cao có được không?",
+  "H05": "Ngày làm có cần chuẩn bị điều khiển không?",
+  "H06": "Các anh chị đến bằng xe gì?"
  },
  "kw": {
   "A01": [
@@ -476,6 +542,65 @@
    "robot",
    "ai",
    "bot"
+  ],
+  "G01": [
+   "10 năm",
+   "cũ",
+   "năm sản xuất"
+  ],
+  "G02": [
+   "không vệ sinh được",
+   "không hỗ trợ",
+   "cửa sổ",
+   "model"
+  ],
+  "G03": [
+   "lỗi",
+   "hỏng",
+   "không chạy",
+   "sửa"
+  ],
+  "G04": [
+   "số model",
+   "ở đâu",
+   "tem",
+   "nhãn"
+  ],
+  "G05": [
+   "tự làm sạch",
+   "không biết",
+   "phân biệt"
+  ],
+  "H01": [
+   "mùi",
+   "hôi",
+   "hoàn toàn"
+  ],
+  "H02": [
+   "chất tẩy",
+   "an toàn",
+   "thân thiện"
+  ],
+  "H03": [
+   "tường đất",
+   "vữa",
+   "gỗ",
+   "tường"
+  ],
+  "H04": [
+   "cao",
+   "chiều cao",
+   "thang"
+  ],
+  "H05": [
+   "điều khiển",
+   "remote",
+   "pin"
+  ],
+  "H06": [
+   "xe",
+   "ô tô",
+   "xe tải"
   ]
  }
 };

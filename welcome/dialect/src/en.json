@@ -167,7 +167,18 @@
   "F03": "Who can see my name and address?",
   "F04": "Do you clean ceiling cassette units?",
   "F05": "Can I request a staff member?",
-  "F06": "Is this chat a person?"
+  "F06": "Is this chat a person?",
+  "G01": "Can you clean an air conditioner that is over 10 years old?",
+  "G02": "Are there models you cannot clean?",
+  "G03": "Can you clean a unit that shows an error or is broken?",
+  "G04": "Where can I find the model number and year of manufacture?",
+  "G05": "I don't know if mine has an auto-cleaning function.",
+  "H01": "Will the smell be completely gone?",
+  "H02": "Is the detergent safe for babies and pets?",
+  "H03": "Can you work in a room with earthen or plaster walls?",
+  "H04": "My air conditioner is installed high up. Is that OK?",
+  "H05": "Should I have the remote control ready?",
+  "H06": "What kind of car do you come in?"
  },
  "kw": {
   "A01": [
@@ -309,6 +320,69 @@
    "robot",
    "ai",
    "bot"
+  ],
+  "G01": [
+   "10 years",
+   "old",
+   "year of manufacture",
+   "older"
+  ],
+  "G02": [
+   "cannot clean",
+   "not supported",
+   "window",
+   "model list"
+  ],
+  "G03": [
+   "error",
+   "broken",
+   "not working",
+   "repair"
+  ],
+  "G04": [
+   "model number",
+   "where",
+   "sticker",
+   "label"
+  ],
+  "G05": [
+   "auto-cleaning",
+   "self-cleaning",
+   "don't know",
+   "tell"
+  ],
+  "H01": [
+   "smell",
+   "odor",
+   "completely"
+  ],
+  "H02": [
+   "detergent",
+   "safe",
+   "chemical",
+   "eco"
+  ],
+  "H03": [
+   "earthen wall",
+   "plaster",
+   "solid wood",
+   "wall"
+  ],
+  "H04": [
+   "high",
+   "height",
+   "ladder",
+   "ceiling"
+  ],
+  "H05": [
+   "remote",
+   "remote control",
+   "battery"
+  ],
+  "H06": [
+   "car",
+   "vehicle",
+   "truck"
   ]
  },
  "items": {
@@ -468,6 +542,61 @@
    "Fair question. I'll be honest.",
    "This guide is an AI robot. Official information from our staff comes first. If you'd like to talk to a person, tap \"I'd like to talk to a person\" next and I'll put you through.",
    "If you'd rather have a person, just ask."
+  ],
+  "G01": [
+   "An air conditioner that's worked this long deserves respect.",
+   "Yes, we can clean units made more than 10 years ago. However, units more than 10 years old are not covered by our 1-week guarantee, because plastic parts can become brittle with age. We may not be able to take very old units, so please tell us the year of manufacture in the booking notes or when we contact you.",
+   "If you know the year, let us know in advance."
+  ],
+  "G02": [
+   "This part is important, so here it is first.",
+   "We do not clean these models: FUJITSU nocria AS-X series, MITSUBISHI Kirigamine Advance FZ series, SHARP Airest series, SHARP AY-Z series (AY-Z...SD is OK), window air conditioners, and wall-embedded air conditioners. If you're not sure, please send us the model number.",
+   "With the model number, we can check for you."
+  ],
+  "G03": [
+   "That's a fair worry.",
+   "We can't clean air conditioners that are broken or showing an error. Before the work day, please check that it runs without any error display. If it shows an error, please tell us before the work.",
+   "Switching it on once beforehand helps a lot."
+  ],
+  "G04": [
+   "Let's find that sticker.",
+   "The model number and year are usually on a sticker on the side of the unit, or inside when you open the front panel. Taking a photo of the sticker and sending it to us is the surest way.",
+   "One photo is enough."
+  ],
+  "G05": [
+   "It can be hard to tell just by looking.",
+   "If you're not sure, write the model number in the booking form, or send us a photo of the model sticker. We will check. If we find on the day that it has auto-cleaning, there is an extra 6,000 yen per unit, and we will explain before starting.",
+   "With the model number, it's quick to check."
+  ],
+  "H01": [
+   "Smells really bother you every day.",
+   "Cleaning removes the dirt and mold that cause smells. But smells soaked into the materials inside the unit may not come out completely even with cleaning. We will do our best, so thank you for understanding.",
+   "Most units feel very different afterwards."
+  ],
+  "H02": [
+   "Your family comes first, of course.",
+   "We use eco-friendly detergent that is safe for babies and pets. There is no harsh smell and no detergent left behind.",
+   "You can relax about this."
+  ],
+  "H03": [
+   "Lovely rooms need extra care.",
+   "For earthen walls, plaster, painted plaster walls, or solid wood walls and floors, water may run down and wet or damage them, so we usually decline. If you accept that risk, we can do the work. Please send us a photo of the wall before booking or when we contact you.",
+   "A photo helps us answer quickly."
+  ],
+  "H04": [
+   "High units need some preparation.",
+   "If it is 2.3 m or more from the floor to the bottom of the unit, it is high-place work that needs a special ladder, and there is an extra charge. If this may apply, please measure and tell us in advance. We will explain the amount before the work and start only after you agree.",
+   "An approximate height is fine too."
+  ],
+  "H05": [
+   "Remotes do tend to go missing.",
+   "Yes, please have the air conditioner's remote control ready. We use it to check how it runs before and after the work.",
+   "Check the batteries too, if you can."
+  ],
+  "H06": [
+   "No big truck, don't worry.",
+   "We come in a light car or a normal passenger car. If there is no parking space, we charge the actual cost of a nearby coin parking separately.",
+   "If you have a parking spot, please tell us."
   ]
  }
 }

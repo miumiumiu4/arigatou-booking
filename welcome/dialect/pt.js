@@ -208,6 +208,61 @@
    "Pergunta justa. Vou ser sincero.",
    "Este guia é um robô de IA. As informações oficiais da nossa equipe vêm em primeiro lugar. Se quiser falar com uma pessoa, toque em \"Quero falar com uma pessoa\" em seguida e eu passo você.",
    "Se preferir uma pessoa, é só pedir."
+  ],
+  "G01": [
+   "Um aparelho que trabalhou tanto tempo merece respeito.",
+   "Sim, limpamos aparelhos fabricados há mais de 10 anos. Porém, aparelhos com 10 anos ou mais não entram na garantia de 1 semana após o serviço, porque as peças de plástico podem estar frágeis com o tempo. Aparelhos muito antigos podem não ser aceitos, então informe o ano de fabricação nas observações da reserva ou quando o responsável entrar em contato.",
+   "Se souber o ano, avise com antecedência."
+  ],
+  "G02": [
+   "Isto é importante, então digo primeiro.",
+   "Não aceitamos limpeza destes modelos: FUJITSU nocria série AS-X, MITSUBISHI Kirigamine Advance série FZ, SHARP série Airest, SHARP série AY-Z (AY-Z〜SD pode), ar-condicionado de janela e ar-condicionado embutido na parede. Se não tiver certeza, informe o número do modelo ao responsável.",
+   "Com o número do modelo, nós verificamos."
+  ],
+  "G03": [
+   "É uma preocupação justa.",
+   "Não conseguimos limpar aparelhos quebrados ou que mostram erro. Antes do dia do serviço, confira se ele funciona sem mostrar erro. Se aparecer erro, avise o responsável antes do serviço.",
+   "Ligar uma vez antes ajuda muito."
+  ],
+  "G04": [
+   "Vamos achar a etiqueta.",
+   "O número do modelo e o ano geralmente ficam numa etiqueta na lateral do aparelho, ou por dentro ao abrir o painel frontal. Tirar uma foto da etiqueta e enviar ao responsável é o mais seguro.",
+   "Uma foto basta."
+  ],
+  "G05": [
+   "Só olhando é difícil saber mesmo.",
+   "Se não souber, escreva o número do modelo em 「Marca・Modelo」 no formulário, ou envie ao responsável a foto da etiqueta do modelo. Nós verificamos. Se no dia descobrirmos que tem limpeza automática, há um acréscimo de 6,000 ienes por aparelho, explicado antes do serviço.",
+   "Com o número do modelo, é rápido verificar."
+  ],
+  "H01": [
+   "Cheiro incomoda todo dia, né.",
+   "A limpeza remove bem a sujeira e o mofo que causam cheiro. Mas cheiros impregnados nos materiais dentro do aparelho podem não sair completamente, mesmo com a limpeza. Faremos o nosso melhor, obrigado pela compreensão.",
+   "Na maioria das vezes, a diferença é grande."
+  ],
+  "H02": [
+   "A família vem em primeiro lugar.",
+   "Usamos detergente ecológico, seguro para bebês e animais de estimação. Sem cheiro forte e sem resíduos de detergente.",
+   "Pode ficar tranquilo."
+  ],
+  "H03": [
+   "Quartos bonitos pedem mais cuidado.",
+   "Em paredes de barro, cal, reboco ou paredes e pisos de madeira maciça, a água pode escorrer e molhar ou desgastar, então em princípio recusamos. Se você aceitar esse risco, podemos fazer. Envie uma foto da parede antes de reservar ou quando o responsável entrar em contato.",
+   "Com a foto, respondemos rápido."
+  ],
+  "H04": [
+   "Lugares altos pedem preparo.",
+   "Se do chão até a parte de baixo do aparelho houver 2.3 m ou mais, é trabalho em altura com escada especial, e há cobrança extra. Se for o caso, meça e avise o responsável com antecedência. Explicamos o valor antes do serviço e só começamos com a sua concordância.",
+   "Uma altura aproximada também serve."
+  ],
+  "H05": [
+   "Controle remoto vive sumindo.",
+   "Sim, deixe o controle do ar-condicionado pronto. Usamos para conferir o funcionamento antes e depois do serviço.",
+   "Veja as pilhas também, se puder."
+  ],
+  "H06": [
+   "Não é caminhão grande, fique tranquilo.",
+   "Vamos com um carro pequeno ou carro de passeio comum. Se não houver vaga, cobramos à parte o valor real de um estacionamento próximo.",
+   "Se tiver vaga, nos avise."
   ]
  },
  "t": {
@@ -325,7 +380,18 @@
   "F03": "Quem pode ver meu nome e endereço?",
   "F04": "Vocês limpam cassete de teto?",
   "F05": "Posso escolher o técnico?",
-  "F06": "Este chat é uma pessoa?"
+  "F06": "Este chat é uma pessoa?",
+  "G01": "Vocês limpam ar-condicionado com mais de 10 anos?",
+  "G02": "Há modelos que vocês não limpam?",
+  "G03": "Vocês limpam aparelho com erro ou quebrado?",
+  "G04": "Onde vejo o número do modelo e o ano de fabricação?",
+  "G05": "Não sei se o meu tem função de limpeza automática.",
+  "H01": "O cheiro sai completamente?",
+  "H02": "O detergente é seguro para bebês e animais?",
+  "H03": "Dá para fazer em quarto com parede de barro ou reboco de cal?",
+  "H04": "Meu ar-condicionado está instalado no alto. Tudo bem?",
+  "H05": "Preciso deixar o controle remoto pronto?",
+  "H06": "Vocês vêm com que tipo de carro?"
  },
  "kw": {
   "A01": [
@@ -479,6 +545,64 @@
    "robô",
    "ia",
    "bot"
+  ],
+  "G01": [
+   "10 anos",
+   "antigo",
+   "velho",
+   "ano de fabricação"
+  ],
+  "G02": [
+   "não limpam",
+   "não atende",
+   "janela",
+   "modelo"
+  ],
+  "G03": [
+   "erro",
+   "quebrado",
+   "não funciona",
+   "conserto"
+  ],
+  "G04": [
+   "número do modelo",
+   "onde",
+   "etiqueta"
+  ],
+  "G05": [
+   "limpeza automática",
+   "não sei"
+  ],
+  "H01": [
+   "cheiro",
+   "odor",
+   "completamente"
+  ],
+  "H02": [
+   "detergente",
+   "seguro",
+   "ecológico"
+  ],
+  "H03": [
+   "parede de barro",
+   "cal",
+   "madeira",
+   "parede"
+  ],
+  "H04": [
+   "alto",
+   "altura",
+   "escada"
+  ],
+  "H05": [
+   "controle",
+   "remoto",
+   "pilha"
+  ],
+  "H06": [
+   "carro",
+   "veículo",
+   "caminhão"
   ]
  }
 };
