@@ -136,6 +136,47 @@
   .share .link button { background: #e8590c; color: #fff; }
   .share .line { display: inline-block; margin-top: 8px; background: #06c755; color: #fff; text-decoration: none; }
   .share p { font-size: 13px; color: var(--muted); margin: 8px 0 0; font-weight: 400; }
+  /* 会話型の予約フォーム（chatform.js）。答えはボタンで選ぶか、下の欄に書く */
+  #chat .bubble { white-space: pre-line; }
+  .cf { margin-top: 14px; }
+  .cf .btn { min-height: 48px; padding: 10px 14px; font-size: 16px; border-radius: 14px; }
+  .cf-chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+  .cf-chips .btn { flex: 1 1 auto; }
+  .cf-grid2, .cf-grid3 { display: grid; gap: 8px; }
+  .cf-grid2 { grid-template-columns: 1fr 1fr; }
+  .cf-grid3 { grid-template-columns: 1fr 1fr 1fr; }
+  .cf-grid3 .btn:last-child:nth-child(3n+1), .cf-grid2 .btn:last-child:nth-child(2n+1) { grid-column: 1 / -1; }
+  .cf-one { display: grid; grid-template-columns: 1fr; margin-top: 10px; }
+  .cf .btn.ghost { border: 2px solid var(--accent); color: var(--text); }
+  .cf .btn.ghost:active { background: #e9f9ef; }
+  .cf-field { display: flex; gap: 8px; margin-top: 8px; }
+  .cf-field input { flex: 1 1 auto; min-width: 0; }
+  .cf-field .btn { flex: 0 0 auto; padding: 10px 18px; }
+  .cf-card { background: #fff; border-radius: 16px; padding: 12px 14px; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+  .cf-card input[type=date], .cf-card input, .cf-card textarea { font-size: 16px; }
+  .cf-card textarea { min-height: 80px; font-family: inherit; }
+  .cf-label { font-weight: 700; font-size: 14px; margin: 12px 0 6px; }
+  .cf-card .cf-label:first-child { margin-top: 0; }
+  .cf-ctr { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px dashed var(--line); }
+  .cf-ctr .t b { display: block; font-size: 15px; }
+  .cf-ctr .t span { font-size: 12px; color: var(--muted); }
+  .cf-ctr .ctr { display: flex; align-items: center; gap: 6px; flex: 0 0 auto; }
+  .cf-ctr .ctr button { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: #fff; font-size: 18px; font-weight: 700; color: #e8590c; cursor: pointer; }
+  .cf-ctr .ctr button:disabled { opacity: .3; cursor: default; }
+  .cf-ctr output { min-width: 24px; text-align: center; font-weight: 800; }
+  .cf-est { margin: 10px 0 0; text-align: right; font-size: 14px; }
+  .cf-est b { font-size: 22px; color: #e8590c; }
+  .cf-checks { display: grid; gap: 6px; }
+  .cf-checks label, .cf-check1 { display: flex; align-items: center; gap: 8px; margin: 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; font-weight: 600; font-size: 14px; }
+  .cf-checks input, .cf-check1 input { width: 20px; height: 20px; padding: 0; flex: 0 0 auto; accent-color: #e8590c; }
+  .cf-confirm dl { margin: 0; display: grid; grid-template-columns: 6.5em 1fr; gap: 6px 10px; font-size: 14px; }
+  .cf-confirm dt { color: var(--muted); font-weight: 700; }
+  .cf-confirm dd { margin: 0; white-space: pre-line; word-break: break-word; }
+  .cf-confirm .ng { margin-top: 10px; background: #fbe9e2; color: #b4532a; border-radius: 10px; padding: 10px 12px; }
+  .cf-note { font-size: 12px; color: var(--muted); margin: 10px 0 0; }
+  .cf-err { background: #fff4d6; color: #6b4e00; border-radius: 10px; padding: 8px 12px; font-size: 14px; margin: 0 0 8px; }
+  .cf-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; margin-top: 6px; }
+  .cf-link { appearance: none; border: 0; background: transparent; color: #fff; text-decoration: underline; font: inherit; font-size: 14px; padding: 8px 2px; cursor: pointer; }
   footer { text-align: center; font-size: 13px; color: #fff; padding: 8px 16px 32px; }
   footer a { color: #fff; }
   .spinner {
@@ -241,6 +282,9 @@
 
   <main>
     <div class="chat" id="chat" aria-live="polite"></div>
+
+    <!-- 会話型の予約フォームの答える欄（chatform.js が中身を作る） -->
+    <div class="cf" id="cf" hidden></div>
 
     <div class="choices" id="choices" hidden>
       <button type="button" class="btn primary" id="yes">はい</button>
@@ -384,6 +428,7 @@
 <!-- welcome-test/ からも同じ部品を読むので ../welcome/ から -->
 <script src="../welcome/thanks-data.js"></script>
 <script src="../welcome/thanks.js"></script>
+<script src="../welcome/chatform.js"></script>
 <script>
 (function () {
   'use strict';
@@ -399,7 +444,10 @@
     // LINE 公式「ありがとうエアコンサポート」の友だち追加・トークのリンク。空なら文で案内する
     LINE_URL: "https://lin.ee/rD0Xlot",
     PHONE: "080-4177-2272",
-    MAIL_TO: ""  // 書き足し（宛名・型番）の送り先。空なら確認メールへの返信で送ってもらう
+    MAIL_TO: "",  // 書き足し（宛名・型番）の送り先。空なら確認メールへの返信で送ってもらう
+    // 会話型の予約フォーム（11/19 三浦さん）。true で「はい」のあと1問ずつ聞く。false ならいつものフォーム。
+    // URL の ?form=chat ／ ?form=classic で、この設定に関係なく選べる
+    CHAT_FORM: false
   };
   window.EVLOG_ENDPOINT = CONFIG.EVLOG_URL;
   var cfg = {};
@@ -409,12 +457,14 @@
     var parts = [];
     keys.forEach(function (k) { if (q.get(k)) parts.push(k + '=' + q.get(k)); });
     cfg = { test: q.get('test') || 'hp-chat-test', page: 'welcome-test', source: parts.join('&'), ref: q.get('ref') || '' };
+    cfg.chat = q.get('form') === 'chat' ? true : q.get('form') === 'classic' ? false : CONFIG.CHAT_FORM;
   }
 
   var MSG = {
     // 紹介リンク（?ref=）や ?from=referral で来た方にはご紹介向け、それ以外は初めての方向け
     first: (cfg.ref || /referral|repeat/.test(cfg.source)) ? 'またお会いできて嬉しいです。ありがとうございます。ご注文でよろしいですか？' : 'ご覧いただきありがとうございます。エアコンクリーニングのご予約でよろしいですか？',
     yes: 'お手数をお掛けしますが、ご予約フォームへのご入力をお願いできますでしょうか？',
+    yesChat: 'ありがとうございます！ご予約に必要なことを、このまま順番にうかがいますね。',
     no: 'ごゆっくりメニューをご覧ください。'
   };
   var CHARA = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNDAgMjIwIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9IuOBguOCiuOBjOOBqOOBhuOCqOOCouOCs+ODs+OBruOCreODo+ODqeOCr+OCv+ODvO+8iOODluODq+ODieODg+OCsOmhlOOBruOCqOOCouOCs+ODs++8iSI+CiAgPCEtLSDogLPvvIjjgbrjgZ/jgpPjgajlnoLjgozjgZ/ogLPvvIkgLS0+CiAgPHBhdGggZD0iTTQ0IDUwIEMzMCAzNCAxMCA0MCA4IDYyIEM4IDc2IDIwIDgyIDMwIDc0IEMzNiA2NiA0MiA2MCA1MCA1OCBaIiBmaWxsPSIjZDliNDhmIiBzdHJva2U9IiMzYTJlMjgiIHN0cm9rZS13aWR0aD0iNSIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgogIDxwYXRoIGQ9Ik0xOTYgNTAgQzIxMCAzNCAyMzAgNDAgMjMyIDYyIEMyMzIgNzYgMjIwIDgyIDIxMCA3NCBDMjA0IDY2IDE5OCA2MCAxOTAgNTggWiIgZmlsbD0iI2Q5YjQ4ZiIgc3Ryb2tlPSIjM2EyZTI4IiBzdHJva2Utd2lkdGg9IjUiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KICA8IS0tIOacrOS9k++8iOWjgeaOm+OBkeOCqOOCouOCs+ODs++8iSAtLT4KICA8cmVjdCB4PSIyMiIgeT0iNDAiIHdpZHRoPSIxOTYiIGhlaWdodD0iMTMyIiByeD0iMzQiIGZpbGw9IiNmYmZhZjciIHN0cm9rZT0iIzNhMmUyOCIgc3Ryb2tlLXdpZHRoPSI1Ii8+CiAgPCEtLSDjgYrjgafjgZPjga7jgZfjgo8gLS0+CiAgPHBhdGggZD0iTTkyIDYwIHEyOCAtMTAgNTYgMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYzliZmI1IiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxwYXRoIGQ9Ik0xMDAgNzIgcTIwIC03IDQwIDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2M5YmZiNSIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8IS0tIOebruOBruOBvuOCj+OCiuOBruOBtuOBoe+8iOeJh+ebruOBoOOBke+8iSAtLT4KICA8cGF0aCBkPSJNMTQ2IDc2IEMxNzAgNjYgMTk2IDgwIDE5MiAxMDQgQzE4NiAxMjAgMTYwIDExOCAxNDggMTA2IEMxNDAgOTYgMTM4IDg0IDE0NiA3NiBaIiBmaWxsPSIjZTljZGIwIi8+CiAgPCEtLSDnm67vvIjjgaHjgofjgaPjgajnnKDjgZ/jgZ3jgYbjg7vlt6blj7PjgaHjgYzjgYTvvIkgLS0+CiAgPGNpcmNsZSBjeD0iODAiIGN5PSI5NiIgcj0iMTUiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzNhMmUyOCIgc3Ryb2tlLXdpZHRoPSI0Ii8+CiAgPGNpcmNsZSBjeD0iODMiIGN5PSI5OSIgcj0iOCIgZmlsbD0iIzNhMmUyOCIvPgogIDxjaXJjbGUgY3g9Ijg2IiBjeT0iOTYiIHI9IjIuNiIgZmlsbD0iI2ZmZiIvPgogIDxwYXRoIGQ9Ik02MyA5MiBxMTcgLTEyIDM0IDAiIGZpbGw9IiNmYmZhZjciIHN0cm9rZT0iIzNhMmUyOCIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8Y2lyY2xlIGN4PSIxNjIiIGN5PSI5NCIgcj0iMTciIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzNhMmUyOCIgc3Ryb2tlLXdpZHRoPSI0Ii8+CiAgPGNpcmNsZSBjeD0iMTU4IiBjeT0iOTgiIHI9IjkiIGZpbGw9IiMzYTJlMjgiLz4KICA8Y2lyY2xlIGN4PSIxNjEiIGN5PSI5NCIgcj0iMyIgZmlsbD0iI2ZmZiIvPgogIDxwYXRoIGQ9Ik0xNDQgODkgcTE4IC0xMSAzNiAwIiBmaWxsPSIjZTljZGIwIiBzdHJva2U9IiMzYTJlMjgiIHN0cm9rZS13aWR0aD0iNCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPCEtLSDpvLvvvIjjgbrjgaHjgoPjgaPjgajvvIkgLS0+CiAgPHBhdGggZD0iTTEwNiAxMDQgcTE1IC04IDMwIDAgcTIgMTIgLTE1IDE2IHEtMTcgLTQgLTE1IC0xNiBaIiBmaWxsPSIjM2EyZTI4Ii8+CiAgPGVsbGlwc2UgY3g9IjExNCIgY3k9IjEwNiIgcng9IjQiIHJ5PSIyLjQiIGZpbGw9IiM4YzdiNzAiLz4KICA8IS0tIOOBu+OBo+OBuu+8iOOBn+OCi+OCk++8iSAtLT4KICA8cGF0aCBkPSJNMTIxIDEyNCBDMTEwIDEyMCA3MCAxMTIgNTIgMTMwIEM0NCAxNDYgNzAgMTU2IDk2IDE1MCBDMTEwIDE0NiAxMTggMTM4IDEyMSAxMzAgWiIgZmlsbD0iI2ZiZmFmNyIgc3Ryb2tlPSIjM2EyZTI4IiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxwYXRoIGQ9Ik0xMjEgMTI0IEMxMzIgMTIwIDE3MiAxMTIgMTkwIDEzMCBDMTk4IDE0NiAxNzIgMTU2IDE0NiAxNTAgQzEzMiAxNDYgMTI0IDEzOCAxMjEgMTMwIFoiIGZpbGw9IiNmYmZhZjciIHN0cm9rZT0iIzNhMmUyOCIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8cGF0aCBkPSJNMTIxIDExOCB2OCIgc3Ryb2tlPSIjM2EyZTI4IiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxlbGxpcHNlIGN4PSI2MiIgY3k9IjEzNiIgcng9IjEyIiByeT0iNyIgZmlsbD0iI2Y2YTlhMCIgb3BhY2l0eT0iLjc1Ii8+CiAgPGVsbGlwc2UgY3g9IjE4MCIgY3k9IjEzNiIgcng9IjEyIiByeT0iNyIgZmlsbD0iI2Y2YTlhMCIgb3BhY2l0eT0iLjc1Ii8+CiAgPCEtLSDlj5fjgZHlj6PvvIjjg6vjg7zjg5Djg7zvvJ3kuIvjgYLjgZTvvInjgajlsI/jgZXjgarniZkgLS0+CiAgPHBhdGggZD0iTTQwIDE1MCBxODAgMjIgMTYwIDAgdjEwIHEtODAgMjYgLTE2MCAwIFoiIGZpbGw9IiNlZmU5ZTIiIHN0cm9rZT0iIzNhMmUyOCIgc3Ryb2tlLXdpZHRoPSI1IiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CiAgPHBhdGggZD0iTTkyIDE1NiBsNiAtMTYgbDYgMTYgWiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjM2EyZTI4IiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KICA8cGF0aCBkPSJNMTM4IDE1NiBsNiAtMTYgbDYgMTYgWiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjM2EyZTI4IiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KICA8cGF0aCBkPSJNNjAgMTYyIHE2MCAxNCAxMjAgMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYzliZmI1IiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDwhLS0g6YGL6Lui44Op44Oz44OXIC0tPgogIDxjaXJjbGUgY3g9IjE5OCIgY3k9IjU4IiByPSI0LjUiIGZpbGw9IiMwNmM3NTUiLz4KICA8IS0tIOOBneOCiOmiqCAtLT4KICA8cGF0aCBkPSJNNzAgMTg4IHExMCA4IDAgMTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzhmYjhlOCIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8cGF0aCBkPSJNMTIwIDE5MCBxMTAgOCAwIDE2IiBmaWxsPSJub25lIiBzdHJva2U9IiM4ZmI4ZTgiIHN0cm9rZS13aWR0aD0iNCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPHBhdGggZD0iTTE3MCAxODggcTEwIDggMCAxNiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOGZiOGU4IiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K';
@@ -515,12 +565,13 @@
       if (then) then();
     }, reduce ? 0 : 900);
   }
-  function hideAll() { ['choices', 'toForm', 'menuPanel', 'formPanel', 'waitPanel', 'thanksPanel', 'hdrEst'].forEach(function (id) { $(id).hidden = true; }); }
+  function hideAll() { ['choices', 'toForm', 'menuPanel', 'formPanel', 'waitPanel', 'thanksPanel', 'hdrEst', 'cf'].forEach(function (id) { $(id).hidden = true; }); }
 
   function start() {
     timers.forEach(clearTimeout); timers = [];
     chat.innerHTML = '';
     hideAll();
+    if (window.ChatForm) ChatForm.reset();
     resetForm();
     later(function () { say(MSG.first, function () { $('choices').hidden = false; }); }, reduce ? 0 : 300);
   }
@@ -546,7 +597,10 @@
     li.innerHTML = '<div><div class="label">' + esc(m.label) + '</div>' + (m.sub ? '<div class="sub">' + esc(m.sub) + '</div>' : '') + '</div>';
     var b = document.createElement('button');
     b.type = 'button'; b.className = 'btn primary'; b.textContent = 'これを予約';
-    b.addEventListener('click', function () { showForm('メニューから:' + m.code, m.code); });
+    b.addEventListener('click', function () {
+      if (cfg.chat && window.ChatForm) { hideAll(); presetFromMenu(m.code); addRow('out', esc(name + 'を予約')); ChatForm.begin('メニューから:' + m.code); return; }
+      showForm('メニューから:' + m.code, m.code);
+    });
     li.appendChild(b);
     $('menuList').appendChild(li);
   });
@@ -555,6 +609,7 @@
     $('choices').hidden = true;
     track('はい');
     addRow('out', 'はい');
+    if (cfg.chat && window.ChatForm) { say(MSG.yesChat, function () { ChatForm.begin('はいから'); }); return; }
     say(MSG.yes, function () { $('toForm').hidden = false; });
   });
   $('no').addEventListener('click', function () {
@@ -753,7 +808,7 @@
         var j; try { j = JSON.parse(txt); } catch (_) { j = { ok: true, id: '（確認メールをご覧ください）' }; }
         if (!j.ok) throw new Error(j.error || '送信失敗');
         var rid = /^[RT]\d{4}-[A-Z0-9]+$/.test(String(j.id)) ? String(j.id) : '';
-        track('申込完了', '台数:' + st.units + (st.tenkase ? ' 天カセ:' + st.tenkase : '') + ' 概算:' + total() + (ref ? ' 紹介コードあり' : '') + (rid ? ' 受付:' + rid : ''));
+        track('申込完了', (cfg.chat && $('formPanel').hidden ? '会話フォーム ' : '') + '台数:' + st.units + (st.tenkase ? ' 天カセ:' + st.tenkase : '') + ' 概算:' + total() + (ref ? ' 紹介コードあり' : '') + (rid ? ' 受付:' + rid : ''));
         adConversion(total(), rid);
         hideAll();
         $('doneMsg').innerHTML = '受付番号 <b>' + esc(j.id) + '</b><br>（テスト版なので確認メールは届きません）作業日は担当者よりご連絡のうえ確定します。';
@@ -888,6 +943,12 @@
       showShare: function (el) { showShare(id, el); }
     });
   }
+  // 会話型の予約フォームに、このページの部品を渡す（chatform.js）
+  if (window.ChatForm) ChatForm.init({
+    $: $, say: say, addRow: addRow, esc: esc, track: track, reduce: reduce, yen: yen,
+    getSt: function () { return st; }, renderEst: renderEst, total: total, maxOf: maxOf,
+    formError: formError, showForm: function (note) { showForm(note); }
+  });
   $('reset').addEventListener('click', function () {
     if (window.ThanksChat && ThanksChat.active()) { ThanksChat.pick(); return; }
     track('選び直し');
