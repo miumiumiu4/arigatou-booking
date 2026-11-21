@@ -29,19 +29,14 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
 
   await page.goto(url + '?src=klp&form=chat');
   await page.getByRole('button', { name: 'はい' }).click();
-  await tap('2台'); await snap('auto');
-  await tap('1台');
+  // 会話で聞くのは必ず要る項目だけ（11/22 決定）。台数 → 天カセ → お名前…
+  await tap('2台');
   await tap('ない');
-  await snap('options');
-  await cf.getByRole('button', { name: '3点セットを増やす' }).click();
-  assert.equal(await page.locator('#hdrTotal').innerText(), '31,300'); // 8,900×2＋6,000＋7,500
-  await tap('これで決める');
   await type('テスト 太郎'); await type('てすと たろう');
   await type('abc'); assert.match(await cf.locator('.cf-err').innerText(), /電話番号/); await snap('phone_err');
   await type('０９０-0000-0000');
   await type('test@example.com');
   await tap('神奈川');
-  await tap('とばす');
   await type('横浜市テスト1-2-3');
   await tap('戸建て');
   const day = k => new Date(Date.now() + 9 * 3600e3 + k * 864e5).toISOString().slice(0, 10);
@@ -50,15 +45,19 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
     if (i === 1) await snap('date');
     await tap(t);
   }
-  await tap('作業当日にお支払い（PayPay）');
-  await tap('敷地内に駐車可');
   await tap('いる'); await tap('2匹');
-  await tap('Googleで検索');
-  await tap('ある（書く・選ぶ）');
+  // 任意の項目は表でまとめて入れる
+  await cf.locator('.cf-extra').waitFor();
+  await snap('optional');
+  await cf.getByRole('button', { name: 'お掃除機能付きを増やす' }).click();
+  await cf.getByRole('button', { name: '3点セットを増やす' }).click();
+  assert.equal(await page.locator('#hdrTotal').innerText(), '31,300'); // 8,900×2＋6,000＋7,500
   await cf.getByText('レンジフード（15,000円）').click();
+  await cf.getByRole('combobox', { name: 'お支払い方法' }).selectOption('paypay');
+  await cf.getByRole('combobox', { name: '当店を何でお知りになりましたか' }).selectOption('Googleで検索');
   await cf.getByRole('textbox', { name: '領収書の宛名（必要な方）' }).fill('テスト株式会社');
-  await snap('extra');
-  await tap('入力した（確認へ進む）');
+  await snap('optional_filled');
+  await tap('確認へ進む');
   await cf.locator('.cf-confirm').waitFor();
   await page.waitForTimeout(700);
   { const hb = await page.locator('header').boundingBox(); assert.ok(hb.y >= -1 && hb.y < 60, '上の帯が画面の上に残っている: ' + hb.y); }
@@ -95,12 +94,23 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   // 途中で「フォームでまとめて入力する」に切り替えても、答えがフォームに残る
   await page.goto(url + '?form=chat');
   await page.getByRole('button', { name: 'はい' }).click();
-  await tap('3台'); await tap('ない'); await tap('ない'); await tap('これで決める');
+  await tap('3台'); await tap('ない');
   await type('切替 花子');
   await cf.getByRole('button', { name: 'フォームでまとめて入力する' }).click();
   assert.equal(await page.inputValue('#f_name'), '切替 花子');
   assert.equal(await page.locator('#o_units').innerText(), '3');
   assert.ok(await page.locator('#formPanel').isVisible());
+  // 任意の表は「とくにない」で飛ばせる（必ず要る項目だけで確認画面まで行ける）
+  await page.goto(url + '?form=chat');
+  await page.getByRole('button', { name: 'はい' }).click();
+  await tap('1台'); await tap('ない');
+  await type('最短 次郎'); await type('さいたん じろう'); await type('09000000000'); await type('t@example.com');
+  await tap('東京'); await type('テスト区1-1'); await tap('戸建て');
+  for (const [k, t] of [[5, '9時〜12時'], [6, '9時〜12時'], [7, '9時〜12時']]) { await cf.locator('input[type=date]').fill(day(k)); await tap(t); }
+  await tap('いない');
+  await tap('とくにない（そのまま確認へ）');
+  await cf.locator('.cf-confirm').waitFor();
+  assert.match(await cf.locator('.cf-confirm').innerText(), /8,900円/);
   await browser.close();
   console.log('chatform e2e ok:', logged.filter(e => /会話|申込/.test(e.event)).map(e => e.event).join(' → '));
 })().catch(async e => { console.error(e); try { const p = (global.__page); if (p) { console.error('CF:', await p.locator('#cf').innerText()); console.error('CHAT:', (await p.locator('#chat').innerText()).slice(-400)); } } catch (_) {} process.exit(1); });

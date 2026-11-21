@@ -98,19 +98,6 @@
         }, 'cf-grid3');
         function setUnits(n) { st().units = n; clamp(); answer(n ? n + '台' : '壁掛けはない'); }
       } },
-    { key: 'auto', group: 'menu', skip: function () { return !st().units; },
-      q: function () { return 'そのうち、お掃除機能付きは何台ですか？\n（フィルターを自動でお掃除する機種です。＋6,000円/台）'; },
-      ui: function () {
-        var n = st().units, l = [{ label: 'ない', n: 0 }];
-        for (var i = 1; i <= Math.min(n, 5); i++) l.push({ label: i + '台', n: i });
-        if (n > 5) l.push({ label: '6台以上', more: true });
-        l.push({ label: 'わからない', n: 0, unknown: true });
-        return chips(l, function (c) {
-          if (c.more) { put(field({ type: 'number', inputMode: 'numeric', min: 6, max: n, placeholder: '台数（6〜' + n + '）', check: function (v) { var k = +digits(v); return k >= 6 && k <= n ? '' : '6〜' + n + ' の数字で入れてください。'; }, done: function (v) { set(+digits(v), false); } })); return; }
-          set(c.n, !!c.unknown);
-        }, 'cf-grid3');
-        function set(k, unk) { st().auto = k; autoUnknown = unk; clamp(); answer(unk ? 'わからない' : k ? k + '台' : 'ない'); }
-      } },
     { key: 'tenkase', group: 'menu',
       q: function () { return '天井に埋め込むタイプ（天カセ・業務用）もありますか？\n（1台目 23,300円・2台目から 22,300円/台。対応できない地域は担当者からご連絡します）'; },
       ui: function () {
@@ -123,24 +110,6 @@
           if (st().units + st().tenkase < 1) { hint('エアコンの台数が0台になっています。壁掛けか天井埋め込みの台数を選んでください。'); return; }
           answer(k ? k + '台' : 'ない');
         }
-      } },
-    { key: 'options', group: 'menu',
-      q: function () { return 'オプションはいかがですか？\n（エアコンの台数分まで選べます。なくても大丈夫です）'; },
-      ui: function () {
-        var w = make('div', 'cf-card');
-        w.appendChild(counter('set3', '3点セット', '防カビ抗菌コート＋室外機＋ドレンホース｜7,500円/台（別々より2,000円お得）'));
-        w.appendChild(counter('coat', '防カビ・抗菌コート', '3,000円/台'));
-        w.appendChild(counter('outdoor', '室外機クリーニング', '4,000円/台'));
-        w.appendChild(counter('drain', 'ドレンホース洗浄', '2,500円/台'));
-        w.appendChild(counter('omatome', 'おまとめセット', '室外機＋防カビ・抗菌コート｜5,000円/台'));
-        w.appendChild(estLine());
-        var NAMES = { set3: '3点セット', coat: '防カビ・抗菌コート', outdoor: '室外機', drain: 'ドレンホース', omatome: 'おまとめセット' };
-        w.appendChild(chips([{ label: 'これで決める', primary: true }], function () {
-          var s = st(), picked = Object.keys(NAMES).filter(function (k) { return s[k]; }).map(function (k) { return NAMES[k] + ' ' + s[k] + '台'; });
-          answer(picked.length ? picked.join('、') : 'オプションなし');
-        }, 'cf-one'));
-        setTimeout(refresh, 0);
-        return w;
       } },
     { key: 'name', group: 'contact',
       q: function () { return 'ここまでの概算は ' + yen(A.total()) + '（税込・駐車場代別）です。\nつづいて、ご予約のお名前を教えてください。'; },
@@ -166,16 +135,6 @@
       q: function () { return '作業する場所をうかがいます。都府県を選んでください。'; },
       ui: function () {
         return chips(options('f_area').map(function (o) { return { label: o.value.replace(/（.*）$/, ''), v: o.value }; }), function (c) { setVal('f_area', c.v); answer(c.label); }, 'cf-grid3');
-      } },
-    { key: 'zip', group: 'place',
-      q: function () { return '郵便番号を教えてください。\n（わからなければ「とばす」で大丈夫です）'; },
-      ui: function () {
-        var w = make('div');
-        w.appendChild(field({ type: 'text', inputMode: 'numeric', autocomplete: 'postal-code', value: $('f_zip').value, placeholder: '例：231-0001',
-          check: function (v) { return digits(v).length === 7 ? '' : '郵便番号は7けたの数字です（例：231-0001）。'; },
-          done: function (v) { var d = digits(v); v = d.slice(0, 3) + '-' + d.slice(3); setVal('f_zip', v); answer(v); } }));
-        w.appendChild(chips([{ label: 'とばす' }], function () { setVal('f_zip', ''); answer('（とばす）'); }, 'cf-one'));
-        return w;
       } },
     { key: 'address', group: 'place',
       q: function () { return 'ご住所を、市区町村から番地・建物名・お部屋の番号までお願いします。' + (/^その他/.test($('f_area').value) ? '\n（都道府県から書いてください）' : ''); },
@@ -210,12 +169,6 @@
       } });
   });
   S.push(
-    { key: 'payment', group: 'pay',
-      q: function () { return '※ご希望日での対応が難しい場合は、1〜2日以内に日程の再調整のご連絡をします。\nお支払い方法はどれにしますか？'; },
-      ui: function () { return chips(options('f_payment').map(function (o) { return { label: o.textContent, v: o.value }; }), function (c) { setVal('f_payment', c.v); answer(c.label); }); } },
-    { key: 'parking', group: 'pay',
-      q: function () { return '作業の車を停める場所はありますか？\n（駐車場代は別途実費です）'; },
-      ui: function () { return chips(options('f_parking').map(function (o) { return { label: o.value, v: o.value }; }), function (c) { setVal('f_parking', c.v); answer(c.label); }); } },
     { key: 'pet', group: 'pay',
       q: function () { return 'ペットはいますか？'; },
       ui: function () {
@@ -231,35 +184,22 @@
           put(foot());
         }, 'cf-grid2');
       } },
-    { key: 'how', group: 'other',
-      q: function () { return '当店を何でお知りになりましたか？（任意）'; },
-      ui: function () {
-        var l = options('f_how').map(function (o) { return { label: o.value, v: o.value }; });
-        l.push({ label: 'とばす', v: '' });
-        return chips(l, function (c) { setVal('f_how', c.v); answer(c.v || '（とばす）'); }, 'cf-grid2');
-      } },
-    { key: 'extra', group: 'other',
-      q: function () { return 'ほかに、ご要望や追加のお掃除はありますか？\n（レンジフード・換気扇、スタッフの指名、領収書、クーポンなど）'; },
-      ui: function () {
-        var w = make('div');
-        w.appendChild(chips([{ label: 'とくにない（確認へ進む）', primary: true }, { label: 'ある（書く・選ぶ）' }], function (c) {
-          if (c.primary) { answer('とくにない'); return; }
-          box.innerHTML = '';
-          put(extraCard());
-        }));
-        return w;
-      } },
+    { key: 'optional', group: 'other',
+      q: function () { return '必ずうかがうことは以上です。ありがとうございます。\nここから下は任意です。必要なところだけ入れて「確認へ進む」を押してください（なければ、そのまま進めます）。\n※ご希望日での対応が難しい場合は、1〜2日以内に日程の再調整のご連絡をします。'; },
+      ui: optionalCard },
     { key: 'confirm', group: 'confirm',
       q: function () { return 'ありがとうございます。ご予約の内容をご確認ください。'; },
       ui: confirmCard }
   );
   function idx(key) { for (var i = 0; i < S.length; i++) if (S[i].key === key) return i; return -1; }
 
-  // 「ある」を選んだときのカード。いつものフォームの欄に、そのまま書き写す
-  function extraCard() {
+  // 任意の項目は1問ずつ聞かず、表（カード）でまとめて入れる（11/22 決定：会話は必ず要る項目だけ。長いと途中でやめる人が増えるため）。
+  // 入れた値は、いつものフォームの欄にそのまま書き写す
+  function optionalCard() {
     var w = make('div', 'cf-card cf-extra');
+    function label(t) { w.appendChild(make('p', 'cf-label', t)); }
     function checks(name, title) {
-      w.appendChild(make('p', 'cf-label', title));
+      label(title);
       var g = make('div', 'cf-checks');
       document.querySelectorAll('#form input[name="' + name + '"]').forEach(function (orig) {
         var l = make('label'), c = make('input');
@@ -270,16 +210,42 @@
       });
       w.appendChild(g);
     }
-    function text(id, title, ph, multi) {
-      w.appendChild(make('p', 'cf-label', title));
+    function text(id, title, ph, multi, attrs) {
+      label(title);
       var orig = $(id), e = make(multi ? 'textarea' : 'input');
       e.value = orig.value; if (ph) e.placeholder = ph; e.setAttribute('aria-label', title);
+      Object.keys(attrs || {}).forEach(function (k) { e[k] = attrs[k]; });
       e.addEventListener('input', function () { orig.value = e.value; fire(orig); });
       w.appendChild(e);
       return e;
     }
+    function select(id, title) {
+      label(title);
+      var orig = $(id), e = make('select');
+      [].forEach.call(orig.options, function (o) { var n = make('option', '', o.textContent); n.value = o.value; e.appendChild(n); });
+      e.value = orig.value; e.setAttribute('aria-label', title);
+      e.addEventListener('change', function () { setVal(id, e.value); });
+      w.appendChild(e);
+    }
+    var skip = chips([{ label: 'とくにない（そのまま確認へ）' }], function () { answer('任意の項目はなし'); }, 'cf-one');
+    w.appendChild(skip);
+    if (st().units) {
+      label('お掃除機能付きの台数（＋6,000円/台）');
+      w.appendChild(counter('auto', 'お掃除機能付き', 'フィルターを自動でお掃除する機種'));
+      var ul = make('label', 'cf-check1'), uc = make('input');
+      uc.type = 'checkbox'; uc.checked = autoUnknown;
+      uc.addEventListener('change', function () { autoUnknown = uc.checked; });
+      ul.appendChild(uc); ul.appendChild(document.createTextNode('お掃除機能付きか分からない'));
+      w.appendChild(ul);
+    }
+    label('オプション（エアコンの台数分まで）');
+    w.appendChild(counter('set3', '3点セット', '防カビ抗菌コート＋室外機＋ドレンホース｜7,500円/台（別々より2,000円お得）'));
+    w.appendChild(counter('coat', '防カビ・抗菌コート', '3,000円/台'));
+    w.appendChild(counter('outdoor', '室外機クリーニング', '4,000円/台'));
+    w.appendChild(counter('drain', 'ドレンホース洗浄', '2,500円/台'));
+    w.appendChild(counter('omatome', 'おまとめセット', '室外機＋防カビ・抗菌コート｜5,000円/台'));
     checks('extra', 'その他のお掃除（概算に入ります）');
-    w.appendChild(make('p', 'cf-label', 'スタッフの指名'));
+    label('スタッフの指名');
     var nl = make('label', 'cf-check1'), nc = make('input');
     nc.type = 'checkbox'; nc.checked = $('f_nominate').checked;
     nl.appendChild(nc); nl.appendChild(document.createTextNode('指名を希望する（＋3,000円）'));
@@ -288,32 +254,40 @@
     function nomShow() { nn.hidden = nn.previousSibling.hidden = !nc.checked; }
     nc.addEventListener('change', function () { $('f_nominate').checked = nc.checked; fire($('f_nominate')); nomShow(); refresh(); });
     nomShow();
-    checks('consult', 'エアコン以外のお掃除のご相談（料金は担当者からご案内します）');
+    w.appendChild(estLine());
+    select('f_payment', 'お支払い方法');
+    select('f_parking', '作業の車を停める場所（駐車場代は別途実費）');
+    text('f_zip', '郵便番号', '例：231-0001', false, { inputMode: 'numeric' });
     text('f_model', 'メーカー名と型式番号（わかる範囲で）', '例：ダイキン AN22XXX');
+    checks('consult', 'エアコン以外のお掃除のご相談（料金は担当者からご案内します）');
     text('f_receiptName', '領収書の宛名（必要な方）', '例：株式会社〇〇　／　〇〇 様');
+    select('f_how', '当店を何でお知りになりましたか');
     text('f_note', 'ご要望・備考', '設置場所、気になる症状、10年以上の機種かどうか など', true);
     text('f_coupon', 'クーポンコード', '');
     text('ref_code', '紹介コード（ご紹介された方）', '例：R0929-311');
-    w.appendChild(estLine());
-    w.appendChild(chips([{ label: '入力した（確認へ進む）', primary: true }], function () {
-      var said = [];
+    w.appendChild(chips([{ label: '確認へ進む', primary: true }], function () {
+      var s = st(), said = [];
+      var NAMES = { set3: '3点セット', coat: '防カビ・抗菌コート', outdoor: '室外機', drain: 'ドレンホース', omatome: 'おまとめセット' };
+      if (s.auto) said.push('お掃除機能付き ' + s.auto + '台'); else if (autoUnknown) said.push('お掃除機能付きか分からない');
+      Object.keys(NAMES).forEach(function (k) { if (s[k]) said.push(NAMES[k] + ' ' + s[k] + '台'); });
       document.querySelectorAll('#form input[name=extra]:checked').forEach(function (c) { said.push(c.value.replace(/（.*）$/, '')); });
       if ($('f_nominate').checked) said.push('スタッフ指名');
       if (document.querySelector('#form input[name=consult]:checked')) said.push('ほかのお掃除の相談');
-      ['f_model', 'f_receiptName', 'f_note', 'f_coupon'].forEach(function (id) { if ($(id).value.trim()) said.push({ f_model: '型番', f_receiptName: '領収書の宛名', f_note: '備考', f_coupon: 'クーポン' }[id]); });
-      answer(said.length ? said.join('、') + ' を入れました' : 'とくにない');
+      ['f_zip', 'f_model', 'f_receiptName', 'f_how', 'f_note', 'f_coupon'].forEach(function (id) { if ($(id).value.trim()) said.push({ f_zip: '郵便番号', f_model: '型番', f_receiptName: '領収書の宛名', f_how: 'きっかけ', f_note: '備考', f_coupon: 'クーポン' }[id]); });
+      answer(said.length ? said.join('、') + ' を入れました' : '任意の項目はなし');
     }, 'cf-one'));
+    setTimeout(refresh, 0);
     return w;
   }
 
   // 確認：内容を一覧で見せ、「この内容で予約する」か「直す」
   var FIX = [
-    { label: '台数・オプション', key: 'units', end: 'options' },
+    { label: '台数', key: 'units', end: 'tenkase' },
     { label: 'お名前・連絡先', key: 'name', end: 'email' },
     { label: '作業の場所', key: 'area', end: 'housing' },
     { label: '希望日', key: 'date1', end: 'date3' },
-    { label: 'お支払い・駐車場・ペット', key: 'payment', end: 'pet' },
-    { label: 'そのほか', key: 'how', end: 'extra' }
+    { label: 'ペット', key: 'pet', end: 'pet' },
+    { label: 'オプション・そのほか', key: 'optional', end: 'optional' }
   ];
   function confirmCard() {
     var s = st(), w = make('div', 'cf-card cf-confirm');
@@ -385,7 +359,8 @@
 
   // ---------- 進め方 ----------
   function put(node) { box.appendChild(node); box.hidden = false; scrollToBox(); }
-  function scrollToBox() { setTimeout(function () { try { box.scrollIntoView({ block: 'end', behavior: A.reduce ? 'auto' : 'smooth' }); } catch (_) {} }, 30); }
+  // 長い表（任意の項目）は、下端ではなく上端（「とくにない」のボタン）が見えるように寄せる
+  function scrollToBox() { setTimeout(function () { try { var top = cur >= 0 && S[cur] && S[cur].key === 'optional'; box.scrollIntoView({ block: top ? 'start' : 'end', behavior: A.reduce ? 'auto' : 'smooth' }); } catch (_) {} }, 30); }
   function ask(i, quiet) {
     while (i < S.length && S[i].skip && S[i].skip()) i++;
     cur = i;
