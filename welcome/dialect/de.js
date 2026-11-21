@@ -208,6 +208,61 @@
    "Berechtigte Frage. Ich bin ehrlich.",
    "Dieser Guide ist ein KI-Roboter. Offizielle Informationen von unserem Team haben Vorrang. Wenn du mit einem Menschen sprechen möchtest, tippe als Nächstes auf „Ich möchte mit einem Menschen sprechen“ und ich verbinde dich.",
    "Wenn dir ein Mensch lieber ist, sag einfach Bescheid."
+  ],
+  "G01": [
+   "Ein Gerät, das so lange arbeitet, verdient Respekt.",
+   "Ja, auch Geräte, die vor mehr als 10 Jahren hergestellt wurden, reinigen wir. Geräte ab 10 Jahren sind aber nicht von der 1-wöchigen Garantie nach der Arbeit abgedeckt, weil Kunststoffteile mit dem Alter spröde werden können. Sehr alte Geräte können wir eventuell nicht annehmen. Bitte nennen Sie das Herstellungsjahr in den Buchungsnotizen oder wenn sich der Zuständige meldet.",
+   "Wenn Sie das Jahr kennen, sagen Sie es uns vorher."
+  ],
+  "G02": [
+   "Das ist wichtig, deshalb zuerst.",
+   "Diese Modelle reinigen wir nicht: FUJITSU nocria Serie AS-X, MITSUBISHI Kirigamine Advance Serie FZ, SHARP Serie Airest, SHARP Serie AY-Z (AY-Z〜SD geht), Fensterklimageräte und in die Wand eingebaute Geräte. Wenn Sie unsicher sind, nennen Sie dem Zuständigen die Modellnummer.",
+   "Mit der Modellnummer prüfen wir das."
+  ],
+  "G03": [
+   "Eine berechtigte Sorge.",
+   "Defekte Klimaanlagen oder Geräte mit Fehleranzeige können wir nicht reinigen. Prüfen Sie bitte vor dem Termin, ob das Gerät ohne Fehleranzeige läuft. Bei einer Fehleranzeige sagen Sie es dem Zuständigen vor der Arbeit.",
+   "Einmal vorher einschalten hilft sehr."
+  ],
+  "G04": [
+   "Suchen wir den Aufkleber.",
+   "Modellnummer und Jahr stehen meist auf einem Aufkleber an der Seite des Geräts oder innen, wenn man die Frontblende öffnet. Am sichersten ist es, den Aufkleber zu fotografieren und dem Zuständigen zu schicken.",
+   "Ein Foto reicht."
+  ],
+  "G05": [
+   "Von außen ist das wirklich schwer zu sehen.",
+   "Wenn Sie es nicht wissen, tragen Sie die Modellnummer unter 「Hersteller・Modell」 im Formular ein oder schicken Sie dem Zuständigen ein Foto des Aufklebers. Wir prüfen das. Stellt sich am Tag heraus, dass das Gerät eine Selbstreinigung hat, kommen 6,000 Yen pro Gerät hinzu, was wir vor Beginn erklären.",
+   "Mit der Modellnummer geht die Prüfung schnell."
+  ],
+  "H01": [
+   "Geruch stört jeden Tag.",
+   "Die Reinigung entfernt gründlich Schmutz und Schimmel, die Geruch verursachen. Gerüche, die sich in die Materialien im Gerät eingezogen haben, gehen aber manchmal auch durch die Reinigung nicht ganz weg. Wir geben unser Bestes und bitten um Verständnis.",
+   "Meistens ist der Unterschied deutlich."
+  ],
+  "H02": [
+   "Die Familie geht vor.",
+   "Wir verwenden ein umweltfreundliches Reinigungsmittel, das auch für Babys und Haustiere sicher ist. Kein scharfer Geruch und keine Rückstände.",
+   "Da können Sie beruhigt sein."
+  ],
+  "H03": [
+   "Schöne Zimmer brauchen besondere Sorgfalt.",
+   "Bei Lehmwänden, Kalkputz, verputzten Wänden oder Wänden und Böden aus Massivholz kann Wasser herunterlaufen und sie nass machen oder beschädigen, deshalb lehnen wir grundsätzlich ab. Wenn Sie das in Kauf nehmen, können wir arbeiten. Schicken Sie bitte vor der Buchung oder wenn sich der Zuständige meldet ein Foto der Wand.",
+   "Mit einem Foto antworten wir schnell."
+  ],
+  "H04": [
+   "Höhe braucht Vorbereitung.",
+   "Wenn es vom Boden bis zur Unterkante des Geräts 2.3 m oder mehr sind, ist es Arbeit in der Höhe mit Spezialleiter, und es fällt ein Aufpreis an. Falls das zutreffen könnte, messen Sie bitte und sagen Sie es dem Zuständigen vorher. Den Betrag erklären wir vor der Arbeit und beginnen erst mit Ihrer Zustimmung.",
+   "Eine ungefähre Höhe genügt."
+  ],
+  "H05": [
+   "Fernbedienungen verschwinden ständig.",
+   "Ja, legen Sie bitte die Fernbedienung der Klimaanlage bereit. Damit prüfen wir den Betrieb vor und nach der Arbeit.",
+   "Schauen Sie auch nach den Batterien."
+  ],
+  "H06": [
+   "Kein großer Lkw, keine Sorge.",
+   "Wir kommen mit einem Kleinwagen oder einem normalen Pkw. Gibt es keinen Parkplatz, berechnen wir die tatsächlichen Kosten eines nahen Münzparkplatzes separat.",
+   "Wenn Sie einen Parkplatz haben, sagen Sie es uns."
   ]
  },
  "t": {
@@ -325,7 +380,18 @@
   "F03": "Wer sieht meinen Namen und meine Adresse?",
   "F04": "Reinigt ihr Deckenkassettengeräte?",
   "F05": "Kann ich einen Techniker wünschen?",
-  "F06": "Ist dieser Chat ein Mensch?"
+  "F06": "Ist dieser Chat ein Mensch?",
+  "G01": "Reinigen Sie auch Klimaanlagen, die älter als 10 Jahre sind?",
+  "G02": "Gibt es Modelle, die Sie nicht reinigen?",
+  "G03": "Reinigen Sie ein Gerät mit Fehlermeldung oder Defekt?",
+  "G04": "Wo finde ich Modellnummer und Herstellungsjahr?",
+  "G05": "Ich weiß nicht, ob meine Anlage eine Selbstreinigung hat.",
+  "H01": "Verschwindet der Geruch vollständig?",
+  "H02": "Ist das Reinigungsmittel sicher für Babys und Haustiere?",
+  "H03": "Geht es auch in einem Zimmer mit Lehm- oder Kalkputzwänden?",
+  "H04": "Meine Klimaanlage hängt sehr hoch. Ist das ein Problem?",
+  "H05": "Soll ich die Fernbedienung bereitlegen?",
+  "H06": "Mit was für einem Auto kommen Sie?"
  },
  "kw": {
   "A01": [
@@ -480,6 +546,63 @@
    "roboter",
    "ki",
    "bot"
+  ],
+  "G01": [
+   "10 Jahre",
+   "alt",
+   "Herstellungsjahr"
+  ],
+  "G02": [
+   "nicht reinigen",
+   "nicht unterstützt",
+   "Fenster",
+   "Modell"
+  ],
+  "G03": [
+   "Fehler",
+   "defekt",
+   "läuft nicht",
+   "Reparatur"
+  ],
+  "G04": [
+   "Modellnummer",
+   "wo",
+   "Aufkleber",
+   "Etikett"
+  ],
+  "G05": [
+   "Selbstreinigung",
+   "weiß nicht"
+  ],
+  "H01": [
+   "Geruch",
+   "riecht",
+   "vollständig"
+  ],
+  "H02": [
+   "Reinigungsmittel",
+   "sicher",
+   "umweltfreundlich"
+  ],
+  "H03": [
+   "Lehmwand",
+   "Kalkputz",
+   "Massivholz",
+   "Wand"
+  ],
+  "H04": [
+   "hoch",
+   "Höhe",
+   "Leiter"
+  ],
+  "H05": [
+   "Fernbedienung",
+   "Batterien"
+  ],
+  "H06": [
+   "Auto",
+   "Fahrzeug",
+   "Lkw"
   ]
  }
 };
