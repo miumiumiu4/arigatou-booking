@@ -886,7 +886,18 @@
     $('waitPanel').removeAttribute('hidden');
     startThanks('R0000-0', [{ name: 'エアコンクリーニング 2台', amount: 17800 }, { name: '3点セット（防カビ抗菌コート・室外機・ドレンホース） 1台', amount: 7500 }], { date1: (function () { var t = new Date(Date.now() + 9 * 36e5 + 7 * 864e5); return t.toISOString().slice(0, 10); })(), time1: '9時〜12時', area: '大阪', address: '（試しの住所）', housing: '戸建て', pet: 'あり', pet_count: '1', payment: 'onsite', parking: '敷地内に駐車可', nominate_name: '（試しのスタッフ）' });
   } else {
-    track('到着');
+    // 到着は「人の目に見えた時」だけ数える。インスタ・Facebook の広告は、押される前にページを裏で先読みすることがあり、
+    // そのまま数えると来ていない人まで到着になる（11/17 に約1,500件）。審査ロボットの訪問も数えない。
+    var robot = /facebookexternalhit|Facebot|meta-externalagent|bot|crawler|spider/i.test(navigator.userAgent || '');
+    var arrived = false;
+    var markArrived = function () {
+      if (arrived || robot || document.visibilityState !== 'visible') return;
+      arrived = true;
+      document.removeEventListener('visibilitychange', markArrived);
+      track('到着');
+    };
+    markArrived();
+    if (!arrived) document.addEventListener('visibilitychange', markArrived);
     start();
   }
 })();
