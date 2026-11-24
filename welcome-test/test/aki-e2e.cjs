@@ -45,19 +45,32 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   // ○を選ばずに送ると止まる
   await page.fill('#f_address', 'テスト'); await page.check('input[name=housing][value="戸建て"]'); await page.check('input[name=pet][value="なし"]');
   await page.getByRole('button', { name: 'この内容で予約する' }).click();
-  assert.match(await page.locator('#formMsg').innerText(), /○ を1つ選んで/);
+  assert.match(await page.locator('#formMsg').innerText(), /○ を1つ以上選んで/);
   // ○を押す
   const first = page.locator('.akio').first();
   const d = await first.getAttribute('data-d'), k = await first.getAttribute('data-k');
   await first.click();
-  assert.match(await page.locator('.akipicked').innerText(), /選んだ日時/);
+  assert.match(await page.locator('.akipicked').innerText(), /第1希望/);
+  // 第2・第3希望も押せる（押した順）。4つ目は増えない。もう一度押すと外れる
+  const rest = page.locator('.akio:not(.on)');
+  const d2 = await rest.nth(0).getAttribute('data-d'), k2 = await rest.nth(0).getAttribute('data-k');
+  await rest.nth(0).click();
+  const d3 = await page.locator('.akio:not(.on)').nth(0).getAttribute('data-d');
+  await page.locator('.akio:not(.on)').nth(0).click();
+  assert.equal(await page.locator('.akio.on').count(), 3);
+  await page.locator('.akio:not(.on)').nth(0).click();
+  assert.equal(await page.locator('.akio.on').count(), 3, '4つ目は選べない');
+  assert.match(await page.locator('.akipicked').innerText(), /第3希望/);
+  await page.locator('.akio.on').nth(2).click();
+  assert.equal(await page.locator('.akio.on').count(), 2, 'もう一度押すと外れる');
+  await page.locator('.akio:not(.on)').nth(0).click();
   await page.locator('#akiBox').scrollIntoViewIfNeeded();
   await snap('aki2_picked');
   await page.getByRole('button', { name: 'この内容で予約する' }).click();
   await page.getByText('ご予約を受け付けました。').waitFor();
   const sent = await page.evaluate(() => window.__lastTestBooking);
   assert.ok(sent.date1.startsWith(d + ' '), sent.date1);
-  assert.equal(sent.date2, ''); assert.equal(sent.date3, '');
+  assert.ok(sent.date2.startsWith(d2 + ' ') && sent.date3 !== '', sent.date2 + ' / ' + sent.date3);
   assert.match(sent.note, new RegExp('【空きから選択】' + d + ' [①②③]\\S+ 神奈川県横浜市緑区 AK-[A-Z0-9]{8}'));
   assert.match(sent.note, /【希望日】第1 /);
   await snap('aki3_done');
