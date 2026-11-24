@@ -1,6 +1,12 @@
 # Cloudflare Pages の応答ヘッダー（tools/cf-build.sh が _site/ に写す。GitHub Pages では _ で始まるので出ない）
+# - nosniff：ファイルの種類を取り違えさせない
+# - Strict-Transport-Security：https だけで開かせる（1年）。サブドメインには広げない
+# - X-Frame-Options / frame-ancestors：ほかのサイトの中に埋め込ませない（予約フォームを偽のページに重ねてだます手口を防ぐ）
 /*
   X-Content-Type-Options: nosniff
+  Strict-Transport-Security: max-age=31536000
+  X-Frame-Options: DENY
+  Content-Security-Policy: frame-ancestors 'none'
 
 # テスト版は検索に出さない（ページ内の noindex に加えて）
 /welcome-test/*
