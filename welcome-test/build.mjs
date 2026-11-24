@@ -15,7 +15,7 @@ if (AKI_URL && (!/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exe
   throw new Error('config.json の AKI_URL がおかしい: ' + AKI_URL);
 }
 function PROD_GAS_RE() { return /https:\/\/script\.google\.com\/macros\/s\/AKfycbwzgjuZ_[A-Za-z0-9_-]+\/exec/; }
-const AKI_PART = readFileSync(join(here, 'aki-part.js'), 'utf8').replace('__AKI_URL__', JSON.stringify(AKI_URL));
+const AKI_PART = readFileSync(join(here, 'aki-part.js'), 'utf8').replace('__AKI_URL__', JSON.stringify(AKI_URL)).replace('__AKI_PROD_RE__', PROD_GAS_RE().toString());
 const PROD_GAS = /https:\/\/script\.google\.com\/macros\/s\/AKfycbwzgjuZ_[A-Za-z0-9_-]+\/exec/;
 if (TEST_GAS_URL && (!/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(TEST_GAS_URL) || PROD_GAS.test(TEST_GAS_URL))) {
   throw new Error('config.json の TEST_GAS_URL がおかしい（本番の受け口は入れられない）: ' + TEST_GAS_URL);

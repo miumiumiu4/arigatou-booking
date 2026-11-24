@@ -88,8 +88,52 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   await page.locator('.akitbl').waitFor();
   for (let i = 0; i < 2; i++) await page.getByRole('button', { name: 'エアコン台数（壁掛け）を増やす' }).click();
   await page.waitForFunction(() => /2枠ぶん/.test(document.getElementById('akiBox').innerText));
+  // ?aki=<C999 のウェブアプリ> で開くと、作りものではなくその窓口に聞き、○を押すと席取りメモを送る（窓口は作りものの答え）
+  const c999 = 'https://script.google.com/macros/s/TESTC999xyz/exec', asked = [], holds = [];
+  await page.unroute(/script\.google\.com/);
+  await page.route(/^https:\/\/script\.google\.com\//, async r => {
+    const u = r.request().url();
+    if (u.includes('AKfycbwzgjuZ_')) { prod.push(u); return r.abort(); }
+    if (r.request().method() === 'POST') { { let b = {}; try { b = JSON.parse(r.request().postData()); } catch (e) {} if (b.kind === 'aki.hold') holds.push(b); } return r.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true,"memo":true}' }); }
+    const q = new URL(u).searchParams; asked.push(Object.fromEntries(q));
+    if (!q.get('callback')) return r.fulfill({ status: 200, body: '{}' });
+    const out = { ok: true, areaLabel: '神奈川県横浜市緑区', slots: [{ date: '2027-01-06', windowNo: 1, label: '①8:00〜9:00', status: '×' }, { date: '2027-01-06', windowNo: 2, label: '②12:00〜14:00', status: '○' }, { date: '2027-01-06', windowNo: 3, label: '③15:00〜18:00', status: '×' }], note: 'C999 の答え' };
+    return r.fulfill({ status: 200, contentType: 'text/javascript', body: q.get('callback') + '(' + JSON.stringify(out) + ');' });
+  });
+  await page.evaluate(() => { try { localStorage.clear(); sessionStorage.clear(); } catch (e) {} });
+  await page.goto(url + '?aki=' + encodeURIComponent(c999));
+  await page.waitForTimeout(300);
+  await page.getByRole('button', { name: 'はい' }).click();
+  await page.getByRole('button', { name: 'ご予約フォームへ進む' }).click();
+  await page.waitForTimeout(600);
+  await page.getByRole('button', { name: 'エアコン台数（壁掛け）を増やす' }).click();
+  await page.fill('#f_name', 'テスト'); await page.fill('#f_kana', 'てすと');
+  await page.fill('#f_phone', '0000000000'); await page.fill('#f_email', 'test@example.com');
+  await page.selectOption('#f_area', '神奈川');
+  await page.fill('#f_zip', '2260027');
+  await page.locator('.akitbl').waitFor();
+  assert.doesNotMatch(await page.locator('#akiBox').innerText(), /作りもの/);
+  const av = asked.find(a => a.action === 'availability');
+  assert.ok(av && av.zip === '2260027' && av.units === '2', JSON.stringify(asked));
+  assert.deepEqual(Object.keys(av).filter(k => /name|phone|mail|address/.test(k)), [], '窓口へ名前・電話・メール・住所を送らない');
+  assert.equal(await page.locator('.akio').count(), 1);
+  await page.locator('.akio').first().click();
+  await page.fill('#f_address', 'テスト'); await page.check('input[name=housing][value="戸建て"]'); await page.check('input[name=pet][value="なし"]');
+  await page.getByRole('button', { name: 'この内容で予約する' }).click();
+  await page.getByText('ご予約を受け付けました。').waitFor();
+  assert.equal(holds.length, 1);
+  assert.equal(holds[0].kind, 'aki.hold');
+  assert.equal(JSON.stringify(holds[0]).match(/テスト|0000000000|example\.com/), null, '席取りメモに名前・電話・メール・住所を入れない');
+  // 本番の受け口の番号は ?aki= に入れても使わない
+  await page.goto(url + '?aki=' + encodeURIComponent('https://script.google.com/macros/s/AKfycbwzgjuZ_abc/exec'));
+  await page.getByRole('button', { name: 'はい' }).click();
+  await page.getByRole('button', { name: 'ご予約フォームへ進む' }).click();
+  await page.waitForTimeout(600);
+  await page.fill('#f_zip', '2260027');
+  await page.locator('.akitbl').waitFor();
+  assert.match(await page.locator('#akiBox').innerText(), /作りもの/, '本番の番号なら作りものの空きのまま');
   assert.equal(prod.length, 0, '本番の予約の受け口へは送らない');
   assert.deepEqual(errs, []);
   await browser.close();
-  console.log('ok 空きの○×（作りもの）：表・選ぶ・送る中身・ほかの日を相談する');
+  console.log('ok 空きの○×：作りもの（表・選ぶ・送る中身・ほかの日を相談する）と ?aki= の窓口（C999 の形）');
 })().catch(e => { console.error(e); process.exit(1); });

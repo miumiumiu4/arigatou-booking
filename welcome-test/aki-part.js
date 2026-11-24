@@ -3,7 +3,15 @@
   // AKI_URL（config.json）が空のあいだは「作りものの空き」（どこにも聞かない）。入れると、そのデスク（C999 など）の
   //   GET ?action=availability&zip=…（○×だけ）と POST {kind:"aki.hold"}（日付・枠・市区町村だけの席取りメモ）を使う。
   // 名前・電話・メール・住所は、デスクの窓口へ送らない（予約そのものは今までどおりの送り先へ）。
-  var AKI_URL = __AKI_URL__;
+  // C999 で試す時は、config.json に書かずに、ページの URL の後ろに ?aki=<C999 のウェブアプリの URL> を付けて開く
+  //   （ウェブアプリの番号をリポジトリに残さないため。本番の予約の受け口の番号は受け付けない）
+  var AKI_URL = __AKI_URL__ || (function () {
+    try {
+      var q = new URLSearchParams(location.search).get('aki') || '';
+      if (!/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(q) || __AKI_PROD_RE__.test(q)) return '';
+      return q;
+    } catch (e) { return ''; }
+  })();
   var aki = { zip: '', need: 0, slots: null, areaLabel: '', page: 0, picked: null, manual: false, loading: false, msg: '', seq: 0, memoId: '', demoTaken: {} };
   var AKI_DEMO_LABELS = ['①8:00〜9:00', '②12:00〜14:00', '③15:00〜18:00'];
   var AKI_DOW = '日月火水木金土';
