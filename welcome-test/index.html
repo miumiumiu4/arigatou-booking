@@ -538,7 +538,7 @@
   function akiJsonp(url) {
     return new Promise(function (ok, ng) {
       var cb = 'akiCb' + Date.now() + Math.floor(Math.random() * 1e6), s = document.createElement('script'), done = false;
-      var t = setTimeout(function () { if (!done) { done = true; cleanup(); ng(new Error('timeout')); } }, 12000);
+      var t = setTimeout(function () { if (!done) { done = true; cleanup(); ng(new Error('timeout')); } }, 25000);
       function cleanup() { try { delete window[cb]; } catch (_) { window[cb] = undefined; } s.remove(); clearTimeout(t); }
       window[cb] = function (o) { if (done) return; done = true; cleanup(); ok(o); };
       s.onerror = function () { if (done) return; done = true; cleanup(); ng(new Error('load')); };
@@ -601,7 +601,7 @@
     var h = '<div class="akihead">空いている日時から選ぶ</div>';
     if (!AKI_URL) h += '<p class="akidemo">【試し】いまは作りものの空きです（本物のデスクとはまだつながっていません）</p>';
     if (!aki.zip) h += '<p class="akihint">上の「郵便番号」（7けた）を入れると、その地域を回れるスタッフの空きが ○× で出ます。</p>';
-    else if (aki.loading) h += '<p class="akihint">空きを調べています…</p>';
+    else if (aki.loading) h += '<p class="akihint">空きを調べています…（10秒ほどかかることがあります）</p>';
     else if (!use) {
       h += '<p class="akihint">' + esc(aki.msg || '') + '</p>';
       if (aki.manual && aki.slots && aki.slots.length) h += '<button type="button" class="akilink" data-aki="back">○×の表にもどる</button>';
