@@ -76,6 +76,8 @@
       aki.loading = false; aki.slots = []; aki.msg = 'いま空きを読めません。下の欄に希望日を書いてお送りください。'; akiRender();
     });
   }
+  // 「②12:00〜14:00」→「12:00〜14:00 の間に到着」（作業の時間と思われないように。11/25 三浦さん）
+  function akiArrive(label) { var t = String(label || '').replace(/^[①②③]\s*/, ''); return t ? t + ' の間に到着' : ''; }
   function akiPickIndex(d, k) { for (var i = 0; i < aki.picks.length; i++) if (aki.picks[i].date === d && aki.picks[i].windowNo === k) return i; return -1; }
   function akiUsingTable() { return !aki.manual && !!(aki.slots && aki.slots.length); }
   function akiDateLabel(ymd) { var d = new Date(ymd + 'T00:00:00Z'); return (d.getUTCMonth() + 1) + '/' + d.getUTCDate() + '（' + AKI_DOW.charAt(d.getUTCDay()) + '）'; }
@@ -94,21 +96,21 @@
       var dates = []; aki.slots.forEach(function (s) { if (dates.indexOf(s.date) < 0) dates.push(s.date); });
       var per = 7, pages = Math.ceil(dates.length / per); if (aki.page >= pages) aki.page = pages - 1;
       var shown = dates.slice(aki.page * per, aki.page * per + per), labels = [1, 2, 3].map(function (k) { var s = aki.slots.find(function (x) { return x.windowNo === k; }); return s ? s.label : ''; });
-      h += '<p class="akihint">' + esc(aki.areaLabel) + ' の空き（' + aki.need + '枠ぶんの作業）。○を押した順に、第1・第2・第3希望になります（第1希望だけでも送れます）。</p>';
-      h += '<table class="akitbl"><thead><tr><th>日付</th>' + labels.map(function (l) { return '<th>' + esc(l).replace(/^([①②③])/, '$1<br>').replace('〜', '〜<br>') + '<br><small>着</small></th>'; }).join('') + '</tr></thead><tbody>';
+      h += '<p class="akihint">' + esc(aki.areaLabel) + ' の空き（' + aki.need + '枠ぶんの作業）。○を押した順に、第1・第2・第3希望になります（第1希望だけでも送れます）。</p><p class="akiarrnote">表の時間は<b>スタッフがお宅に着く時間の目安</b>です。作業の時間ではありません。</p>';
+      h += '<table class="akitbl"><thead><tr><th>日付</th>' + labels.map(function (l) { var m = String(l).match(/^([①②③])?\s*(.*)$/); return '<th><span class="akiarr">到着</span><br>' + esc(m[2]).replace('〜', '〜<br>') + '</th>'; }).join('') + '</tr></thead><tbody>';
       shown.forEach(function (d) {
         var w = new Date(d + 'T00:00:00Z').getUTCDay();
         h += '<tr><th class="' + (w === 0 ? 'sun' : w === 6 ? 'sat' : '') + '">' + akiDateLabel(d) + '</th>';
         [1, 2, 3].forEach(function (k) {
           var s = aki.slots.find(function (x) { return x.date === d && x.windowNo === k; });
           var at = akiPickIndex(d, k), sel = at >= 0;
-          h += s && s.status === '○' ? '<td><button type="button" class="akio' + (sel ? ' on' : '') + '" data-d="' + d + '" data-k="' + k + '" aria-label="' + akiDateLabel(d) + ' ' + esc(s.label) + ' 空きあり">' + (sel ? '第' + (at + 1) + '<br>希望' : '○') + '</button></td>' : '<td class="akix" aria-label="空きなし">×</td>';
+          h += s && s.status === '○' ? '<td><button type="button" class="akio' + (sel ? ' on' : '') + '" data-d="' + d + '" data-k="' + k + '" aria-label="' + akiDateLabel(d) + ' ' + esc(akiArrive(s.label)) + ' 空きあり">' + (sel ? '第' + (at + 1) + '<br>希望' : '○') + '</button></td>' : '<td class="akix" aria-label="空きなし">×</td>';
         });
         h += '</tr>';
       });
       h += '</tbody></table><div class="akipager"><button type="button" data-aki="prev"' + (aki.page ? '' : ' disabled') + '>← 前の週</button><span>' + (aki.page + 1) + ' / ' + pages + '</span><button type="button" data-aki="next"' + (aki.page < pages - 1 ? '' : ' disabled') + '>次の週 →</button></div>';
-      h += '<p class="akinote">○＝空きあり、×＝埋まり・お休み。時間は「スタッフが伺う時間の幅」です。担当が型番などを確かめてから、確定のご連絡をします。</p>';
-      if (aki.picks.length) h += '<div class="akipicked">' + aki.picks.map(function (p, i) { return '第' + (i + 1) + '希望：<b>' + akiDateLabel(p.date) + ' ' + esc(p.label) + '</b>'; }).join('<br>') + (aki.picks.length < 3 ? '<br><small>第' + (aki.picks.length + 1) + '希望もあると、早く決まりやすくなります（任意）。もう一度押すと外れます。</small>' : '<br><small>もう一度押すと外れます。</small>') + '<br><small>第1希望の日時を、送ってから少しの間お取り置きします。第2・第3希望は、ほかの方が先に決まることがあります。</small></div>';
+      h += '<p class="akinote"><b>表の時間は、スタッフがお宅に着く時間の目安です（作業の時間ではありません）。</b>○＝空きあり、×＝埋まり・お休み。担当が型番などを確かめてから、確定のご連絡をします。</p>';
+      if (aki.picks.length) h += '<div class="akipicked">' + aki.picks.map(function (p, i) { return '第' + (i + 1) + '希望：<b>' + akiDateLabel(p.date) + '</b> <span class="akiarr">' + esc(akiArrive(p.label)) + '</span>'; }).join('<br>') + (aki.picks.length < 3 ? '<br><small>第' + (aki.picks.length + 1) + '希望もあると、早く決まりやすくなります（任意）。もう一度押すと外れます。</small>' : '<br><small>もう一度押すと外れます。</small>') + '<br><small>第1希望の日時を、送ってから少しの間お取り置きします。第2・第3希望は、ほかの方が先に決まることがあります。</small></div>';
       h += '<button type="button" class="akilink" data-aki="manual">合う○が無い・ほかの日を相談する（希望日を3つ書く）</button>';
     }
     box.innerHTML = h;
@@ -144,10 +146,10 @@
     if (!akiUsingTable() || !aki.picked) return;
     if (!aki.memoId) { var a = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', m = 'AK-'; for (var i = 0; i < 8; i++) m += a.charAt(Math.floor(Math.random() * a.length)); aki.memoId = m; }
     var pk = aki.picks;
-    data.date1 = pk[0].date + ' ' + pk[0].label; data.time1 = pk[0].label;
-    data.date2 = pk[1] ? pk[1].date + ' ' + pk[1].label : ''; data.date3 = pk[2] ? pk[2].date + ' ' + pk[2].label : '';
-    if (pk[1]) data.time2 = pk[1].label; else delete data.time2;
-    if (pk[2]) data.time3 = pk[2].label; else delete data.time3;
+    data.date1 = pk[0].date + ' ' + akiArrive(pk[0].label); data.time1 = akiArrive(pk[0].label);
+    data.date2 = pk[1] ? pk[1].date + ' ' + akiArrive(pk[1].label) : ''; data.date3 = pk[2] ? pk[2].date + ' ' + akiArrive(pk[2].label) : '';
+    if (pk[1]) data.time2 = akiArrive(pk[1].label); else delete data.time2;
+    if (pk[2]) data.time3 = akiArrive(pk[2].label); else delete data.time3;
   }
   function akiMark() { return '【空きから選択】' + aki.picked.date + ' ' + aki.picked.label.replace(/\s+/g, '') + ' ' + aki.areaLabel.replace(/\s+/g, '') + ' ' + aki.memoId; }
   // 送る直前：席取りメモ（日付・枠・郵便番号・台数だけ）。たった今ほかの方が取っていたら止めて選びなおしてもらう

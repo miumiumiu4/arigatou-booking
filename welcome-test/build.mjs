@@ -43,6 +43,9 @@ const BAND_CSS = `
   .bk .akipager { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; gap: 8px; }
   .bk .akipager button { border: 1px solid #c5ccd4; background: #fff; border-radius: 8px; padding: 6px 10px; font-size: 13px; }
   .bk .akipager button:disabled { opacity: .35; }
+  .bk .akiarrnote { background: #fff4e6; border-left: 4px solid #c2410c; padding: 6px 8px; margin: 6px 0; font-size: 14px; }
+  .bk .akiarr { font-weight: 800; color: #c2410c; font-size: 15px; }
+  .bk .akitbl thead th .akiarr { font-size: 12px; }
   .bk .akipicked { background: #fdeee2; border-radius: 8px; padding: 8px 10px; margin-top: 8px; font-size: 14px; }
   .bk .akilink { display: block; width: 100%; margin-top: 8px; background: none; border: 1px dashed #4a90d9; color: #1c5fa8; border-radius: 8px; padding: 8px; font-size: 13px; }
 `;
