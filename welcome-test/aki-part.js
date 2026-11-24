@@ -8,8 +8,10 @@
   var AKI_DEMO_LABELS = ['①8:00〜9:00', '②12:00〜14:00', '③15:00〜18:00'];
   var AKI_DOW = '日月火水木金土';
   function akiZipNow() { var z = ($('f_zip').value || '').replace(/[０-９]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0xFEE0); }).replace(/\D/g, ''); return z.length === 7 ? z : ''; }
-  function akiCounts() { var units = (st.units || 0) + (st.tenkase || 0), auto = Math.min(units, (st.auto || 0) + (st.tenkase || 0)); return { units: units, auto: auto }; }
+  // 台数とお掃除機能付き（11/24 会議：台数で要る枠の数が変わる。天カセは何枠かの決定まで○×を出さない）
+  function akiCounts() { var units = st.units || 0, auto = Math.min(units, st.auto || 0); return { units: units, auto: auto, tenkase: st.tenkase || 0 }; }
   function akiNeed() { var c = akiCounts(); if (!c.units) return 1; return Math.min(3, Math.max(1, Math.ceil((c.units - c.auto) / 2 + c.auto - 1e-9))); }
+  function akiKey() { var c = akiCounts(); return [akiNeed(), c.units, c.auto ? 1 : 0, c.tenkase ? 1 : 0].join('|'); }
   function akiJsonp(url) {
     return new Promise(function (ok, ng) {
       var cb = 'akiCb' + Date.now() + Math.floor(Math.random() * 1e6), s = document.createElement('script'), done = false;
@@ -44,11 +46,12 @@
   function akiLoad() {
     var zip = akiZipNow(), need = akiNeed();
     if (!zip) { aki.zip = ''; aki.slots = null; aki.msg = ''; akiRender(); return; }
-    if (zip === aki.zip && need === aki.need && aki.slots) return;
+    if (zip === aki.zip && akiKey() === aki.key && aki.slots) return;
     var my = ++aki.seq, c = akiCounts();
-    aki.zip = zip; aki.need = need; aki.loading = true; aki.msg = ''; akiRender();
+    aki.zip = zip; aki.need = need; aki.key = akiKey(); aki.loading = true; aki.msg = ''; akiRender();
     var p = AKI_URL
-      ? akiJsonp(AKI_URL + '?action=availability&zip=' + zip + '&units=' + c.units + '&auto=' + c.auto + '&amount=' + total())
+      ? akiJsonp(AKI_URL + '?action=availability&zip=' + zip + '&units=' + c.units + '&auto=' + c.auto + '&tenkase=' + c.tenkase + '&amount=' + total())
+      : c.tenkase ? Promise.resolve({ ok: true, slots: [], note: '天井埋め込み（天カセ）は、担当が対応できるスタッフと日程を確かめてからご案内します。下の欄に希望日を書いてお送りください。' })
       : akiDemo(zip, need);
     p.then(function (o) {
       if (my !== aki.seq) return;
@@ -118,7 +121,7 @@
   var akiTimer = null;
   function akiSoon() { clearTimeout(akiTimer); akiTimer = setTimeout(akiLoad, 400); }
   $('f_zip').addEventListener('input', akiSoon);
-  $('form').addEventListener('click', function () { if (aki.zip && akiNeed() !== aki.need) akiSoon(); });
+  $('form').addEventListener('click', function () { if (aki.zip && akiKey() !== aki.key) akiSoon(); });
     akiRender();
   }
   // 表を使っている時：第2・第3希望は聞かない。○を選んでいなければ止める
@@ -136,7 +139,7 @@
     if (!akiUsingTable() || !aki.picked) return Promise.resolve();
     var c = akiCounts(), pk = aki.picked;
     if (!AKI_URL) { aki.demoTaken[pk.date + '|' + pk.windowNo] = 1; return Promise.resolve(); }
-    var body = { kind: 'aki.hold', memoId: aki.memoId, zip: aki.zip, date: pk.date, slotNo: pk.windowNo, units: c.units, auto: c.auto, amount: total() };
+    var body = { kind: 'aki.hold', memoId: aki.memoId, zip: aki.zip, date: pk.date, slotNo: pk.windowNo, units: c.units, auto: c.auto, tenkase: c.tenkase, amount: total() };
     return fetch(AKI_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) })
       .then(function (r) { return r.text(); })
       .then(function (t) { var j; try { j = JSON.parse(t); } catch (_) { j = { ok: true }; } return j; }, function () { return { ok: true }; })

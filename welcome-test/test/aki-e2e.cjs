@@ -75,6 +75,19 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   await page.locator('#akiBox').scrollIntoViewIfNeeded();
   await snap('aki4_manual');
 
+  // 天カセを足すと ○× を出さず希望日欄（11/24 会議：何枠かの決定まで）
+  await page.getByRole('button', { name: /ほかの日を相談する/ }).count();
+  await page.getByRole('button', { name: '○×の表にもどる' }).click();
+  await page.locator('.akitbl').waitFor();
+  await page.getByRole('button', { name: '天井埋め込み（天カセ・業務用）を増やす' }).click();
+  await page.waitForFunction(() => !document.querySelector('.akitbl') && /天カセ/.test(document.getElementById('akiBox').innerText));
+  assert.equal(await page.locator('#date1').isVisible(), true);
+  await snap('aki5_tenkase');
+  // 天カセを戻し、壁掛けを3台にすると「2枠ぶん」で聞き直す
+  await page.getByRole('button', { name: '天井埋め込み（天カセ・業務用）を減らす' }).click();
+  await page.locator('.akitbl').waitFor();
+  for (let i = 0; i < 2; i++) await page.getByRole('button', { name: 'エアコン台数（壁掛け）を増やす' }).click();
+  await page.waitForFunction(() => /2枠ぶん/.test(document.getElementById('akiBox').innerText));
   assert.equal(prod.length, 0, '本番の予約の受け口へは送らない');
   assert.deepEqual(errs, []);
   await browser.close();
