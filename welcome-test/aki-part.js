@@ -185,7 +185,7 @@
     return akiPost(body)
       .then(function (t) { var j; try { j = JSON.parse(t); } catch (_) { j = { ok: true }; } return j; }, function () { return { ok: true }; })
       .then(function (j) {
-        if (j.ok) return;
+        if (j.ok) { if (j.jobId) aki.lastJobId = String(j.jobId); return; }
         if (j.error === 'taken') { aki.picks.shift(); aki.picked = aki.picks[0] || null; aki.slots = null; aki.zip = ''; akiLoad(); $('akiBox').scrollIntoView({ block: 'center' }); }
         throw new Error(j.message || '選んだ日時を受け付けられませんでした');
       });

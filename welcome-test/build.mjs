@@ -62,6 +62,8 @@ const FAKE = `
     return akiBeforeSend(data).then(function () {
       if (CONFIG.GAS_URL) return fetch(CONFIG.GAS_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(data) });
       var d = new Date(), id = 'T' + ('0' + (d.getMonth() + 1)).slice(-2) + ('0' + d.getDate()).slice(-2) + '-TEST' + (++testSeq);
+      // 試験用のデスク（C999）に仮押さえが入った時は、その受付番号（C999-K-…）を出す（11/26 テスト）
+      if (aki.lastJobId) { id = aki.lastJobId; aki.lastJobId = ''; }
       return new Promise(function (ok) { setTimeout(function () { ok({ text: function () { return Promise.resolve(JSON.stringify({ ok: true, id: id })); } }); }, 400); });
     });
   }
