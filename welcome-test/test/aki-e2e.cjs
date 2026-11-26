@@ -136,7 +136,10 @@ const shots = shotsAt > 0 ? process.argv[shotsAt + 1] : null;
   await page.getByText('ご予約を受け付けました。').waitFor();
   assert.equal(holds.length, 1);
   assert.equal(holds[0].kind, 'aki.hold');
-  assert.equal(JSON.stringify(holds[0]).match(/テスト|0000000000|example\.com/), null, '席取りメモに名前・電話・メール・住所を入れない');
+  const h0 = Object.assign({}, holds[0]); delete h0.testName;
+  assert.equal(JSON.stringify(h0).match(/テスト|0000000000|example\.com/), null, '席取りメモに電話・メール・住所を入れない（お名前は試験用の testName だけ）');
+  assert.ok(!holds[0].testName || holds[0].testName.length <= 20, 'テストのお名前は20文字まで');
+  assert.ok(await page.locator('.testband small').innerText().then(t => /C999/.test(t)), '帯の文が「C999 に仮押さえが入る」になる');
   // 本番の受け口の番号は ?aki= に入れても使わない
   await page.goto(url + '?aki=' + encodeURIComponent('https://script.google.com/macros/s/AKfycbwzgjuZ_abc/exec'));
   await page.getByRole('button', { name: 'はい' }).click();

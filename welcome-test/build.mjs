@@ -59,7 +59,7 @@ const FAKE = `
   function testSend(data) {
     window.__lastTestBooking = data;
     // 空きの○を選んでいれば、先に席取りメモ（aki-part.js）
-    return akiBeforeSend().then(function () {
+    return akiBeforeSend(data).then(function () {
       if (CONFIG.GAS_URL) return fetch(CONFIG.GAS_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(data) });
       var d = new Date(), id = 'T' + ('0' + (d.getMonth() + 1)).slice(-2) + ('0' + d.getDate()).slice(-2) + '-TEST' + (++testSeq);
       return new Promise(function (ok) { setTimeout(function () { ok({ text: function () { return Promise.resolve(JSON.stringify({ ok: true, id: id })); } }); }, 400); });

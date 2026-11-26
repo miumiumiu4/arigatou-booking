@@ -503,7 +503,7 @@
   function testSend(data) {
     window.__lastTestBooking = data;
     // 空きの○を選んでいれば、先に席取りメモ（aki-part.js）
-    return akiBeforeSend().then(function () {
+    return akiBeforeSend(data).then(function () {
       if (CONFIG.GAS_URL) return fetch(CONFIG.GAS_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(data) });
       var d = new Date(), id = 'T' + ('0' + (d.getMonth() + 1)).slice(-2) + ('0' + d.getDate()).slice(-2) + '-TEST' + (++testSeq);
       return new Promise(function (ok) { setTimeout(function () { ok({ text: function () { return Promise.resolve(JSON.stringify({ ok: true, id: id })); } }); }, 400); });
@@ -549,6 +549,26 @@
       document.head.appendChild(s);
     });
   }
+  // 11/26：まず同じ住所の中継（/aki-api、Cloudflare）に聞く。Google アカウントが複数ログインしているブラウザでも止まらない。
+  //   中継が無い所（手元のファイル・GitHub Pages）や中継が失敗した時は、今までどおり直接聞く
+  function akiRelayOk() { return /^https?:$/.test(location.protocol) && !/github\.io$/.test(location.hostname); }
+  function akiGet(qs) {
+    var direct = function () { return akiJsonp(AKI_URL + '?' + qs); };
+    if (!akiRelayOk()) return direct();
+    return fetch('/aki-api?u=' + encodeURIComponent(AKI_URL) + '&' + qs, { cache: 'no-store' })
+      .then(function (r) { if (!/json/.test(r.headers.get('content-type') || '')) throw new Error('relay'); return r.json(); })
+      .then(function (j) { if (!j || (j.ok === false && /^(bad_target|upstream|relay|method)$/.test(j.error || ''))) throw new Error('relay'); return j; })
+      .catch(direct);
+  }
+  function akiPost(body) {
+    var s = JSON.stringify(body);
+    var direct = function () { return fetch(AKI_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: s }).then(function (r) { return r.text(); }); };
+    if (!akiRelayOk()) return direct();
+    return fetch('/aki-api?u=' + encodeURIComponent(AKI_URL), { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: s })
+      .then(function (r) { if (!/json/.test(r.headers.get('content-type') || '')) throw new Error('relay'); return r.text(); })
+      .then(function (t) { var j = {}; try { j = JSON.parse(t); } catch (_) {} if (j.ok === false && /^(bad_target|upstream|relay|method|bad_kind|bad_body)$/.test(j.error || '')) throw new Error('relay'); return t; })
+      .catch(direct);
+  }
   // 作りものの空き：明後日から来月の終わりまで。日曜は×が多い。押した枠は×になる
   function akiDemo(zip, need) {
     return akiJsonp('https://zipcloud.ibsnet.co.jp/api/search?zipcode=' + zip).then(function (z) {
@@ -576,7 +596,7 @@
     var my = ++aki.seq, c = akiCounts();
     aki.zip = zip; aki.need = need; aki.key = akiKey(); aki.loading = true; aki.msg = ''; akiRender();
     var p = AKI_URL
-      ? akiJsonp(AKI_URL + '?action=availability&zip=' + zip + '&units=' + c.units + '&auto=' + c.auto + '&tenkase=' + c.tenkase + '&amount=' + total())
+      ? akiGet('action=availability&zip=' + zip + '&units=' + c.units + '&auto=' + c.auto + '&tenkase=' + c.tenkase + '&amount=' + total())
       : c.tenkase ? Promise.resolve({ ok: true, slots: [], note: '天井埋め込み（天カセ）は、担当が対応できるスタッフと日程を確かめてからご案内します。下の欄に希望日を書いてお送りください。' })
       : akiDemo(zip, need);
     p.then(function (o) {
@@ -635,6 +655,8 @@
   }
   // 画面の部品ができてから（build.mjs が $('f_nominate') の行の前で呼ぶ）
   function akiInit() {
+    // 11/26：?aki= で試験用のデスクにつないでいる時は、帯の文を実際の動きに合わせる
+    if (AKI_URL) { var bs = document.querySelector('.testband small'); if (bs) bs.textContent = '空いている日時の○を選んで送ると、試験用の予約デスク（C999）に仮押さえが1件入ります（お名前だけ。電話・メール・住所は入りません）。本番の予約台帳には入りません。確認メールも届きません。'; }
     $('akiBox').addEventListener('click', function (e) {
       var b = e.target.closest('button'); if (!b) return;
       if (b.dataset.d) {
@@ -671,13 +693,14 @@
   }
   function akiMark() { return '【空きから選択】' + aki.picked.date + ' ' + aki.picked.label.replace(/\s+/g, '') + ' ' + aki.areaLabel.replace(/\s+/g, '') + ' ' + aki.memoId; }
   // 送る直前：席取りメモ（日付・枠・郵便番号・台数だけ）。たった今ほかの方が取っていたら止めて選びなおしてもらう
-  function akiBeforeSend() {
+  function akiBeforeSend(data) {
     if (!akiUsingTable() || !aki.picked) return Promise.resolve();
     var c = akiCounts(), pk = aki.picked;
     if (!AKI_URL) { aki.demoTaken[pk.date + '|' + pk.windowNo] = 1; return Promise.resolve(); }
     var body = { kind: 'aki.hold', memoId: aki.memoId, zip: aki.zip, date: pk.date, slotNo: pk.windowNo, units: c.units, auto: c.auto, tenkase: c.tenkase, amount: total() };
-    return fetch(AKI_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) })
-      .then(function (r) { return r.text(); })
+    // テスト版だけ：試験用のデスク（C999）の仮押さえ行に、入れたお名前だけを渡す（電話・メール・住所は渡さない）。本番のページには入らない部分
+    if (data && data.name) body.testName = String(data.name).slice(0, 20);
+    return akiPost(body)
       .then(function (t) { var j; try { j = JSON.parse(t); } catch (_) { j = { ok: true }; } return j; }, function () { return { ok: true }; })
       .then(function (j) {
         if (j.ok) return;
